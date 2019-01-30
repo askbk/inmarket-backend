@@ -2,7 +2,7 @@ const app = require("express")();
 const http = require("http").Server(app);
 
 app.get("/", (req, res) => {
-    res.send("<h1>goodbye</h1>");
+    res.sendFile("/srv/http/inmarket-app/index.html");
 });
 
 http.listen(3000, () => {
