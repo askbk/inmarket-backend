@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+    inmarket-backend:
+        build: .
+        volumes:
+            - .:/srv/http/inmarket-backend
+            - /srv/http/inmarket-backend
+        ports:
+            - 3000:3000
+            - 9229:9229
+        command: npm start
