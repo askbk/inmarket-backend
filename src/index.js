@@ -1,13 +1,12 @@
-const app = require("express")();
 const express = require("express");
+const app = express();
 const http = require("http").Server(app);
+
 const appdir = __dirname + "/app";
-app.use(express.static(appdir));
+const port = 3000;
 
-app.get("/", (req, res) => {
-    res.sendFile(appdir + "/index.html");
-});
+app.use("/", express.static(appdir));
 
-http.listen(3000, () => {
-    console.log("listening on port 3000");
+http.listen(port, () => {
+    console.log("listening on port " + port);
 });
