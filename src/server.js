@@ -2,8 +2,31 @@ const express = require("express");
 const app = express();
 const http = require("http").Server(app);
 const fs = require("fs");   //  For å teste API
+
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
+
+const mariadb = require('mariadb');
+const pool = mariadb.createPool({
+    host: "database",
+    user: "ask",
+    password: "123",
+    connectionLimit: 5
+});
+
+async function testDBConnection() {
+    let conn;
+    try {
+        conn = await pool.getConnection();
+        console.log("connected ! connection id is " + conn.threadId)
+    } catch (err) {
+        throw err;
+    } finally {
+        if (conn) return conn.end();
+    }
+}
+
+testDBConnection();
 
 const appdir = __dirname + "/app";
 const test_path = __dirname + "/testdata";

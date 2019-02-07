@@ -1,6 +1,4 @@
 # Backend for InMarket-appen
-Kjør
-`docker-compose up`
 ## Setup
 1. Klon repoet
     ````
@@ -11,12 +9,8 @@ Kjør
     sudo pacman -S docker docker-compose
     sudo systemctl start docker.service
     ````
-3. Installer dependencies
+3. Kjør
     ````
     cd inmarket-backend
-    npm install
-    ````
-4. Kjør
-    ````
     sudo docker-compose up
     ````

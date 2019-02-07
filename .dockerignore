@@ -8,4 +8,5 @@ containers
 .gitignore
 README.md
 LICENSE
-src
+src/app
+src/testdata
