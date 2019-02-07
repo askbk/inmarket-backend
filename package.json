@@ -3,13 +3,11 @@
     "version": "0.0.1",
     "description": "Backend for InMarket sin app.",
     "dependencies": {
-        "body-parse": "^0.1.0",
         "body-parser": "^1.18.3",
         "express": "^4.16.4",
         "mariadb": "^2.0.3"
     },
     "devDependencies": {
-        "eslint": "^5.12.1",
         "nodemon": "^1.18.9"
     },
     "scripts": {
