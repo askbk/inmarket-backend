@@ -11,6 +11,7 @@ const pool = mariadb.createPool({
     host: "database",
     user: "ask",
     password: "123",
+    database: "inmarket_db",
     connectionLimit: 5
 });
 
@@ -55,10 +56,33 @@ app.get("/api/getUser/:id", (req, res, next) => {
 });
 
 app.post("/api/register", (req, res, next) => {
-    const user = req.params;
-    res.json(user);
+    const user = req.body;
+    try {
+        insertUser(user);
+    } catch (e) {
+	    console.error(e);
+        throw e;
+	}
 });
 
 http.listen(port, () => {
     console.log("listening on port " + port + " at " + new Date().toTimeString());
 });
+
+async function insertUser(user) {
+    let conn;
+    try {
+        conn = await pool.query(`INSERT INTO user (name, email, phone,
+										kommuneNr, adminLevel, password,
+										createTime, userType, profilePicture)
+									VALUES (?, ?, ?, 1, 0, ?, NOW(), ?, ?)`,
+									[user.name, user.email, user.phone,
+                                    user.password, user.userType,
+                                    "img/stock-profile.jpg"]);
+		// console.log(res); // { affectedRows: 1, insertId: 1, warningStatus: 0 }
+    } catch (err) {
+        throw err;
+    } finally {
+        console.log("hleoo");
+    }
+}
