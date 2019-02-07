@@ -17,5 +17,5 @@
 ## Bruk
 ### Gå inn i MariaDB
 ````
-docker exec -it inmarket_db bash
+docker exec -it inmarket-backend_database_1 bash
 ````
