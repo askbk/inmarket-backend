@@ -3,3 +3,4 @@ containers
 src/app
 src/testdata
 .eslint*
+db/workdir

@@ -14,3 +14,8 @@
     cd inmarket-backend
     sudo docker-compose up
     ````
+## Bruk
+### Gå inn i MariaDB
+````
+docker exec -it inmarket_db bash
+````

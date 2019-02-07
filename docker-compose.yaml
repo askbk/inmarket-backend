@@ -2,10 +2,10 @@ version: '3'
 
 services:
     database:
-        image: mariadb
+        build: ./db
         restart: always
         volumes:
-            - ./db:/var/lib/mysql
+            - ./db/workdir:/var/lib/mysql
         ports:
             - 3306:3306
         environment:
