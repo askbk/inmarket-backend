@@ -3,18 +3,15 @@
     "version": "0.0.1",
     "description": "Backend for InMarket sin app.",
     "dependencies": {
-        "body-parse": "^0.1.0",
         "body-parser": "^1.18.3",
         "express": "^4.16.4",
         "jsonwebtoken": "^8.4.0",
         "mariadb": "^2.0.3"
     },
     "devDependencies": {
-        "eslint": "^5.12.1",
         "nodemon": "^1.18.9"
     },
     "scripts": {
-        "lint": "eslint src/server.js",
         "start": "nodemon --inspect src/server.js 3000",
         "start:prod": "node src/server.js"
     }
