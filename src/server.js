@@ -1,8 +1,6 @@
 const express = require("express");
 const app = express();
 const http = require("http").Server(app);
-const fs = require("fs");   //  For å teste API
-
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
 
@@ -33,9 +31,11 @@ const appdir = __dirname + "/app";
 const test_path = __dirname + "/testdata";
 const port = 3000;
 
-const Users = require("./api/users.js");
+const Users = require("./api/users.js"),
+    Token = require('./token.js');
 
-const users = new Users(pool);
+const users = new Users(pool),
+    token = new Token();
 
 app.use(bodyParser.json());
 

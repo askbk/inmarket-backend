@@ -37,4 +37,12 @@ module.exports =  class Users extends API {
             throw e;
         }
     }
+
+    async getId(email) {
+        
+    }
+
+    async getPassword(userId) {
+
+    }
 }
