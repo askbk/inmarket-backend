@@ -51,6 +51,14 @@ app.post("/api/login", (req, res, next) => {
     res.send(JSON.stringify(req.body));
 });
 
+app.get("/api/getbyemail/:email", (req, res, next) => {
+    try {
+        res.json(users.getId(req.params.email));
+    } catch (e) {
+        throw e;
+    }
+})
+
 app.get("/api/users/:id",  (req, res, next) => {
     try {
         users.getUser(req, res, next);

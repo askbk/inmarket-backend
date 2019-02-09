@@ -1,4 +1,4 @@
-const API = require('./api.js');
+const API = require(__dirname + '/api.js');
 
 module.exports =  class Users extends API {
     constructor(pool) {
@@ -39,7 +39,19 @@ module.exports =  class Users extends API {
     }
 
     async getId(email) {
-        
+        const sql = `SELECT *
+                    FROM user
+                    WHERE email='?'`,
+            values = [email];
+        let conn;
+        try {
+            conn = await this.pool.getConnection();
+            const result = await conn.query(sql, values);
+            return result;
+        } catch (e) {
+            res.status(500).send(e);
+            throw e;
+        }
     }
 
     async getPassword(userId) {

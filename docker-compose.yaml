@@ -15,8 +15,6 @@ services:
             MYSQL_DATABASE: "inmarket_db"
     webserver:
         build: .
-        links:
-            - database
         volumes:
             - .:/srv/http/inmarket-backend
             - /srv/http/inmarket-backend
