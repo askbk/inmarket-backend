@@ -16,8 +16,7 @@ services:
     webserver:
         build: .
         volumes:
-            - .:/srv/http/inmarket-backend
-            - /srv/http/inmarket-backend
+            - .:/srv/http/node
         ports:
             - 3000:3000
             - 9229:9229
