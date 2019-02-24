@@ -37,44 +37,39 @@ module.exports = class Auth {
         const email = req.body.email,
             password = req.body.password;
 
-        if (email && password) {
-            const userId = this.users.getId(email);
+        //  Email or password undefined
+        if (!email && !password) {
+            res.status(403).send({
+                success: false,
+                message: "Bad email";
+            });
 
-            if (userId === -1) {
-                res.status(403).send({
-                    success: false,
-                    message: "Bad email";
-                });
-                return;
-            }
-
-            if (this.verifyPassword(password, users.getPassword(userId))) {
-                const jwt = this.token.issue(userId);
-                res.status(200).send({
-                    success: true,
-                    token: jwt;
-                });
-                next();
-                return;
-            }
-
-            if (userId === -1) {
-                res.status(403).send({
-                    success: false,
-                    message: "Bad email";
-                });
-                return;
-            }
+            return;
         }
 
-        res.status(403).send({
-            success: false,
-            message: "Bad email";
-        });
+        const userId = this.users.getId(email);
+        //  Email is not registered in database
+        if (userId === -1) {
+            res.status(403).send({
+                success: false,
+                message: "Bad email";
+            });
+            return;
+        }
 
-        return;
+        //  Email and password match entry in database -> issue a token
+        if (this.verifyPassword(password, users.getPassword(userId))) {
+            const jwt = this.token.issue(userId);
+            res.status(200).send({
+                success: true,
+                token: jwt;
+            });
+            next();
+            return;
+        }
     }
 
+    // TODO: gotta implement.
     async verifyPassword(attempt, truth) {
         //  gotta implement
         return true;
