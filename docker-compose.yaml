@@ -21,3 +21,5 @@ services:
             - 3000:3000
             - 9229:9229
         command: npm start
+        depends_on:
+            - database
