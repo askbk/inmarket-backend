@@ -12,7 +12,7 @@
         "nodemon": "^1.18.9"
     },
     "scripts": {
-        "start": "nodemon --inspect src/server.js 3000",
+        "start": "nodemon --watch src --inspect src/server.js 3000",
         "start:prod": "node src/server.js"
     }
 }
