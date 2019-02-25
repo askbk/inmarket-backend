@@ -6,6 +6,7 @@
     ````
 2. Installer pakker (må fikse?)
     ````
+    cd inmarket-backend
     npm install
     ````
 3. Installer Docker og docker-compose og start docker.service
@@ -15,7 +16,6 @@
     ````
 4. Kjør
     ````
-    cd inmarket-backend
     sudo docker-compose up
     ````
 ## Bruk
