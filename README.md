@@ -4,18 +4,14 @@
     ````
     git clone https://github.com/askbk/inmarket-backend.git
     ````
-2. Installer pakker (må fikse?)
-    ````
-    cd inmarket-backend
-    npm install
-    ````
-3. Installer Docker og docker-compose og start docker.service
+2. Installer Docker og docker-compose og start docker.service
     ````
     sudo pacman -S docker docker-compose
     sudo systemctl start docker.service
     ````
-4. Kjør
+3. Kjør
     ````
+    cd inmarket-backend
     sudo docker-compose up
     ````
 ## Bruk
