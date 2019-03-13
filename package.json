@@ -4,6 +4,7 @@
     "description": "Backend for InMarket sin app.",
     "dependencies": {
         "body-parser": "^1.18.3",
+        "cors": "^2.8.5",
         "express": "^4.16.4",
         "jsonwebtoken": "^8.4.0",
         "mariadb": "^2.0.3"
@@ -12,7 +13,7 @@
         "nodemon": "^1.18.9"
     },
     "scripts": {
-        "start": "nodemon --watch src --inspect src/server.js 3000",
+        "start": "nodemon --inspect=0.0.0.0:9229 src/server.js",
         "start:prod": "node src/server.js"
     }
 }

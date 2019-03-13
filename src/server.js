@@ -3,6 +3,7 @@ const app = express();
 const http = require("http").Server(app);
 const bodyParser = require("body-parser");
 const jsonParser = bodyParser.json();
+const cors = require('cors')
 
 const mariadb = require('mariadb');
 const pool = mariadb.createPool({
@@ -17,7 +18,7 @@ async function testDBConnection() {
     let conn;
     try {
         conn = await pool.getConnection();
-        console.log("connected ! connection id is " + conn.threadId)
+        console.log("connected! connection id is " + conn.threadId)
     } catch (err) {
         throw err;
     } finally {
@@ -37,9 +38,11 @@ const Users = require("./api/users.js"),
 const users = new Users(pool),
     token = new Token();
 
+app.use(cors());
+
 app.use(bodyParser.json());
 
-//  Let app take care of everything except API
+//  Serve app
 app.get(/^(?!\/api\/)/, express.static(appdir));
 
 
@@ -84,4 +87,5 @@ app.post("/api/users",  (req, res, next) => {
 
 http.listen(port, () => {
     console.log("listening on port " + port + " at " + new Date().toTimeString());
+    console.log("cors is enabled");
 });
