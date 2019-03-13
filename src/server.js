@@ -29,7 +29,7 @@ testDBConnection();
 
 const appdir = __dirname + "/app";
 const test_path = __dirname + "/testdata";
-const port = 3000;
+const port = 5000;
 
 const Users = require("./api/users.js"),
     Token = require('./token.js');
