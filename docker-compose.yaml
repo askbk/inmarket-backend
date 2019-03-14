@@ -16,7 +16,7 @@ services:
     webserver:
         build: .
         volumes:
-            - .:/srv/http/node
+            - .:/usr/app
         ports:
             - 5000:5000
             - 9229:9229

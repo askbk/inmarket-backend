@@ -2,6 +2,7 @@
     "name": "inmarket-backend",
     "version": "0.0.1",
     "description": "Backend for InMarket sin app.",
+    "main": "src/server.js",
     "dependencies": {
         "body-parser": "^1.18.3",
         "cors": "^2.8.5",
@@ -13,7 +14,7 @@
         "nodemon": "^1.18.9"
     },
     "scripts": {
-        "start": "nodemon --inspect=0.0.0.0:9229 src/server.js",
+        "start": "nodemon --verbose --watch src src/server.js",
         "start:prod": "node src/server.js"
     }
 }
