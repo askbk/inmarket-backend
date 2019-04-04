@@ -1,9 +1,6 @@
-const express = require("express");
-const app = express();
+const app = require("./app.js");
 const http = require("http").Server(app);
-const bodyParser = require("body-parser");
-const jsonParser = bodyParser.json();
-const cors = require('cors')
+const port = 5000;
 
 const mariadb = require('mariadb');
 const pool = mariadb.createPool({
@@ -27,63 +24,6 @@ async function testDBConnection() {
 }
 
 testDBConnection();
-
-const appdir = __dirname + "/app";
-const test_path = __dirname + "/testdata";
-const port = 5000;
-
-const Users = require("./api/users.js"),
-    Token = require('./token.js');
-
-const users = new Users(pool),
-    token = new Token();
-
-app.use(cors());
-
-app.use(bodyParser.json());
-
-//  Serve app
-app.get(/^(?!\/api\/)/, express.static(appdir));
-
-
-app.use("/api/test", (req, res, next) => {
-    res.status(200).send('Hello world!');
-});
-
-app.post("/api/login", (req, res, next) => {
-    res.send(JSON.stringify(req.body));
-});
-
-// app.get("/api/g/:e", (req, res, next) => {
-//     try {
-//         res.json(users.getId(req.params.e));
-//     } catch (e) {
-//         console.log(e);
-//         throw e;
-//     }
-// });
-// app.get("/api/users/:id",  (req, res, next) => {
-//     try {
-//         users.getUser(req, res, next);
-//     } catch (e) {
-//         throw e;
-//     }
-// });
-app.get("/api/users/:id",  (req, res, next) => {
-    try {
-        users.getUser(req, res, next);
-    } catch (e) {
-        throw e;
-    }
-});
-
-app.post("/api/users",  (req, res, next) => {
-    try {
-        users.postUser(req, res, next);
-    } catch (e) {
-        throw e;
-    }
-});
 
 http.listen(port, () => {
     console.log("listening on port " + port + " at " + new Date().toTimeString());
