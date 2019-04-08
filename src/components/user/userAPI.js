@@ -1,11 +1,10 @@
-const UsersDAL = require("./usersDAL.js");
-const usersDAL = new UsersDAL();
-
-module.exports = class UsersAPI {
-    constructor() {}
+class UserAPI {
+    constructor(userDAL) {
+        this.userDAL = userDAL;
+    }
 
     async getAll(req, res, next) {
-        let result = await usersDAL.getAll();
+        let result = await this.usersDAL.getAll();
         console.log(result);
         res.send(result);
     }
@@ -13,13 +12,15 @@ module.exports = class UsersAPI {
     async getByID(req, res, next) {
         const id = req.params.id;
 
-        const user = await usersDAL.getByID(id);
+        const user = await this.userDAL.getByID(id);
         res.send(JSON.stringify(user));
     }
 
     async post(req, res, next) {
         const userContext = req.body;
 
-        return usersDAL.insert(userContext);
+        return this.userDAL.insert(userContext);
     }
 }
+
+module.exports = UserAPI;
