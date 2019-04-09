@@ -1,15 +1,16 @@
+const TokenIssuer = require('./token.js');
+
 module.exports = class Auth {
-    constructor(pool, token, users) {
-        this.pool = pool;
-        this.token = token;
-        this.users = users;
+    constructor(userDAL) {
+        this.tokenIssuer = new TokenIssuer;
+        this.users = userDAL;
     }
 
     async authenticate(req, res, next) {
         const token = req.body.token || req.query.token || req.headers['x-access-token'];
         if (token) {
             try {
-                this.token.verify(token, (err, decoded) => {
+                this.tokenIssuer.verify(token, (err, decoded) => {
                     if (err) {
                         throw err;
                     }

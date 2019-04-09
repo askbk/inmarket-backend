@@ -1,13 +1,12 @@
-module.exports = class Token {
+module.exports = class TokenIssuer {
     constructor() {
-        const fs = require("fs");
         this.jwt = require("jsonwebtoken");
 
-        this.privateKey = fs.readFileSync(__dirname + "/private.key", "utf8"),
-        this.publicKey = fs.readFileSync(__dirname + "/public.key", "utf8");
+        this.privateKey = "private key";
+        this.publicKey = "public key";
 
         const i = "InMarket",
-            a = "app.imnor.no",
+            a = "app.inmarket.as",
             texp = "12h",
             alg = "RS256";
 
