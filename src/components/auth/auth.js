@@ -2,7 +2,7 @@ const TokenIssuer = require('./token.js');
 
 module.exports = class Auth {
     constructor(userDAL) {
-        this.tokenIssuer = new TokenIssuer;
+        this.tokenIssuer = new TokenIssuer();
         this.users = userDAL;
     }
 
@@ -34,40 +34,20 @@ module.exports = class Auth {
         }
     }
 
-    async login(req, res, next) {
-        const email = req.body.email,
-            password = req.body.password;
-
-        //  Email or password undefined
-        if (!email && !password) {
-            res.status(403).send({
-                success: false,
-                message: "Bad email";
-            });
-
-            return;
-        }
-
-        const userId = this.users.getId(email);
+    async login(email, password) {
+        const userId = this.users.getIDByEmail(email);
         //  Email is not registered in database
         if (userId === -1) {
-            res.status(403).send({
-                success: false,
-                message: "Bad email";
-            });
-            return;
+            return false;
         }
 
         //  Email and password match entry in database -> issue a token
         if (this.verifyPassword(password, users.getPassword(userId))) {
             const jwt = this.token.issue(userId);
-            res.status(200).send({
-                success: true,
-                token: jwt;
-            });
-            next();
-            return;
-        }
+            return jwt;
+        });
+
+        return false;
     }
 
     // TODO: gotta implement.

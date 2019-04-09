@@ -1,3 +1,5 @@
 const Auth = require("./auth.js");
 
-module.exports = Auth;
+module.exports = userDAL => {
+    return new Auth(userDAL);
+}

@@ -24,7 +24,7 @@ sequelize
     console.error('Unable to connect to the database:', err);
   });
 
-const user = require("./components/user");
+const user = require("./components/user")(sequelize);
 
 //  Add middleware
 app.use(cors());
