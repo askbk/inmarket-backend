@@ -9,11 +9,25 @@ class UserDAL {
         });
     }
 
-    async getByID(id) {}
+    async getByID(id) {
+        return this.userModel.findByPk(id).then(user => {
+            return user;
+        })
+    }
 
     async insert(user) {}
 
-    async getIDByEmail(email) {}
+    async getIDByEmail(email) {
+        return this.userModel.findOne(
+            {
+                where: {
+                    email: email
+                }
+            }
+        ).then(user => {
+            return user;
+        });
+    }
 }
 
 module.exports = UserDAL;
