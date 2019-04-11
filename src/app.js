@@ -24,7 +24,8 @@ sequelize
     console.error('Unable to connect to the database:', err);
   });
 
-const user = require("./components/user");
+const user = require("./components/user")(sequelize);
+const login = require("./components/login")(user.userDAL);
 
 //  Add middleware
 app.use(cors());
@@ -33,13 +34,17 @@ app.use(bodyParser.json());
 //  Add router for /api/users endpoint(s)
 app.use("/api/users", user);
 
+app.use("/api/login", login);
+
+// app.post("/api/login", (req, res, next) => {
+//     res.send(JSON.stringify(req.body));
+// });
 app.use("/api/test", (req, res, next) => {
     res.status(200).send('Hello world!');
 });
 
-app.post("/api/login", (req, res, next) => {
-    res.send(JSON.stringify(req.body));
-});
+
+
 
 
 

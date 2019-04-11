@@ -1,15 +1,17 @@
+const TokenIssuer = require('./token.js');
+
 module.exports = class Auth {
-    constructor(pool, token, users) {
-        this.pool = pool;
-        this.token = token;
-        this.users = users;
+    constructor(userDAL) {
+        this.tokenIssuer = new TokenIssuer();
+        this.users = userDAL;
     }
 
     async authenticate(req, res, next) {
-        const token = req.body.token || req.query.token || req.headers['x-access-token'];
+        const token = req.body.token || req.body.jwt;
+
         if (token) {
             try {
-                this.token.verify(token, (err, decoded) => {
+                this.tokenIssuer.verify(token, (err, decoded) => {
                     if (err) {
                         throw err;
                     }
@@ -33,40 +35,20 @@ module.exports = class Auth {
         }
     }
 
-    async login(req, res, next) {
-        const email = req.body.email,
-            password = req.body.password;
-
-        //  Email or password undefined
-        if (!email && !password) {
-            res.status(403).send({
-                success: false,
-                message: "Bad email";
-            });
-
-            return;
-        }
-
-        const userId = this.users.getId(email);
+    async login(email, password) {
+        const userId = this.users.getIDByEmail(email);
         //  Email is not registered in database
         if (userId === -1) {
-            res.status(403).send({
-                success: false,
-                message: "Bad email";
-            });
-            return;
+            return false;
         }
 
         //  Email and password match entry in database -> issue a token
         if (this.verifyPassword(password, users.getPassword(userId))) {
             const jwt = this.token.issue(userId);
-            res.status(200).send({
-                success: true,
-                token: jwt;
-            });
-            next();
-            return;
+            return jwt;
         }
+
+        return false;
     }
 
     // TODO: gotta implement.

@@ -4,7 +4,7 @@ class UserAPI {
     }
 
     async getAll(req, res, next) {
-        let result = await this.usersDAL.getAll();
+        let result = await this.userDAL.getAll();
         console.log(result);
         res.send(result);
     }
