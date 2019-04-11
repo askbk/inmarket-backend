@@ -16,11 +16,25 @@ class LoginAPI {
 
             return;
         }
-        
-        this.auth.login(email, password);
 
-        res.send(result);
+        const jwt = this.auth.login(email, password);
+
+        if (jwt) {
+            res.status(200).send({
+                success: true,
+                jwt: jwt
+            });
+            
+            return;
+        }
+
+        res.stats(403).send({
+            success: false,
+            message: "Incorrect credentials"
+        });
+
+        return;
     }
 }
 
-module.exports = UserAPI;
+module.exports = LoginAPI;
