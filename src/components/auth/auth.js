@@ -7,7 +7,8 @@ module.exports = class Auth {
     }
 
     async authenticate(req, res, next) {
-        const token = req.body.token || req.query.token || req.headers['x-access-token'];
+        const token = req.body.token || req.body.jwt;
+
         if (token) {
             try {
                 this.tokenIssuer.verify(token, (err, decoded) => {

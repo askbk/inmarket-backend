@@ -15,7 +15,7 @@ class UserDAL {
         })
     }
 
-    async insert(user) {}
+    async create(user) {}
 
     async getIDByEmail(email) {
         return this.userModel.findOne(
@@ -26,6 +26,17 @@ class UserDAL {
             }
         ).then(user => {
             return user;
+        });
+    }
+
+    async getPassword(id) {
+        return this.userModel.findOne({
+            attributes: ["password"],
+            where: {
+                id: id
+            }
+        }).then(password => {
+            return password;
         });
     }
 }
