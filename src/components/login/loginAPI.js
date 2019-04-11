@@ -7,11 +7,13 @@ class LoginAPI {
         const email = req.body.email,
         password = req.body.password;
 
+        console.log("loginAPI");
+
         //  Email or password undefined
         if (!email || !password) {
             res.status(403).send({
                 success: false,
-                message: "Missing credentials";
+                message: "Missing credentials"
             });
 
             return;
@@ -24,11 +26,11 @@ class LoginAPI {
                 success: true,
                 jwt: jwt
             });
-            
+
             return;
         }
 
-        res.stats(403).send({
+        res.status(403).send({
             success: false,
             message: "Incorrect credentials"
         });

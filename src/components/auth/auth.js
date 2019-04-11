@@ -45,7 +45,7 @@ module.exports = class Auth {
         if (this.verifyPassword(password, users.getPassword(userId))) {
             const jwt = this.token.issue(userId);
             return jwt;
-        });
+        }
 
         return false;
     }
