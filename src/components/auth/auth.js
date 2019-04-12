@@ -4,6 +4,8 @@ module.exports = class Auth {
     constructor(userDAL) {
         this.tokenIssuer = new TokenIssuer();
         this.users = userDAL;
+        this.bcrypt = require("bcrypt");
+        this.saltRounds = 10;
     }
 
     async authenticate(req, res, next) {
@@ -36,24 +38,18 @@ module.exports = class Auth {
     }
 
     async login(email, password) {
-        const userId = this.users.getIDByEmail(email);
+        const userId = await this.users.getIDByEmail(email);
         //  Email is not registered in database
         if (userId === -1) {
             return false;
         }
 
         //  Email and password match entry in database -> issue a token
-        if (this.verifyPassword(password, users.getPassword(userId))) {
-            const jwt = this.token.issue(userId);
+        if (await this.bcrypt.compare(password, await users.getPassword(userId))) {
+            const jwt = await this.token.issue(userId);
             return jwt;
         }
 
         return false;
-    }
-
-    // TODO: gotta implement.
-    async verifyPassword(attempt, truth) {
-        //  gotta implement
-        return true;
     }
 }
