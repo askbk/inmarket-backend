@@ -25,14 +25,20 @@ module.exports = class TokenIssuer {
         };
     }
 
-    issue(user) {
+    issue(userId) {
         const signOptions = this.signOptions;
 
-        signOptions.subject = user;
+        signOptions.subject = userId;
 
         return this.jwt.sign({
             data: "hello"   // payload
-        }, this.privateKey, signOptions);
+        }, this.privateKey, signOptions, (err, token) => {
+            if (err) {
+                return false;
+            }
+
+            return token;
+        });
     }
 
     verify(token, cb) {
