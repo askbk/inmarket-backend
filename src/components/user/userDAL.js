@@ -12,7 +12,7 @@ class UserDAL {
     async getByID(id) {
         return this.userModel.findByPk(id).then(user => {
             return user;
-        })
+        });
     }
 
     async create(user) {}
@@ -29,14 +29,14 @@ class UserDAL {
         });
     }
 
-    async getPassword(id) {
+    async getPasswordHash(id) {
         return this.userModel.findOne({
-            attributes: ["password"],
+            attributes: ["passwordHash"],
             where: {
                 id: id
             }
-        }).then(password => {
-            return password;
+        }).then(passwordHash => {
+            return passwordHash;
         });
     }
 }
