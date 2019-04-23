@@ -1,5 +1,9 @@
-const Sq = require("sequelize");
+const User = require("./user");
+const Activity = require("./activity");
+const Competence = require("./competence");
 
-module.exports = sequelize => {
-    const User = require("./userModel.js")(sequelize);
+module.exports = {
+    ...User,
+    ...Activity,
+    ...Competence
 }

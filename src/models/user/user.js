@@ -2,22 +2,17 @@ module.exports = (sequelize, Sq) => {
     const Model = Sq.Model;
     class User extends Model {}
     User.init({
-        id: {
-            type: Sq.INTEGER,
-            primaryKey: true,
-            autoIncrement: true
-        },
-        name: {
+        firstName: {
             type: Sq.STRING,
             allowNull: false
         },
-        email: {
+        lastName: {
             type: Sq.STRING,
             allowNull: false
         },
-        password: {
+        profilePicturePath: {
             type: Sq.STRING,
-            allowNull: false
+            allowNull: true
         }
     }, {
         sequelize,
