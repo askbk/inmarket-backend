@@ -1,9 +1,14 @@
 class UserAPI {
-    constructor(userDAL) {
+    constructor(userDAL, models) {
+        this.auth = require("../auth")(models);
         this.userDAL = userDAL;
+        console.log(userDAL);
+        console.log(userDAL.getAll());
+        this.models = models;
     }
 
     async getAll(req, res, next) {
+        console.log(this);
         let result = await this.userDAL.getAll();
         console.log(result);
         res.send(result);
