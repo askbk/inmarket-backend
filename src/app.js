@@ -3,9 +3,9 @@ const app           = express();
 const bodyParser    = require("body-parser");
 const cors          = require('cors')
 
-const models        = require("./sequelize.js");
+const models        = require("./sequelize");
 const user          = require("./components/user")(models);
-const login         = require("./components/login")(user.userDAL);
+const login         = require("./components/login")(models);
 
 //  Add middleware for cors, json parsing, etc.
 app.use(cors());

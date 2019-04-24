@@ -1,5 +1,5 @@
-const Sq = require('sequelize');
-const Models = require("./models");
+const Sq        = require('sequelize');
+const Models    = require("./models");
 const sq = new Sq(
     "inmarket_db",
     "ask",

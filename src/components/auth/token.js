@@ -1,4 +1,4 @@
-module.exports = class TokenIssuer {
+class TokenIssuer {
     constructor() {
         this.jwt = require("jsonwebtoken");
 
@@ -45,3 +45,5 @@ module.exports = class TokenIssuer {
         this.jwt.verify(token, this.publicKey, this.verifyOptions, cb);
     }
 }
+
+module.exports = TokenIssuer;

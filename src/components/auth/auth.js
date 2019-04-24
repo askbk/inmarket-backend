@@ -1,9 +1,10 @@
-const TokenIssuer = require('./token.js');
+const TokenIssuer   = require('./token.js');
+const UserDAL       = require("../user/userDAL.js");
 
-module.exports = class Auth {
-    constructor(userDAL) {
+class Auth {
+    constructor(models) {
         this.tokenIssuer = new TokenIssuer();
-        this.users = userDAL;
+        this.users = new UserDAL(models.User);
         this.bcrypt = require("bcrypt");
         this.saltRounds = 10;
     }
@@ -39,17 +40,20 @@ module.exports = class Auth {
 
     async login(email, password) {
         const userId = await this.users.getIDByEmail(email);
-        //  Email is not registered in database
+
         if (userId === -1) {
+            //  Email is not registered in database
             return false;
         }
 
-        //  Email and password match entry in database -> issue a token
         if (await this.bcrypt.compare(password, await users.getPassword(userId))) {
+            //  Password matches entry in database -> issue a token
             const jwt = await this.token.issue(userId);
             return jwt;
         }
-
+        //  Password doesn't match
         return false;
     }
 }
+
+module.exports = Auth;

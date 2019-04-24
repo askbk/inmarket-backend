@@ -19,7 +19,7 @@ class UserAPI {
     async post(req, res, next) {
         const userContext = req.body;
 
-        return this.userDAL.insert(userContext);
+        return await this.userDAL.insert(userContext);
     }
 }
 
