@@ -20,7 +20,7 @@ class Auth {
                     }
 
                     if (decoded) {
-                        next();
+                        return true;
                     }
                 });
             } catch (e) {

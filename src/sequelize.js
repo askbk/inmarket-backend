@@ -64,6 +64,11 @@ sq.sync(
     console.log("error:" + err);
 });
 
+User.bulkCreate([
+    {firstName: "ask", lastName: "yo", profilePicturePath: "Hello"},
+    {firstName: "ask", lastName: "nje", profilePicturePath: "/usr/bin/firefox"}
+]);
+
 module.exports = {
     User,
 }
