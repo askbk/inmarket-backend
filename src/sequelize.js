@@ -57,7 +57,7 @@ CompetenceRating.belongsTo(Employee, {as: "ratedByEmployee"});
 CompetenceRating.belongsTo(Company, {as: "ratedByCompany"});
 
 sq.sync(
-    {force: true}
+    {force: false}
 ).then(() => {
     console.log("sequelize initiated");
 }).catch((err) => {
@@ -67,7 +67,12 @@ sq.sync(
 User.bulkCreate([
     {firstName: "ask", lastName: "yo", profilePicturePath: "Hello"},
     {firstName: "ask", lastName: "nje", profilePicturePath: "/usr/bin/firefox"}
-]);
+]).then(users => {
+    Login.bulkCreate([
+        {email: "ask@ask.no", passwordHash: "hash", userId: users[0].id},
+        {email: "yo@yo.net", passwordHash: "egg", userId: users[1].id}
+    ]);
+});
 
 module.exports = {
     User,

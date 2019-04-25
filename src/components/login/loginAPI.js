@@ -17,7 +17,7 @@ class LoginAPI {
             return;
         }
 
-        const jwt = this.auth.login(email, password);
+        const jwt = await this.auth.login(email, password);
 
         if (jwt) {
             res.status(200).send({
@@ -25,7 +25,7 @@ class LoginAPI {
                 jwt: jwt
             });
 
-            return;
+            return true;
         }
 
         res.status(403).send({
@@ -33,7 +33,7 @@ class LoginAPI {
             message: "Incorrect credentials"
         });
 
-        return;
+        return false;
     }
 }
 

@@ -34,11 +34,14 @@ class Auth {
                 success: false,
                 message: "No token provided."
             });
+
+            throw "No token provided";
         }
     }
 
     async login(email, password) {
         const userId = await this.authDAL.getIDByEmail(email);
+        console.log(userId);
 
         if (userId === -1) {
             //  Email is not registered in database
