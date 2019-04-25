@@ -1,5 +1,7 @@
 const Auth = require("./auth.js");
+const AuthDAL = require("./authDAL.js");
 
 module.exports = models => {
-    return new Auth(models);
+    const authDAL = new AuthDAL(models);
+    return new Auth(authDAL);
 }

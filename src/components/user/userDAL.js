@@ -1,6 +1,6 @@
 class UserDAL {
-    constructor(userModel) {
-        this.userModel = userModel;
+    constructor(models) {
+        this.userModel = models.User;
     }
 
     async getAll() {
@@ -16,29 +16,6 @@ class UserDAL {
     }
 
     async create(user) {}
-
-    async getIDByEmail(email) {
-        return this.userModel.findOne(
-            {
-                where: {
-                    email: email
-                }
-            }
-        ).then(user => {
-            return user;
-        });
-    }
-
-    async getPasswordHash(id) {
-        return this.userModel.findOne({
-            attributes: ["passwordHash"],
-            where: {
-                id: id
-            }
-        }).then(passwordHash => {
-            return passwordHash;
-        });
-    }
 }
 
 module.exports = UserDAL;

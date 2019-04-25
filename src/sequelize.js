@@ -57,7 +57,7 @@ CompetenceRating.belongsTo(Employee, {as: "ratedByEmployee"});
 CompetenceRating.belongsTo(Company, {as: "ratedByCompany"});
 
 sq.sync(
-    {force: false}
+    {force: true}
 ).then(() => {
     console.log("sequelize initiated");
 }).catch((err) => {
@@ -71,4 +71,5 @@ User.bulkCreate([
 
 module.exports = {
     User,
+    Login
 }

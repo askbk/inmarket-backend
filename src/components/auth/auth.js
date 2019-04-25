@@ -1,10 +1,9 @@
 const TokenIssuer   = require('./token.js');
-const UserDAL       = require("../user/userDAL.js");
 
 class Auth {
-    constructor(models) {
+    constructor(authDAL) {
         this.tokenIssuer = new TokenIssuer();
-        this.users = new UserDAL(models.User);
+        this.authDAL = authDAL;
         this.bcrypt = require("bcrypt");
         this.saltRounds = 10;
     }
@@ -39,14 +38,14 @@ class Auth {
     }
 
     async login(email, password) {
-        const userId = await this.users.getIDByEmail(email);
+        const userId = await this.authDAL.getIDByEmail(email);
 
         if (userId === -1) {
             //  Email is not registered in database
             return false;
         }
 
-        if (await this.bcrypt.compare(password, await users.getPassword(userId))) {
+        if (await this.bcrypt.compare(password, await this.authDAL.getPasswordHash(userId))) {
             //  Password matches entry in database -> issue a token
             const jwt = await this.token.issue(userId);
             return jwt;
