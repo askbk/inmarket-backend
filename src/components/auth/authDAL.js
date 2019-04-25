@@ -5,7 +5,7 @@ class AuthDAL {
 
     async getIDByEmail(email) {
         try {
-            const id = await this.loginModel.findOne(
+            const login = await this.loginModel.findOne(
                 {
                     attributes: ["userId"],
                     where: {
@@ -14,7 +14,7 @@ class AuthDAL {
                 }
             );
 
-            return id
+            return login.userId;
         } catch (e) {
             console.log(e);
             return false;
@@ -23,16 +23,15 @@ class AuthDAL {
 
     async getPasswordHash(id) {
         try {
-            const passwordHash = await this.loginModel.findOne(
+            const login = await this.loginModel.findOne(
                 {
-                    attributes: ["passwordHash"],
                     where: {
-                        id: id
+                        userId: id
                     }
                 }
             );
 
-            return passwordHash
+            return login.passwordHash;
         } catch (e) {
             console.log(e);
             return false;
