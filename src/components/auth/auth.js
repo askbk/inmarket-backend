@@ -56,6 +56,14 @@ class Auth {
         //  Password doesn't match
         return false;
     }
+
+    async hash(password) {
+        try {
+            return await this.bcrypt.hash(password, this.saltRounds);
+        } catch (e) {
+            throw e
+        }
+    }
 }
 
 module.exports = Auth;
