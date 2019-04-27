@@ -12,10 +12,12 @@ class UserAPI {
 
     async getByID(req, res, next) {
         try {
-            this.auth.authenticate(req, res, next);
-            const id = req.params.id;
-            const user = await this.userDAL.getByID(id);
-            res.send(user);
+            const authenticated = await this.auth.authenticate(req, res, next);
+            if (authenticated) {
+                const id = req.params.id;
+                const user = await this.userDAL.getByID(id);
+                res.status(200).send(user);
+            }
         } catch (e) {
             return false;
         }

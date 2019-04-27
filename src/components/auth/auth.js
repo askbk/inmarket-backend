@@ -13,15 +13,12 @@ class Auth {
 
         if (token) {
             try {
-                this.tokenIssuer.verify(token, (err, decoded) => {
-                    if (err) {
-                        throw err;
-                    }
+                const decoded = await this.tokenIssuer.verify(token);
+                if (decoded) {
+                    console.log(decoded);
+                }
 
-                    if (decoded) {
-                        return true;
-                    }
-                });
+                return true;
             } catch (e) {
                 res.status(403).send({
                     success: false,
