@@ -76,5 +76,6 @@ User.bulkCreate([
 
 module.exports = {
     User,
-    Login
+    Login,
+    Activity
 }
