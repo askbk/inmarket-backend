@@ -18,7 +18,7 @@ class LoginAPI {
         }
 
         const jwt = await this.auth.login(email, password);
-
+        
         if (jwt) {
             res.status(200).send({
                 success: true,
