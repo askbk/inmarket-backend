@@ -12,10 +12,12 @@ class UserAPI {
 
     async getByID(req, res, next) {
         try {
-            this.auth.authenticate(req, res, next);
-            const id = req.params.id;
-            const user = await this.userDAL.getByID(id);
-            res.send(user);
+            const authenticated = await this.auth.authenticate(req, res, next);
+            if (authenticated) {
+                const id = req.params.id;
+                const user = await this.userDAL.getByID(id);
+                res.status(200).send(user);
+            }
         } catch (e) {
             return false;
         }
@@ -25,6 +27,30 @@ class UserAPI {
         const userContext = req.body;
 
         return await this.userDAL.insert(userContext);
+    }
+
+    async create(req, res, next) {
+        const { firstName, lastName, password, email } = req.body;
+        const passwordHash = await this.auth.hash(password);
+
+        try {
+            this.userDAL.create(
+                firstName,
+                lastName,
+                email,
+                passwordHash
+            );
+
+            res.status(200).send({
+                success: true,
+                message: "User created"
+            });
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: "Error when creating user"
+            });
+        }
     }
 }
 

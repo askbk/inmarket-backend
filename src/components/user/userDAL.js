@@ -1,6 +1,7 @@
 class UserDAL {
     constructor(models) {
         this.userModel = models.User;
+        this.loginModel = models.Login;
     }
 
     async getAll() {
@@ -15,7 +16,22 @@ class UserDAL {
         });
     }
 
-    async create(user) {}
+    async create(firstName, lastName, email, passwordHash) {
+        try {
+            const user = await this.userModel.create({
+                firstName: firstName,
+                lastName: lastName,
+            });
+
+            this.loginModel.create({
+                email: email,
+                passwordHash: passwordHash,
+                userId: user.id
+            });
+        } catch (e) {
+            throw e;
+        }
+    }
 }
 
 module.exports = UserDAL;

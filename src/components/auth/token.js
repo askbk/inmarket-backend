@@ -2,8 +2,8 @@ class TokenIssuer {
     constructor() {
         this.jwt = require("jsonwebtoken");
 
-        this.privateKey = "private key";
-        this.publicKey = "public key";
+        this.privateKey =   require('./private.js');
+        this.publicKey =    require('./public.js');
 
         const i = "InMarket",
             a = "app.inmarket.as",
@@ -11,38 +11,51 @@ class TokenIssuer {
             alg = "RS256";
 
         this.signOptions = {
-            issuer: i,
-            audience: a,
-            expiresIn: texp,
-            algorithm: alg
+            "algorithm": alg,
+            "audience": a,
+            "issuer": i
         };
 
         this.verifyOptions = {
-            issuer: i,
-            audience: a,
-            expiresIn: texp,
-            algorithm: [alg]
+            "algorithm": alg,
+            "audience": a,
+            "issuer": i
         };
     }
 
     issue(userId) {
-        const signOptions = this.signOptions;
+        return new Promise((resolve, reject) => {
+            this.jwt.sign(
+                {
+                  "sub": userId,
+                  "name": "John Doe",
+                  "admin": true
+                },
+                this.privateKey,
+                this.signOptions,
+                (err, token) => {
+                    if (err) {
+                        console.log(err);
+                        reject(err)
+                    }
 
-        signOptions.subject = userId;
-
-        return this.jwt.sign({
-            data: "hello"   // payload
-        }, this.privateKey, signOptions, (err, token) => {
-            if (err) {
-                return false;
-            }
-
-            return token;
+                    resolve(token);
+                }
+            );
         });
     }
 
-    verify(token, cb) {
-        this.jwt.verify(token, this.publicKey, this.verifyOptions, cb);
+    verify(token) {
+        return new Promise((resolve, reject) => {
+            this.jwt.verify(token, this.publicKey, this.verifyOptions, (err, decoded) => {
+                if (err) {
+                    console.log(err);
+                    reject(err);
+                }
+
+                resolve(decoded);
+            });
+        });
     }
 }
 

@@ -13,15 +13,12 @@ class Auth {
 
         if (token) {
             try {
-                this.tokenIssuer.verify(token, (err, decoded) => {
-                    if (err) {
-                        throw err;
-                    }
+                const decoded = await this.tokenIssuer.verify(token);
+                if (decoded) {
+                    console.log(decoded);
+                }
 
-                    if (decoded) {
-                        return true;
-                    }
-                });
+                return true;
             } catch (e) {
                 res.status(403).send({
                     success: false,
@@ -34,24 +31,43 @@ class Auth {
                 success: false,
                 message: "No token provided."
             });
+
+            throw "No token provided";
         }
     }
 
     async login(email, password) {
         const userId = await this.authDAL.getIDByEmail(email);
+        console.log(userId);
 
         if (userId === -1) {
             //  Email is not registered in database
             return false;
         }
 
-        if (await this.bcrypt.compare(password, await this.authDAL.getPasswordHash(userId))) {
+        const passwordHash = await this.authDAL.getPasswordHash(userId);
+
+        const match = await this.bcrypt.compare(password, passwordHash);
+
+        console.log(match);
+
+        if (match) {
             //  Password matches entry in database -> issue a token
-            const jwt = await this.token.issue(userId);
+            const jwt = await this.tokenIssuer.issue(userId);
+            console.log(jwt);
             return jwt;
         }
+
         //  Password doesn't match
         return false;
+    }
+
+    async hash(password) {
+        try {
+            return await this.bcrypt.hash(password, this.saltRounds);
+        } catch (e) {
+            throw e
+        }
     }
 }
 
