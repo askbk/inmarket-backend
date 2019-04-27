@@ -1,32 +1,22 @@
-const express = require("express");
-const app = express();
-const bodyParser = require("body-parser");
-const cors = require('cors')
+const express       = require("express");
+const app           = express();
+const bodyParser    = require("body-parser");
+const cors          = require('cors')
 
-const appdir = __dirname + "/app";
-const test_path = __dirname + "/testdata";
+const models        = require("./sequelize");
+const user          = require("./components/user")(models);
+const login         = require("./components/login")(models);
+const activity      = require("./components/activity")(models);
 
-const users = require("./components/users");
-
-//  Add middleware
+//  Add middleware for cors, json parsing, etc.
 app.use(cors());
 app.use(bodyParser.json());
 
-//  Add router for /api/users endpoint(s)
-app.use("/api/users", users);
-
-//  Serve app
-// app.get(/^(?!\/api\/)/, express.static(appdir));
-
-
+app.use("/api/users", user);
+app.use("/api/login", login);
+app.use("/api/activities", activity);
 app.use("/api/test", (req, res, next) => {
     res.status(200).send('Hello world!');
 });
-
-app.post("/api/login", (req, res, next) => {
-    res.send(JSON.stringify(req.body));
-});
-
-
 
 module.exports = app;
