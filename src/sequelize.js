@@ -17,18 +17,19 @@ sq
     console.error('Unable to connect to database:', err);
 });
 
-const Company = Models.Company(sq, Sq);
-const Login = Models.Login(sq, Sq);
-const Employee = Models.Employee(sq, Sq);
-const Activity = Models.Activity(sq, Sq);
-const ActivityException = Models.ActivityException(sq, Sq);
-const Jobseeker = Models.Jobseeker(sq, Sq);
-const Competence = Models.Competence(sq, Sq);
-const CompetenceRating = Models.CompetenceRating(sq, Sq);
-const JobseekerCompetence = Models.JobseekerCompetence(sq, Sq);
-const User = Models.User(sq, Sq);
-const Conversation = Models.Conversation(sq, Sq);
-const Message = Models.Message(sq, Sq);
+const Company               = Models.Company(sq, Sq);
+const Login                 = Models.Login(sq, Sq);
+const Employee              = Models.Employee(sq, Sq);
+const Activity              = Models.Activity(sq, Sq);
+const ActivityException     = Models.ActivityException(sq, Sq);
+const Jobseeker             = Models.Jobseeker(sq, Sq);
+const Competence            = Models.Competence(sq, Sq);
+const CompetenceRating      = Models.CompetenceRating(sq, Sq);
+const JobseekerCompetence   = Models.JobseekerCompetence(sq, Sq);
+const User                  = Models.User(sq, Sq);
+const Conversation          = Models.Conversation(sq, Sq);
+const Message               = Models.Message(sq, Sq);
+const Contact               = Models.Contact(sq, Sq);
 
 //  Define relations here...
 Login.belongsTo(User);
@@ -44,8 +45,7 @@ Employee.hasMany(Activity, {as: "createdActivities"});
 Company.hasMany(Activity);
 Activity.hasMany(ActivityException, {as: "exceptions"});
 
-User.belongsToMany(User, {through: "contact", as: "contacts"});
-User.belongsToMany(User, {through: "contactRequest", as: "contactRequests"});
+User.belongsToMany(User, {through: Contact, as: "contacts"});
 
 Conversation.hasMany(Message);
 User.belongsToMany(Conversation, {through: "conversationParticipant"});
