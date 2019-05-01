@@ -56,22 +56,27 @@ JobseekerCompetence.hasMany(CompetenceRating)
 CompetenceRating.belongsTo(Employee, {as: "ratedByEmployee"});
 CompetenceRating.belongsTo(Company, {as: "ratedByCompany"});
 
+//  This is only for testing purposes to be able to log in with the dummy users
+const Auth = require("./components/auth/auth.js");
+const auth = new Auth();
+
 sq.sync(
-    {force: false}
+    {force: true}
 ).then(() => {
     console.log("sequelize initiated");
-}).catch((err) => {
-    console.log("error:" + err);
-});
-
-User.bulkCreate([
-    {firstName: "ask", lastName: "yo", profilePicturePath: "Hello"},
-    {firstName: "ask", lastName: "nje", profilePicturePath: "/usr/bin/firefox"}
-]).then(users => {
-    Login.bulkCreate([
-        {email: "ask@ask.no", passwordHash: "hash", userId: users[0].id},
-        {email: "yo@yo.net", passwordHash: "egg", userId: users[1].id}
-    ]);
+    return auth.hash("passord123");
+}).then(passHash => {
+    User.bulkCreate([
+        {firstName: "ask", lastName: "yo", profilePicturePath: "Hello", profileDescription: "Hei, jeg er en kul type!"},
+        {firstName: "ask", lastName: "nje", profilePicturePath: "/usr/bin/firefox"}
+    ]).then(users => {
+        Login.bulkCreate([
+            {email: "ask@ask.no", passwordHash: passHash, userId: users[0].id},
+            {email: "yo@yo.net", passwordHash: passHash, userId: users[1].id}
+        ]);
+    });
+}).catch(e => {
+    console.log(`error: ${e}`);
 });
 
 module.exports = {
