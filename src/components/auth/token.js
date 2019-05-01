@@ -23,13 +23,13 @@ class TokenIssuer {
         };
     }
 
-    issue(userId) {
+    issue(userContext) {
         return new Promise((resolve, reject) => {
             this.jwt.sign(
                 {
-                  "sub": userId,
-                  "name": "John Doe",
-                  "admin": true
+                  "sub": userContext.userId,
+                  "name": userContext.fullName,
+                  "admin": userContext.isAdmin
                 },
                 this.privateKey,
                 this.signOptions,
