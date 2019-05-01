@@ -1,11 +1,11 @@
-class UserDAL {
+class UserController {
     constructor(models) {
         this.userModel = models.User;
         this.loginModel = models.Login;
     }
 
     async getAll() {
-        return this.userModel.findAll().then(users => {
+        return this.userModel.finControllerl().then(users => {
             return users;
         });
     }
@@ -32,6 +32,19 @@ class UserDAL {
             throw e;
         }
     }
+
+    async updateProfile(userContext) {
+        const user = await this.userModel.findByPk(userContext.id);
+        const { firstName, lastName, description } = userContext;
+
+        try {
+            const success = await user.update({ firstName, lastName, description});
+
+            return success;
+        } catch (e) {
+            throw e;
+        }
+    }
 }
 
-module.exports = UserDAL;
+module.exports = UserController;

@@ -1,12 +1,11 @@
 class ActivityAPI {
-    constructor(activityDAL, models) {
-        // this.auth = require("../auth")(models);
-        this.activityDAL = activityDAL;
-        this.models = models;
+    constructor(activityController, auth) {
+        this.activityController = activityController;
+        this.auth = auth;
     }
 
     async getAll(req, res, next) {
-        let result = await this.activityDAL.getAll();
+        let result = await this.activityController.getAll();
         res.send(result);
     }
 
@@ -17,7 +16,7 @@ class ActivityAPI {
             // if (authenticated) {
             // }
             const id = req.params.id;
-            const activity = await this.activityDAL.getByID(id);
+            const activity = await this.activityController.getByID(id);
             res.status(200).send(activity);
         } catch (e) {
             return false;
@@ -29,7 +28,7 @@ class ActivityAPI {
             isRecurring, recurrencePattern } = req.body;
 
         try {
-            const success = await this.activityDAL.create({
+            const success = await this.activityController.create({
                 name, description, startDateUTC, endDateUTC, duration, isRecurring,
                 recurrencePattern
             });

@@ -18,6 +18,11 @@ module.exports = (sequelize, Sq) => {
             type: Sq.BOOLEAN,
             allowNull: false,
             defaultValue: false
+        },
+        profileDescription: {
+            type: Sq.STRING,
+            allowNull: false,
+            defaultValue: "Denne brukeren har ingen beskrivelse :( ;)"
         }
     }, {
         sequelize,

@@ -1,10 +1,12 @@
 const TokenIssuer   = require('./token.js');
 
 class Auth {
-    constructor(authDAL, models) {
+    constructor(authController, models) {
         this.tokenIssuer = new TokenIssuer();
-        this.userModel = models.User;
-        this.authDAL = authDAL;
+        if (models) {
+            this.userModel = models.User;
+        }
+        this.authController = authController;
         this.bcrypt = require("bcrypt");
         this.saltRounds = 10;
     }
@@ -38,7 +40,7 @@ class Auth {
     }
 
     async login(email, password) {
-        const userId = await this.authDAL.getIDByEmail(email);
+        const userId = await this.authController.getIDByEmail(email);
         console.log(userId);
 
         if (!userId) {
@@ -47,7 +49,7 @@ class Auth {
             return false;
         }
 
-        const passwordHash = await this.authDAL.getPasswordHash(userId);
+        const passwordHash = await this.authController.getPasswordHash(userId);
 
         const match = await this.bcrypt.compare(password, passwordHash);
 
