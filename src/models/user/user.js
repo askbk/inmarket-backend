@@ -18,6 +18,7 @@ module.exports = (sequelize, Sq) => {
             type: Sq.STRING,
             allowNull: false,
             defaultValue: "Denne brukeren har ingen beskrivelse :( ;)"
+        }
     }, {
         sequelize,
         modelName: "user"
