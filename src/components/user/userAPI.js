@@ -44,18 +44,21 @@ class UserAPI {
 
     async updateProfile(req, res, next) {
         // TODO: Add authentication here
-        
+        console.log(req.params);
+        const userId = req.params.id
+
         const userContext = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
-            description: req.body.description
+            description: req.body.description,
+            id: userId
         };
 
         try {
             const success = await this.userController.updateProfile(userContext);
 
             if (success) {
-                req.status(200).send({
+                res.status(200).send({
                     success: true,
                     message: "Successful profile update"
                 });
@@ -63,14 +66,14 @@ class UserAPI {
                 return true;
             }
 
-            req.status(500).send({
+            res.status(500).send({
                 success: false,
                 message: "Unknown error when updating profile"
             });
 
             return false;
         } catch(e) {
-            req.status(500).send({
+            res.status(500).send({
                 success: false,
                 message: `Error when updating profile: ${e}`
             });
