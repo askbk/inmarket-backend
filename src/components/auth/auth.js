@@ -1,8 +1,9 @@
 const TokenIssuer   = require('./token.js');
 
 class Auth {
-    constructor(authDAL) {
+    constructor(authDAL, models) {
         this.tokenIssuer = new TokenIssuer();
+        this.userModel = models.User;
         this.authDAL = authDAL;
         this.bcrypt = require("bcrypt");
         this.saltRounds = 10;
@@ -40,8 +41,9 @@ class Auth {
         const userId = await this.authDAL.getIDByEmail(email);
         console.log(userId);
 
-        if (userId === -1) {
+        if (!userId) {
             //  Email is not registered in database
+            //  Should find a better way to handle this.
             return false;
         }
 
@@ -53,7 +55,14 @@ class Auth {
 
         if (match) {
             //  Password matches entry in database -> issue a token
-            const jwt = await this.tokenIssuer.issue(userId);
+            const user = await this.userModel.findByPk(userId);
+
+            const fullName = `${user.lastName} ${user.firstName}`;
+            const isAdmin = user.isAdmin;
+            const userContext = { userId, fullName, isAdmin };
+
+            const jwt = await this.tokenIssuer.issue(userContext);
+
             console.log(jwt);
             return jwt;
         }
