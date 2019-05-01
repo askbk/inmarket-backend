@@ -13,6 +13,11 @@ module.exports = (sequelize, Sq) => {
         profilePicturePath: {
             type: Sq.STRING,
             allowNull: true
+        },
+        isAdmin: {
+            type: Sq.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         }
     }, {
         sequelize,
