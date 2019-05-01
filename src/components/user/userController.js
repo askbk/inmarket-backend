@@ -32,6 +32,19 @@ class UserController {
             throw e;
         }
     }
+
+    async updateProfile(userContext) {
+        const user = this.userModel.findByPk(userContext.id);
+        const { firstName, lastName, description } = userContext;
+
+        try {
+            const success = await user.update({ firstName, lastName, description});
+
+            return success;
+        } catch (e) {
+            throw e;
+        }
+    }
 }
 
 module.exports = UserController;
