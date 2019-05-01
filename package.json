@@ -10,7 +10,7 @@
         "express": "^4.16.4",
         "jsonwebtoken": "^8.4.0",
         "mariadb": "^2.0.3",
-        "sequelize": "^5.2.13"
+        "sequelize": "^5.7.6"
     },
     "devDependencies": {
         "nodemon": "^1.18.9"
