@@ -4,7 +4,8 @@ module.exports = (sequelize, Sq) => {
     Competence.init({
         name: {
             type: Sq.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         }
     }, {
         sequelize,

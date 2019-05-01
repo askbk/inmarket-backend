@@ -9,6 +9,7 @@ module.exports = (sequelize, Sq) => {
         orgNumber: {
             type: Sq.INTEGER,
             allowNull: false,
+            unique: true
         }
     }, {
         sequelize,
