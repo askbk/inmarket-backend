@@ -4,7 +4,8 @@ module.exports = (sequelize, Sq) => {
     Login.init({
         email: {
             type: Sq.STRING,
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         passwordHash: {
             type: Sq.STRING,
