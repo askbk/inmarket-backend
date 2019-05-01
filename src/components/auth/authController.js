@@ -1,4 +1,4 @@
-class AuthDAL {
+class AuthController {
     constructor(models) {
         this.loginModel = models.Login;
     }
@@ -39,4 +39,4 @@ class AuthDAL {
     }
 }
 
-module.exports = AuthDAL;
+module.exports = AuthController;

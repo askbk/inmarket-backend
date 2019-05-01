@@ -1,13 +1,8 @@
 class UserAPI {
-    constructor(userDAL, models) {
+    constructor(userController, models) {
         this.auth = require("../auth")(models);
-        this.userDAL = userDAL;
+        this.userController = userController;
         this.models = models;
-    }
-
-    async getAll(req, res, next) {
-        let result = await this.userDAL.getAll();
-        res.send(result);
     }
 
     async getByID(req, res, next) {
@@ -15,7 +10,7 @@ class UserAPI {
             const authenticated = await this.auth.authenticate(req, res, next);
             if (authenticated) {
                 const id = req.params.id;
-                const user = await this.userDAL.getByID(id);
+                const user = await this.userController.getByID(id);
                 res.status(200).send(user);
             }
         } catch (e) {
@@ -23,18 +18,12 @@ class UserAPI {
         }
     }
 
-    async post(req, res, next) {
-        const userContext = req.body;
-
-        return await this.userDAL.insert(userContext);
-    }
-
     async create(req, res, next) {
         const { firstName, lastName, password, email } = req.body;
         const passwordHash = await this.auth.hash(password);
 
         try {
-            this.userDAL.create(
+            this.userController.create(
                 firstName,
                 lastName,
                 email,
@@ -50,6 +39,16 @@ class UserAPI {
                 success: false,
                 message: "Error when creating user"
             });
+        }
+    }
+
+    async updateProfile(req, res, next) {
+        const { firstName, lastName, description } = req.body;
+
+        try {
+            // TODO: implement a method to update info
+        } catch(e) {
+
         }
     }
 }

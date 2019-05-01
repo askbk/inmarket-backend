@@ -1,10 +1,10 @@
-class ActivityDAL {
+class ActivityController {
     constructor(models) {
         this.activityModel = models.Activity;
     }
 
     async getAll() {
-        return this.activityModel.findAll().then(activites => {
+        return this.activityModel.finControllerl().then(activites => {
             return activites;
         });
     }
@@ -26,4 +26,4 @@ class ActivityDAL {
     }
 }
 
-module.exports = ActivityDAL;
+module.exports = ActivityController;

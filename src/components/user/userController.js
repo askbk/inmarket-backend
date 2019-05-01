@@ -1,11 +1,11 @@
-class UserDAL {
+class UserController {
     constructor(models) {
         this.userModel = models.User;
         this.loginModel = models.Login;
     }
 
     async getAll() {
-        return this.userModel.findAll().then(users => {
+        return this.userModel.finControllerl().then(users => {
             return users;
         });
     }
@@ -34,4 +34,4 @@ class UserDAL {
     }
 }
 
-module.exports = UserDAL;
+module.exports = UserController;
