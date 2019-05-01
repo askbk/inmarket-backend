@@ -18,9 +18,9 @@ class Auth {
                     console.log(decoded);
                 }
 
-                return true;
+                return decoded;
             } catch (e) {
-                res.status(403).send({
+                res.status(401).send({
                     success: false,
                     message: "Bad token provided."
                 });
