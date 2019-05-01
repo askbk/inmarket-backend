@@ -34,7 +34,7 @@ class UserController {
     }
 
     async updateProfile(userContext) {
-        const user = this.userModel.findByPk(userContext.id);
+        const user = await this.userModel.findByPk(userContext.id);
         const { firstName, lastName, description } = userContext;
 
         try {
