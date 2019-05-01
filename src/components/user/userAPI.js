@@ -43,10 +43,35 @@ class UserAPI {
     }
 
     async updateProfile(req, res, next) {
-        // TODO: Add authentication here
-        console.log(req.params);
+        //  Authenticate user and decode token
+        let token;
+        try {
+            token = await this.auth.authenticate(req, res, next);
+            if (!token) {
+                res.status(401).send({
+                    success: false,
+                    message: "Not logged in with a valid token"
+                });
+                return false;
+            }
+        } catch (e) {
+            return false;
+        }
+
+        //  Get id of the user that is to be modified
         const userId = req.params.id
 
+        //  Make sure that users only modify their own profiles
+        if (userId !== token.sub) {
+            res.status(403).send({
+                success: false,
+                message: "Not allowed to edit another user's profile"
+            });
+
+            return false;
+        }
+
+        //  Values to be updated
         const userContext = {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
@@ -54,6 +79,7 @@ class UserAPI {
             id: userId
         };
 
+        //  Attempt to do update profile
         try {
             const success = await this.userController.updateProfile(userContext);
 
