@@ -10,9 +10,26 @@ module.exports = (sequelize, Sq) => {
             type: Sq.STRING,
             allowNull: false
         },
+        birthDate: {
+            type: Sq.DATEONLY,
+            allowNull: true,
+        },
+        phoneNumber: {
+            type: Sq.STRING,
+            allowNull: true
+        },
+        municipality: {
+            type: Sq.STRING,
+            allowNull: true
+        },
         profilePicturePath: {
             type: Sq.STRING,
             allowNull: true
+        },
+        isEmployee: {
+            type: Sq.BOOLEAN,
+            allowNull: false,
+            defaultValue: false
         },
         isAdmin: {
             type: Sq.BOOLEAN,

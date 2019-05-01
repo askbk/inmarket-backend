@@ -6,6 +6,14 @@ module.exports = (sequelize, Sq) => {
             type: Sq.STRING,
             allowNull: false
         },
+        webpage: {
+            type: Sq.STRING,
+            allowNull: true
+        },
+        registrationCode: {
+            type: Sq.INTEGER,
+            allowNull: true
+        },
         orgNumber: {
             type: Sq.INTEGER,
             allowNull: false,
