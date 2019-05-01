@@ -9,7 +9,7 @@ class Auth {
     }
 
     async authenticate(req, res, next) {
-        const token = req.body.token || req.body.jwt;
+        const token = req.headers.authorization;
 
         if (token) {
             try {
