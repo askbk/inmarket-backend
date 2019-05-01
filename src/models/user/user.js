@@ -13,7 +13,11 @@ module.exports = (sequelize, Sq) => {
         profilePicturePath: {
             type: Sq.STRING,
             allowNull: true
-        }
+        },
+        profileDescription: {
+            type: Sq.STRING,
+            allowNull: false,
+            defaultValue: "Denne brukeren har ingen beskrivelse :( ;)"
     }, {
         sequelize,
         modelName: "user"
