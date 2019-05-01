@@ -105,6 +105,12 @@ class UserAPI {
             return false;
         }
     }
+    
+    //  Send contact request from one user to another
+    async contact(req, res, next) {
+        const contactee = req.params.id;
+        const contacterToken = req.body.jwt;
+    }
 }
 
 module.exports = UserAPI;
