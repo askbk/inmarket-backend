@@ -42,6 +42,9 @@ class UserController {
                 });
             }
 
+            // TODO: need to insert skills that jobseeker has or that employee
+            // wants
+
             this.loginModel.create({
                 email: userContext.email,
                 passwordHash: passwordHash,
