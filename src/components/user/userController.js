@@ -1,6 +1,9 @@
 class UserController {
     constructor(models) {
         this.userModel = models.User;
+        this.jobseekerModel = models.Jobseeker;
+        this.employeeModel = models.Employee;
+        this.companyModel = models.Company;
         this.loginModel = models.Login;
     }
 
@@ -16,15 +19,31 @@ class UserController {
         });
     }
 
-    async create(firstName, lastName, email, passwordHash) {
+    async create(userContext, passwordHash) {
         try {
             const user = await this.userModel.create({
-                firstName: firstName,
-                lastName: lastName,
+                ...userContext
             });
 
+            if (userContext.userType === "company") {
+                this.companyModel.create({
+                    ...userContext,
+                    userId: user.id
+                });
+            } else if (userContext.type === "employee") {
+                this.employeeModel.create({
+                    ...userContext,
+                    userId: user.id
+                });
+            } else if (userContext.type === "jobseeker") {
+                this.jobseekerModel.create({
+                    ...userContext,
+                    userId: user.id
+                });
+            }
+
             this.loginModel.create({
-                email: email,
+                email: userContext.email,
                 passwordHash: passwordHash,
                 userId: user.id
             });
