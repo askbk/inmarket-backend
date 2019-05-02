@@ -82,5 +82,8 @@ sq.sync(
 module.exports = {
     User,
     Login,
-    Activity
+    Activity,
+    Company,
+    Employee,
+    Jobseeker
 }
