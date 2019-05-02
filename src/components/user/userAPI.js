@@ -28,10 +28,10 @@ class UserAPI {
             phoneNumber: body.phoneNumber,
             municipality: body.municipality,
             userType: body.userType,
-            profileDescription: body.profileDescription
+            profileDescription: body.profileDescription,
         };
 
-        let userContext;
+        let userContext, skills;
 
         switch (true) {
             case userInfo.userType === "company":
@@ -47,6 +47,7 @@ class UserAPI {
             case userInfo.userType === "employee":
                 userContext = {
                     role: body.role,
+                    skills: body.skills,
                     ...userInfo
                 };
                 break;
@@ -54,6 +55,7 @@ class UserAPI {
                 userContext = {
                     type: body.type,
                     education: body.education,
+                    skills: body.skills,
                     ...userInfo
                 };
                 break;
