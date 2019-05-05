@@ -90,6 +90,11 @@ sq.sync(
     Skill.findOrCreate({where: {name: "Salg"}});
     Skill.findOrCreate({where: {name: "Vasking"}});
     Skill.findOrCreate({where: {name: "Baking"}});
+
+    Interest.findOrCreate({where: {name: "Avengers"}});
+    Interest.findOrCreate({where: {name: "Transformers"}});
+    Interest.findOrCreate({where: {name: "Lese bøker"}});
+    Interest.findOrCreate({where: {name: "Rappe"}});
 }).catch(e => {
     console.log(`error: ${e}`);
 });
