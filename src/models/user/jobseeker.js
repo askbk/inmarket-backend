@@ -4,7 +4,7 @@ module.exports = (sequelize, Sq) => {
     Jobseeker.init({
         type: {
             type: Sq.STRING,
-            allowNull: false
+            allowNull: true
         },
         education: {
             type: Sq.STRING,

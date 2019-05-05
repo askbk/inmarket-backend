@@ -4,7 +4,7 @@ module.exports = (sequelize, Sq) => {
     Employee.init({
         role: {
             type: Sq.STRING,
-            allowNull: false
+            allowNull: true
         }
     }, {
         sequelize,

@@ -1,15 +1,15 @@
 module.exports = (sequelize, Sq) => {
     const Model = Sq.Model;
-    class JobseekerCompetence extends Model {}
-    JobseekerCompetence.init({
+    class JobseekerSkill extends Model {}
+    JobseekerSkill.init({
         isActive: {
             type: Sq.BOOLEAN,
             allowNull: false
         }
     }, {
         sequelize,
-        modelName: "jobseekerCompetence"
+        modelName: "jobseekerSkill"
     });
 
-    return JobseekerCompetence;
+    return JobseekerSkill;
 }

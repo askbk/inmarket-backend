@@ -1,7 +1,7 @@
 module.exports = (sequelize, Sq) => {
     const Model = Sq.Model;
-    class Competence extends Model {}
-    Competence.init({
+    class Interest extends Model {}
+    Interest.init({
         name: {
             type: Sq.STRING,
             allowNull: false,
@@ -9,8 +9,8 @@ module.exports = (sequelize, Sq) => {
         }
     }, {
         sequelize,
-        modelName: "competence"
+        modelName: "interest"
     });
 
-    return Competence;
+    return Interest;
 }

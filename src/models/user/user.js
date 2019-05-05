@@ -26,10 +26,10 @@ module.exports = (sequelize, Sq) => {
             type: Sq.STRING,
             allowNull: true
         },
-        isEmployee: {
-            type: Sq.BOOLEAN,
+        userType: {
+            type: Sq.STRING,
             allowNull: false,
-            defaultValue: false
+            defaultValue: "jobseeker"
         },
         isAdmin: {
             type: Sq.BOOLEAN,

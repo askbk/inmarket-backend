@@ -1,6 +1,7 @@
 class UserAPI {
     constructor(userController, auth) {
         this.userController = userController;
+        this.auth = auth;
     }
 
     async getByID(req, res, next) {
@@ -17,14 +18,56 @@ class UserAPI {
     }
 
     async create(req, res, next) {
-        const { firstName, lastName, password, email } = req.body;
-        const passwordHash = await this.auth.hash(password);
+        const body = {...req.body};
+
+        const userInfo = {
+            firstName: body.firstName,
+            lastName: body.lastName,
+            email: body.email,
+            phoneNumber: body.phoneNumber,
+            municipality: body.municipality,
+            userType: body.userType,
+        };
+
+        let userContext, skills;
+
+        switch (true) {
+            case userInfo.userType === "company":
+                userContext = {
+                    name: body.name,
+                    webpage: body.webpage,
+                    registrationCode: body.registrationCode,
+                    orgNumber: body.orgNumber,
+                    ...userInfo
+                };
+                break;
+
+            case userInfo.userType === "employee":
+                userContext = {
+                    role: body.role,
+                    skills: body.skills,
+                    ...userInfo
+                };
+                break;
+            case userInfo.userType === "jobseeker":
+                userContext = {
+                    type: body.type,
+                    education: body.education,
+                    skills: body.skills,
+                    ...userInfo
+                };
+                break;
+            default:
+                //  error: no usertype given
+                break;
+        }
+
+
+        const passwordHash = await this.auth.hash(body.password);
 
         try {
-            this.userController.create(
-                firstName,
-                lastName,
-                email,
+            await this.userController.create(
+                userContext,
                 passwordHash
             );
 
@@ -35,7 +78,7 @@ class UserAPI {
         } catch (e) {
             res.status(500).send({
                 success: false,
-                message: "Error when creating user"
+                message: `Error when creating user: ${e}`
             });
         }
     }
@@ -105,7 +148,7 @@ class UserAPI {
             return false;
         }
     }
-    
+
     //  Send contact request from one user to another
     async contact(req, res, next) {
         const contactee = req.params.id;

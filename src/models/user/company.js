@@ -15,7 +15,7 @@ module.exports = (sequelize, Sq) => {
             allowNull: true
         },
         orgNumber: {
-            type: Sq.INTEGER,
+            type: Sq.STRING,
             allowNull: false,
             unique: true
         }
