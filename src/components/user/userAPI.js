@@ -24,11 +24,9 @@ class UserAPI {
             firstName: body.firstName,
             lastName: body.lastName,
             email: body.email,
-            birthDate: body.birthDate,
             phoneNumber: body.phoneNumber,
             municipality: body.municipality,
             userType: body.userType,
-            profileDescription: body.profileDescription,
         };
 
         let userContext, skills;
