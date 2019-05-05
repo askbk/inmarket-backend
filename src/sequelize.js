@@ -32,15 +32,15 @@ const Message           = Models.Message(sq, Sq);
 const Contact           = Models.Contact(sq, Sq);
 
 //  Define relations here...
-Login.belongsTo(User);
-Employee.belongsTo(User);
-Jobseeker.belongsTo(User);
-Jobseeker.belongsTo(Company, {as: "monitoringCompany"});
-Company.belongsTo(User);
-Company.hasMany(Employee, {as: "employees"});
+Login.User = Login.belongsTo(User);
+Employee.User = Employee.belongsTo(User);
+Jobseeker.User = Jobseeker.belongsTo(User);
+Jobseeker.MonitoringCompany = Jobseeker.belongsTo(Company, {as: "monitoringCompany"});
+Company.User = Company.belongsTo(User);
+Company.Empoyees = Company.hasMany(Employee, {as: "employees"});
 
-Jobseeker.belongsToMany(Activity, {through: "activityParticipant"});
-Jobseeker.belongsToMany(Activity, {through: "activityInvitation"});
+Jobseeker.Activities = Jobseeker.belongsToMany(Activity, {through: "activityParticipant"});
+Jobseeker.ActivityInvirations = Jobseeker.belongsToMany(Activity, {through: "activityInvitation"});
 Employee.hasMany(Activity, {as: "createdActivities"});
 Company.hasMany(Activity);
 Activity.hasMany(ActivityException, {as: "exceptions"});
@@ -51,11 +51,11 @@ Conversation.hasMany(Message);
 User.belongsToMany(Conversation, {through: "conversationParticipant"});
 Message.belongsTo(User, {as: "sender"});
 
-Skill.belongsToMany(Jobseeker, {through: JobseekerSkill});
-Skill.belongsToMany(Employee, {through: "employeeWantsSkill"});
-JobseekerSkill.hasMany(SkillRating)
-SkillRating.belongsTo(Employee, {as: "ratedByEmployee"});
-SkillRating.belongsTo(Company, {as: "ratedByCompany"});
+Jobseeker.Skills = Jobseeker.belongsToMany(Skill, {through: JobseekerSkill});
+Employee.SkillsWanted = Employee.belongsToMany(Skill, {through: "employeeWantsSkill"});
+JobseekerSkill.Ratings = JobseekerSkill.hasMany(SkillRating)
+SkillRating.Employee = SkillRating.belongsTo(Employee, {as: "ratedByEmployee"});
+SkillRating.Company = SkillRating.belongsTo(Company, {as: "ratedByCompany"});
 
 //  This is only for testing purposes to be able to log in with the dummy users
 const Auth = require("./components/auth/auth.js");
@@ -76,6 +76,11 @@ sq.sync(
             {email: "yo@yo.net", passwordHash: passHash, userId: users[1].id}
         ]);
     });
+
+    Skill.findOrCreate({where: {name: "Videoredigering"}});
+    Skill.findOrCreate({where: {name: "Salg"}});
+    Skill.findOrCreate({where: {name: "Vasking"}});
+    Skill.findOrCreate({where: {name: "Baking"}});
 }).catch(e => {
     console.log(`error: ${e}`);
 });
@@ -86,5 +91,7 @@ module.exports = {
     Activity,
     Company,
     Employee,
-    Jobseeker
+    Jobseeker,
+    Skill,
+    JobseekerSkill
 }
