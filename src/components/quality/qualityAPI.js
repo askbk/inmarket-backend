@@ -12,7 +12,7 @@ class QualityAPI {
 
             res.status(200).send({
                 skills: qualities[0],
-                interests: []
+                interests: qualities[1]
             });
         } catch (e) {
             return false;

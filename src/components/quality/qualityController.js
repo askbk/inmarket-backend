@@ -1,17 +1,18 @@
 class QualityController {
     constructor(models) {
         this.skillModel = models.Skill;
+        this.interestModel = models.Interest;
     }
 
     async getAllSkills() {
-        return this.skillModel.findAll().then(users => {
-            return users;
+        return this.skillModel.findAll().then(skills => {
+            return skills;
         });
     }
 
     async getAllInterests() {
-        return new Promise((resolve, reject) => {
-            resolve();
+        return this.interestModel.findAll().then(interests => {
+            return interests;
         });
     }
 
