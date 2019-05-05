@@ -26,6 +26,9 @@ const Jobseeker         = Models.Jobseeker(sq, Sq);
 const Skill             = Models.Skill(sq, Sq);
 const SkillRating       = Models.SkillRating(sq, Sq);
 const JobseekerSkill    = Models.JobseekerSkill(sq, Sq);
+const Interest          = Models.Interest(sq, Sq);
+const InterestRating    = Models.InterestRating(sq, Sq);
+const JobseekerInterest = Models.JobseekerInterest(sq, Sq);
 const User              = Models.User(sq, Sq);
 const Conversation      = Models.Conversation(sq, Sq);
 const Message           = Models.Message(sq, Sq);
@@ -56,6 +59,12 @@ Employee.SkillsWanted = Employee.belongsToMany(Skill, {through: "employeeWantsSk
 JobseekerSkill.Ratings = JobseekerSkill.hasMany(SkillRating)
 SkillRating.Employee = SkillRating.belongsTo(Employee, {as: "ratedByEmployee"});
 SkillRating.Company = SkillRating.belongsTo(Company, {as: "ratedByCompany"});
+
+Jobseeker.Interests = Jobseeker.belongsToMany(Interest, {through: JobseekerInterest});
+Employee.InterestsWanted = Employee.belongsToMany(Interest, {through: "employeeWantsInterest"});
+JobseekerInterest.Ratings = JobseekerInterest.hasMany(InterestRating)
+InterestRating.Employee = InterestRating.belongsTo(Employee, {as: "ratedByEmployee"});
+InterestRating.Company = InterestRating.belongsTo(Company, {as: "ratedByCompany"});
 
 //  This is only for testing purposes to be able to log in with the dummy users
 const Auth = require("./components/auth/auth.js");
