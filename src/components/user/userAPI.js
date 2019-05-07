@@ -149,6 +149,17 @@ class UserAPI {
         }
     }
 
+    async getContactRecommendations(req, res, next) {
+        const userContext = {
+            userType: "jobseeker",
+            userId: req.params.id
+        };
+
+        const skills = await this.userController.getContactRecommendations(userContext);
+
+        res.send(skills);
+    }
+
     //  Send contact request from one user to another
     async contact(req, res, next) {
         const contactee = req.params.id;
