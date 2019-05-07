@@ -26,6 +26,7 @@ const Jobseeker         = Models.Jobseeker(sq, Sq);
 const Skill             = Models.Skill(sq, Sq);
 const SkillRating       = Models.SkillRating(sq, Sq);
 const JobseekerSkill    = Models.JobseekerSkill(sq, Sq);
+const EmployeeSkill     = Models.EmployeeSkill(sq, Sq);
 const Interest          = Models.Interest(sq, Sq);
 const InterestRating    = Models.InterestRating(sq, Sq);
 const JobseekerInterest = Models.JobseekerInterest(sq, Sq);
@@ -55,7 +56,9 @@ User.belongsToMany(Conversation, {through: "conversationParticipant"});
 Message.belongsTo(User, {as: "sender"});
 
 Jobseeker.Skills = Jobseeker.belongsToMany(Skill, {through: JobseekerSkill});
-Employee.SkillsWanted = Employee.belongsToMany(Skill, {through: "employeeWantsSkill"});
+Skill.Jobseekers = Skill.belongsToMany(Jobseeker, {through: JobseekerSkill});
+Skill.Employees = Skill.belongsToMany(Employee, {through: EmployeeSkill});
+Employee.SkillsWanted = Employee.belongsToMany(Skill, {through: EmployeeSkill});
 JobseekerSkill.Ratings = JobseekerSkill.hasMany(SkillRating)
 SkillRating.Employee = SkillRating.belongsTo(Employee, {as: "ratedByEmployee"});
 SkillRating.Company = SkillRating.belongsTo(Company, {as: "ratedByCompany"});
@@ -108,6 +111,7 @@ module.exports = {
     Jobseeker,
     Skill,
     JobseekerSkill,
+    EmployeeSkill,
     Interest,
     JobseekerInterest
 }
