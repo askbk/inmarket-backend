@@ -5,14 +5,12 @@ class AuthController {
 
     async getIDByEmail(email) {
         try {
-            const login = await this.loginModel.findOne(
-                {
-                    attributes: ["userId"],
-                    where: {
-                        email: email
-                    }
+            const login = await this.loginModel.findOne({
+                attributes: ['userId'],
+                where: {
+                    email: email
                 }
-            );
+            });
 
             return login.userId;
         } catch (e) {
@@ -23,13 +21,11 @@ class AuthController {
 
     async getPasswordHash(id) {
         try {
-            const login = await this.loginModel.findOne(
-                {
-                    where: {
-                        userId: id
-                    }
+            const login = await this.loginModel.findOne({
+                where: {
+                    userId: id
                 }
-            );
+            });
 
             return login.passwordHash;
         } catch (e) {

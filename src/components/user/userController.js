@@ -28,31 +28,34 @@ class UserController {
                 ...userContext
             });
 
-            if (userContext.userType === "company") {
+            if (userContext.userType === 'company') {
                 this.companyModel.create({
                     ...userContext,
                     userId: user.id
                 });
-            } else if (userContext.userType === "employee") {
+            } else if (userContext.userType === 'employee') {
                 this.employeeModel.create({
                     ...userContext,
-                    userId: user.id,
-                });
-            } else if (userContext.userType === "jobseeker") {
-
-                this.jobseekerModel.create({
-                    ...userContext,
                     userId: user.id
-                }).then(jobseeker => {
-                    const jobseekerSkills = userContext.skills.map(skill => {
-                        return {
-                            jobseekerId: jobseeker.id,
-                            skillId: skill,
-                            isActive: true
-                        }
+                });
+            } else if (userContext.userType === 'jobseeker') {
+                this.jobseekerModel
+                    .create({
+                        ...userContext,
+                        userId: user.id
+                    })
+                    .then(jobseeker => {
+                        const jobseekerSkills = userContext.skills.map(
+                            skill => {
+                                return {
+                                    jobseekerId: jobseeker.id,
+                                    skillId: skill,
+                                    isActive: true
+                                };
+                            }
+                        );
+                        this.jobseekerSkillModel.bulkCreate(jobseekerSkills);
                     });
-                    this.jobseekerSkillModel.bulkCreate(jobseekerSkills);
-                })
             }
 
             // TODO: need to insert skills that jobseeker has or that employee
@@ -73,7 +76,11 @@ class UserController {
         const { firstName, lastName, description } = userContext;
 
         try {
-            const success = await user.update({ firstName, lastName, description});
+            const success = await user.update({
+                firstName,
+                lastName,
+                description
+            });
 
             return success;
         } catch (e) {

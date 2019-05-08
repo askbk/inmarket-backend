@@ -18,7 +18,7 @@ class UserAPI {
     }
 
     async create(req, res, next) {
-        const body = {...req.body};
+        const body = { ...req.body };
 
         const userInfo = {
             firstName: body.firstName,
@@ -26,13 +26,13 @@ class UserAPI {
             email: body.email,
             phoneNumber: body.phoneNumber,
             municipality: body.municipality,
-            userType: body.userType,
+            userType: body.userType
         };
 
         let userContext, skills;
 
         switch (true) {
-            case userInfo.userType === "company":
+            case userInfo.userType === 'company':
                 userContext = {
                     name: body.name,
                     webpage: body.webpage,
@@ -42,14 +42,14 @@ class UserAPI {
                 };
                 break;
 
-            case userInfo.userType === "employee":
+            case userInfo.userType === 'employee':
                 userContext = {
                     role: body.role,
                     skills: body.skills,
                     ...userInfo
                 };
                 break;
-            case userInfo.userType === "jobseeker":
+            case userInfo.userType === 'jobseeker':
                 userContext = {
                     type: body.type,
                     education: body.education,
@@ -62,18 +62,14 @@ class UserAPI {
                 break;
         }
 
-
         const passwordHash = await this.auth.hash(body.password);
 
         try {
-            await this.userController.create(
-                userContext,
-                passwordHash
-            );
+            await this.userController.create(userContext, passwordHash);
 
             res.status(200).send({
                 success: true,
-                message: "User created"
+                message: 'User created'
             });
         } catch (e) {
             res.status(500).send({
@@ -91,7 +87,7 @@ class UserAPI {
             if (!token) {
                 res.status(401).send({
                     success: false,
-                    message: "Not logged in with a valid token"
+                    message: 'Not logged in with a valid token'
                 });
                 return false;
             }
@@ -100,7 +96,7 @@ class UserAPI {
         }
 
         //  Get id of the user that is to be modified
-        const userId = req.params.id
+        const userId = req.params.id;
 
         //  Make sure that users only modify their own profiles
         if (userId !== token.sub) {
@@ -122,12 +118,14 @@ class UserAPI {
 
         //  Attempt to do update profile
         try {
-            const success = await this.userController.updateProfile(userContext);
+            const success = await this.userController.updateProfile(
+                userContext
+            );
 
             if (success) {
                 res.status(200).send({
                     success: true,
-                    message: "Successful profile update"
+                    message: 'Successful profile update'
                 });
 
                 return true;
@@ -135,11 +133,11 @@ class UserAPI {
 
             res.status(500).send({
                 success: false,
-                message: "Unknown error when updating profile"
+                message: 'Unknown error when updating profile'
             });
 
             return false;
-        } catch(e) {
+        } catch (e) {
             res.status(500).send({
                 success: false,
                 message: `Error when updating profile: ${e}`

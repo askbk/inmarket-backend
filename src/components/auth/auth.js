@@ -1,4 +1,4 @@
-const TokenIssuer   = require('./token.js');
+const TokenIssuer = require('./token.js');
 
 class Auth {
     constructor(authController, models) {
@@ -7,7 +7,7 @@ class Auth {
             this.userModel = models.User;
         }
         this.authController = authController;
-        this.bcrypt = require("bcrypt");
+        this.bcrypt = require('bcrypt');
         this.saltRounds = 10;
     }
 
@@ -25,17 +25,17 @@ class Auth {
             } catch (e) {
                 res.status(401).send({
                     success: false,
-                    message: "Bad token provided."
+                    message: 'Bad token provided.'
                 });
                 throw e;
             }
         } else {
             res.status(403).send({
                 success: false,
-                message: "No token provided."
+                message: 'No token provided.'
             });
 
-            throw "No token provided";
+            throw 'No token provided';
         }
     }
 
@@ -77,7 +77,7 @@ class Auth {
         try {
             return await this.bcrypt.hash(password, this.saltRounds);
         } catch (e) {
-            throw e
+            throw e;
         }
     }
 }
