@@ -148,7 +148,7 @@ class UserAPI {
   async contact(req, res, next) {
     const contactee = parseInt(req.params.id);
 
-    if(isNaN(contactee)){
+    if (isNaN(contactee)) {
       res.status(500).send({
         success: false,
         message: "ID must be a integer"
@@ -161,8 +161,7 @@ class UserAPI {
       const authenticated = await this.auth.authenticate(req, res, next);
       contacter = authenticated.sub;
 
-
-      if(contacter === contactee){
+      if (contacter === contactee) {
         res.status(500).send({
           success: false,
           message: "You can't connect with yourself"
@@ -175,8 +174,6 @@ class UserAPI {
       });
       return;
     }
-
-
 
     try {
       const hasContacted = await this.userController.hasContactOnOneSide(
@@ -213,7 +210,6 @@ class UserAPI {
       });
     }
   }
-
 }
 
 module.exports = UserAPI;
