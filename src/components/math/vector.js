@@ -20,17 +20,11 @@ const dotProduct = (vectorA, vectorB) => {
 
 // Return cosine of the angle between two vectors
 const cosine = async (vectorA, vectorB) => {
-    console.log(vectorA);
-    console.log(vectorB);
     const magnitudeA = magnitude(vectorA);
     const magnitudeB = magnitude(vectorB);
     const dot = dotProduct(vectorA, vectorB);
-
-    // console.log(`magnitudes: ${magnitudeA}, ${magnitudeB}`);
-    // console.log(`dot: ${dot}`)
-    //
-    // console.log(magnitudeA * magnitudeB);
-    return dotProduct(vectorA, vectorB) / (magnitudeA * magnitudeB);
+    
+    return dot / (magnitudeA * magnitudeB);
 }
 
 module.exports = {magnitude, dotProduct, cosine};
