@@ -13,7 +13,8 @@
         "sequelize": "^5.7.6"
     },
     "devDependencies": {
-        "nodemon": "^1.18.9"
+        "nodemon": "^1.18.9",
+        "prettier": "^1.17.0"
     },
     "scripts": {
         "start": "nodemon --verbose --watch src src/server.js",

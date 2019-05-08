@@ -146,12 +146,28 @@ class UserAPI {
   }
 
   async contact(req, res, next) {
-    const contactee = req.params.id;
+    const contactee = parseInt(req.params.id);
+
+    if(isNaN(contactee)){
+      res.status(500).send({
+        success: false,
+        message: "ID must be a integer"
+      });
+      return;
+    }
 
     let contacter;
     try {
       const authenticated = await this.auth.authenticate(req, res, next);
       contacter = authenticated.sub;
+
+
+      if(contacter === contactee){
+        res.status(500).send({
+          success: false,
+          message: "You can't connect with yourself"
+        });
+      }
     } catch (e) {
       res.status(500).send({
         success: false,
@@ -159,6 +175,8 @@ class UserAPI {
       });
       return;
     }
+
+
 
     try {
       const hasContacted = await this.userController.hasContactOnOneSide(
@@ -176,7 +194,7 @@ class UserAPI {
     } catch (e) {
       res.status(500).send({
         success: false,
-        message: `Error when contactin: ${e}`
+        message: `Error when contacting: ${e}`
       });
       return;
     }
