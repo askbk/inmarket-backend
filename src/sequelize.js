@@ -109,5 +109,6 @@ module.exports = {
     Skill,
     JobseekerSkill,
     Interest,
-    JobseekerInterest
+    JobseekerInterest,
+    Contact
 }

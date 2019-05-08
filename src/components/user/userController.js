@@ -7,6 +7,7 @@ class UserController {
         this.loginModel = models.Login;
         this.jobseekerSkillModel = models.JobseekerSkill;
         this.skillModel = models.Skill;
+        this.contactModel = models.Contact;
         console.log(this.jobseekerSkillModel);
     }
 
@@ -20,6 +21,31 @@ class UserController {
         return this.userModel.findByPk(id).then(user => {
             return user;
         });
+    }
+
+    async createContact(senderId, reciverId){
+        await this.contactModel.create({userId: senderId, contactId:reciverId});
+    }
+
+    async hasContactOnOneSide(senderId, reciverId){
+        const count = await this.contactModel.count(
+            {where:{userId: senderId, contactId:reciverId}});
+
+        if (count > 0)
+            return true;
+
+        return false;
+    }
+
+
+    async hasEstablishedContact(id1, id2){
+        if(!(await hasContactOnOneSide(id1,id2)))
+            return false;
+        if(!(await hascontactOnOneSide(id2,id1)))
+            return false;
+        return true;
+
+        const hasContact1 = await hasContactOnOneSide(id1,id2);
     }
 
     async create(userContext, passwordHash) {
