@@ -16,7 +16,7 @@ class Recommend {
 
     // TODO: clean up code.
     // TODO: add same calculation for interests.
-    // TODO: Reduce database load by implementoing caching for stuff like IDF, skills, etc.
+    // TODO: Reduce database load by implementing caching for stuff like IDF, skills, etc.
     async meEmployees(context) {
         const userId = context.userId,
             userType = context.userType;
@@ -27,6 +27,7 @@ class Recommend {
         if (userType === "jobseeker") {
             let mySkills;
 
+            // Use Promise.all to perform tasks in parallel
             await Promise.all([
                 // Get all employees (documents)
                 this.getEmployees(),
@@ -39,9 +40,6 @@ class Recommend {
                 // List of skills for current user (query)
                 (async () => {mySkills = await this.getMySkills(userId);})(),
             ]);
-
-            // Count number of employees (documents)
-            this.employeeCount = this.employees.length;
 
             // Create lookup table for idf
             await this.calculateIDF();
@@ -62,7 +60,7 @@ class Recommend {
             const employees = await Promise.all(employeeVectors.map(async employee => {
                 const cos = await vector.cosine(employee.vector, myVector);
                 return {
-                    employeeId: employee.employeeId,
+                    employee: employee.employee,
                     cosine: cos
                 }
             })
@@ -80,9 +78,6 @@ class Recommend {
             }));
 
             // Return employees in recommended order
-            // TODO: employee objects should probably be included in the return
-            // so they don't have to be fetched from database again.
-            console.log(employees);
             return employees;
         } else if (userType === "employee") {
             const jobseekerCount = await this.jobseeker.count();
@@ -95,6 +90,10 @@ class Recommend {
             include: [{
                 model: this.employeeModel,
                 required: false
+            },
+            {
+                model: this.jobseekerModel,
+                required: true
             }]
         });
     }
@@ -117,11 +116,21 @@ class Recommend {
         });
     }
 
+    async getJobseekers() {
+        this.jobseekers = await this.jobseekerModel.findAll({
+            include: [{
+                model: this.skillModel,
+                required: true
+            }]
+        });
+    }
+
     calculateIDF() {
         return new Promise((resolve, reject) => {
+            const employeeCount = this.employees.length;
             for (const skill of this.skills) {
                 const docFreq = skill.employees.length;
-                this.idf[skill.id] = 1 + Math.log(this.employeeCount / (1 + docFreq));
+                this.idf[skill.id] = 1 + Math.log(employeeCount / (1 + docFreq));
             }
 
             resolve(true);
@@ -141,7 +150,7 @@ class Recommend {
                 }
 
                 return {
-                    employeeId: employee.id,
+                    employee: employee,
                     vector: employeeVector
                 }
             });
