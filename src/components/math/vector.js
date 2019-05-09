@@ -19,11 +19,11 @@ const dotProduct = (vectorA, vectorB) => {
 }
 
 // Return cosine of the angle between two vectors
-const cosine = async (vectorA, vectorB) => {
+const cosine = (vectorA, vectorB) => {
     const magnitudeA = magnitude(vectorA);
     const magnitudeB = magnitude(vectorB);
     const dot = dotProduct(vectorA, vectorB);
-    
+
     return dot / (magnitudeA * magnitudeB);
 }
 

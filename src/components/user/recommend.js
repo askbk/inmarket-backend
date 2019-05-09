@@ -57,25 +57,35 @@ class Recommend {
             const employeeVectors = await this.calculateTFIDFVectors(myVector);
 
             // Calculate cosine of angle between query and each employee
-            const employees = await Promise.all(employeeVectors.map(async employee => {
-                const cos = await vector.cosine(employee.vector, myVector);
+            const employees = employeeVectors.map(employee => {
+                const cos = vector.cosine(employee.vector, myVector);
                 return {
                     employee: employee.employee,
                     cosine: cos
                 }
             })
-            // Sort employees according to cosine similarity
-            .sort((firstEl, secondEl) => {
-                if (firstEl.cosine > secondEl.cosine) {
+            // Sort employees according to cosine similarity in descending order
+            .sort((a, b) => {
+                // Both cosines are well-defined and non-zero
+                if (a.cosine && b.cosine) {
+                    if (a.cosine > b.cosine) return -1;
+                    if (b.cosine > a.cosine) return 1;
+                    return 0;
+                }
+
+                // Check if first cosine is well-defined
+                if (a.cosine) {
                     return -1;
                 }
 
-                if (secondEl.cosine > firstEl.cosine) {
+                // check if second cosine is well-defined
+                if (b.cosine) {
                     return 1;
                 }
 
-                return 0;
-            }));
+                // Both are bad
+                return 0
+            });
 
             // Return employees in recommended order
             return employees;
