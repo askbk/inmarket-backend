@@ -1,15 +1,18 @@
 module.exports = (sequelize, Sq) => {
     const Model = Sq.Model;
     class Message extends Model {}
-    Message.init({
-        content: {
-            type: Sq.STRING,
-            allowNull: false
+    Message.init(
+        {
+            content: {
+                type: Sq.STRING,
+                allowNull: false
+            }
+        },
+        {
+            sequelize,
+            modelName: 'message'
         }
-    }, {
-        sequelize,
-        modelName: "message"
-    });
+    );
 
     return Message;
-}
+};
