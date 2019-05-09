@@ -147,10 +147,70 @@ class UserAPI {
         }
     }
 
-    //  Send contact request from one user to another
     async contact(req, res, next) {
-        const contactee = req.params.id;
-        const contacterToken = req.body.jwt;
+        const contactee = parseInt(req.params.id);
+
+        if (isNaN(contactee)) {
+            res.status(500).send({
+                success: false,
+                message: 'ID must be a integer'
+            });
+            return;
+        }
+
+        let contacter;
+        try {
+            const authenticated = await this.auth.authenticate(req, res, next);
+            contacter = authenticated.sub;
+
+            if (contacter === contactee) {
+                res.status(500).send({
+                    success: false,
+                    message: "You can't connect with yourself"
+                });
+            }
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: 'Authentication failed'
+            });
+            return;
+        }
+
+        try {
+            const hasContacted = await this.userController.hasContactOnOneSide(
+                contacter,
+                contactee
+            );
+
+            if (hasContacted) {
+                res.status(500).send({
+                    success: false,
+                    message: 'The contacter has already requested the contactee'
+                });
+                return;
+            }
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Error when contacting: ${e}`
+            });
+            return;
+        }
+
+        try {
+            await this.userController.createContact(contacter, contactee);
+
+            res.status(200).send({
+                success: true,
+                message: ''
+            });
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: 'Could not create a contact'
+            });
+        }
     }
 }
 
