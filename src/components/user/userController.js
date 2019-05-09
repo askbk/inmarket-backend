@@ -1,5 +1,5 @@
 class UserController {
-    constructor(models, recommend) {
+    constructor(models) {
         this.userModel = models.User;
         this.jobseekerModel = models.Jobseeker;
         this.employeeModel = models.Employee;
@@ -8,7 +8,6 @@ class UserController {
         this.jobseekerSkillModel = models.JobseekerSkill;
         this.employeeSkillModel = models.EmployeeSkill;
         this.skillModel = models.Skill;
-        this.recommend = recommend;
     }
 
     async getAll() {
@@ -89,10 +88,6 @@ class UserController {
         } catch (e) {
             throw e;
         }
-    }
-
-    async getContactRecommendations(context) {
-        return this.recommend.employees(context);
     }
 }
 
