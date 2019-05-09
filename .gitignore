@@ -5,3 +5,4 @@ src/testdata
 .eslint*
 db/workdir
 .nvmrc
+.idea/*

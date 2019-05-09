@@ -15,7 +15,6 @@ class QualityController {
             return interests;
         });
     }
-
 }
 
 module.exports = QualityController;
