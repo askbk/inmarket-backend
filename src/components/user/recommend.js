@@ -17,7 +17,7 @@ class Recommend {
     // TODO: clean up code.
     // TODO: add same calculation for interests.
     // TODO: Reduce database load by implementing caching for stuff like IDF, skills, etc.
-    async meEmployees(context) {
+    async employees(context) {
         const userId = context.userId,
             userType = context.userType;
 

@@ -92,8 +92,7 @@ class UserController {
     }
 
     async getContactRecommendations(context) {
-        console.log(this.recommend);
-        return this.recommend.meEmployees(context);
+        return this.recommend.employees(context);
     }
 }
 
