@@ -57,10 +57,17 @@ class Recommend {
             const employeeVectors = await this.calculateTFIDFVectors(myVector);
 
             // Calculate cosine of angle between query and each employee
-            const employees = employeeVectors.map(employee => {
-                const cos = vector.cosine(employee.vector, myVector);
+            const employees = employeeVectors.map(employeeVector => {
+                const cos = vector.cosine(employeeVector.vector, myVector);
+                // For easier readability when testing recommendations
+                // const skillList = employeeVector.employee.skills.map(skill => {return skill.id;}) || [];
+                // return {
+                //     employeeId: employeeVector.employee.id,
+                //     skills: skillList,
+                //     cosine: cos
+                // }
                 return {
-                    employee: employee.employee,
+                    employee: employeeVector.employee,
                     cosine: cos
                 }
             })
@@ -89,6 +96,9 @@ class Recommend {
 
             // Return employees in recommended order
             return employees;
+            // For easier testing of recommendations
+            // const mySkillList = mySkills.map(skill => {return skill.id;});
+            // return {myskills: mySkillList, employees: employees};
         } else if (userType === "employee") {
             const jobseekerCount = await this.jobseeker.count();
             // do the same here
@@ -112,7 +122,7 @@ class Recommend {
         return await this.skillModel.findAll({
             include: [{
                 model: this.jobseekerModel,
-                where: {id: 1}
+                where: {id: id}
             }]
         });
     }
