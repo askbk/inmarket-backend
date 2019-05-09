@@ -6,9 +6,8 @@ class RecommendationAPI {
         console.log(this.recommend);
     }
 
-    async getContactRecommendations(req, res, next) {
+    async getEmployeeRecommendations(req, res, next) {
         const userContext = {
-            userType: "jobseeker",
             userId: req.params.id
         };
 

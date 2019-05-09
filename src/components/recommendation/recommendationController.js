@@ -17,51 +17,48 @@ class Recommend {
     // TODO: clean up code.
     // TODO: add same calculation for interests.
     // TODO: Reduce database load by implementing caching for stuff like IDF, skills, etc.
+
+    // This method assumes the user requesting recommendations is a jobseeker
     async employeeRecommendations(context) {
-        const userId = context.userId,
-            userType = context.userType;
+        const userId = context.userId
 
-        const targetType = userType === "jobseeker" ? "employee" : "jobseeker";
+        let mySkills;
 
+        // Use Promise.all to perform tasks in parallel
+        await Promise.all([
+            // Get all employees (documents)
+            this.getEmployees(),
+            // Get all skills (terms)
+            // Is it better to just use this.employees, as it already contains
+            // relevant skills? Would then have to manually count number of
+            // employees looking for a specific skill. Check if there is some
+            // performance to be gained here.
+            this.getSkills(),
+            // List of skills for current user (query)
+            (async () => {mySkills = await this.getMySkills(userId);})(),
+        ]);
 
-        if (userType === "jobseeker") {
-            let mySkills;
+        // Create lookup table for idf
+        await this.calculateIDF();
 
-            // Use Promise.all to perform tasks in parallel
-            await Promise.all([
-                // Get all employees (documents)
-                this.getEmployees(),
-                // Get all skills (terms)
-                // Is it better to just use this.employees, as it already contains
-                // relevant skills? Would then have to manually count number of
-                // employees looking for a specific skill. Check if there is some
-                // performance to be gained here.
-                this.getSkills(),
-                // List of skills for current user (query)
-                (async () => {mySkills = await this.getMySkills(userId);})(),
-            ]);
+        // Count skills (query length)
+        const mySkillCount = mySkills.length;
 
-            // Create lookup table for idf
-            await this.calculateIDF();
+        // Calculate tfidf vector of query
+        const myVector = [];
+        for (const mySkill of mySkills) {
+            myVector[mySkill.id] = (1 / mySkills.length) * this.idf[mySkill.id];
+        }
 
-            // Count skills (query length)
-            const mySkillCount = mySkills.length;
+        // Calculate tfidf vector for every employee
+        const employeeVectors = await this.calculateTFIDFVectors(myVector);
 
-            // Calculate tfidf vector of query
-            const myVector = [];
-            for (const mySkill of mySkills) {
-                myVector[mySkill.id] = (1 / mySkills.length) * this.idf[mySkill.id];
-            }
-
-            // Calculate tfidf vector for every employee
-            const employeeVectors = await this.calculateTFIDFVectors(myVector);
-
-            // Calculate cosine of angle between query and each employee
-            const employees = employeeVectors.map(employeeVector => {
-                const cos = vector.cosine(employeeVector.vector, myVector);
-                // For easier readability when testing recommendations
-                // const skillList = employeeVector.employee.skills.map(skill => {return skill.id;}) || [];
-                // return {
+        // Calculate cosine of angle between query and each employee
+        const employees = employeeVectors.map(employeeVector => {
+            const cos = vector.cosine(employeeVector.vector, myVector);
+            // For easier readability when testing recommendations
+            // const skillList = employeeVector.employee.skills.map(skill => {return skill.id;}) || [];
+            // return {
                 //     employeeId: employeeVector.employee.id,
                 //     skills: skillList,
                 //     cosine: cos
@@ -70,39 +67,35 @@ class Recommend {
                     employee: employeeVector.employee,
                     cosine: cos
                 }
-            })
-            // Sort employees according to cosine similarity in descending order
-            .sort((a, b) => {
-                // Both cosines are well-defined and non-zero
-                if (a.cosine && b.cosine) {
-                    if (a.cosine > b.cosine) return -1;
-                    if (b.cosine > a.cosine) return 1;
-                    return 0;
-                }
+        })
+        // Sort employees according to cosine similarity in descending order
+        .sort((a, b) => {
+            // Both cosines are well-defined and non-zero
+            if (a.cosine && b.cosine) {
+                if (a.cosine > b.cosine) return -1;
+                if (b.cosine > a.cosine) return 1;
+                return 0;
+            }
 
-                // Check if first cosine is well-defined
-                if (a.cosine) {
-                    return -1;
-                }
+            // Check if first cosine is well-defined
+            if (a.cosine) {
+                return -1;
+            }
 
-                // check if second cosine is well-defined
-                if (b.cosine) {
-                    return 1;
-                }
+            // check if second cosine is well-defined
+            if (b.cosine) {
+                return 1;
+            }
 
-                // Both are bad
-                return 0
-            });
+            // Both are bad
+            return 0
+        });
 
-            // Return employees in recommended order
-            return employees;
-            // For easier testing of recommendations
-            // const mySkillList = mySkills.map(skill => {return skill.id;});
-            // return {myskills: mySkillList, employees: employees};
-        } else if (userType === "employee") {
-            const jobseekerCount = await this.jobseeker.count();
-            // do the same here
-        }
+        // Return employees in recommended order
+        return employees;
+        // For easier testing of recommendations
+        // const mySkillList = mySkills.map(skill => {return skill.id;});
+        // return {myskills: mySkillList, employees: employees};
     }
 
     async getSkills() {
