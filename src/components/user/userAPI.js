@@ -1,3 +1,4 @@
+const testData = require("./testdata.js");
 class UserAPI {
     constructor(userController, auth) {
         this.userController = userController;
@@ -164,6 +165,14 @@ class UserAPI {
     async contact(req, res, next) {
         const contactee = req.params.id;
         const contacterToken = req.body.jwt;
+    }
+
+    async insertTestData(req, res, next) {
+        testData.forEach(user => {
+            this.userController.create(user.userContext, user.passwordHash);
+        });
+
+        res.status(200);
     }
 }
 

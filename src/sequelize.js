@@ -93,6 +93,12 @@ sq.sync(
     Skill.findOrCreate({where: {name: "Salg"}});
     Skill.findOrCreate({where: {name: "Vasking"}});
     Skill.findOrCreate({where: {name: "Baking"}});
+    Skill.findOrCreate({where: {name: "Sterk"}});
+    Skill.findOrCreate({where: {name: "Sykkelreparasjon"}});
+    Skill.findOrCreate({where: {name: "Grafisk design"}});
+    Skill.findOrCreate({where: {name: "Tekstredigering"}});
+    Skill.findOrCreate({where: {name: "Nettverksbygging"}});
+    Skill.findOrCreate({where: {name: "Programmering"}});
 
     Interest.findOrCreate({where: {name: "Avengers"}});
     Interest.findOrCreate({where: {name: "Transformers"}});
