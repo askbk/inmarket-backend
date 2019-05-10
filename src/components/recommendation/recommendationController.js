@@ -7,6 +7,8 @@ class Recommend {
         this.jobseekerSkillModel = models.JobseekerSkill;
         this.employeeSkillModel = models.EmployeeSkill;
         this.skillModel = models.Skill;
+        this.userModel = models.User;
+        this.companyModel = models.Company;
 
         this.idf = [];
         this.skills = [];
@@ -20,7 +22,7 @@ class Recommend {
 
     // This method assumes the user requesting recommendations is a jobseeker
     async employeeRecommendations(context) {
-        const userId = context.userId
+        const userId = context.userId;
 
         let mySkills;
 
@@ -35,7 +37,9 @@ class Recommend {
             // performance to be gained here.
             this.getSkills(),
             // List of skills for current user (query)
-            (async () => {mySkills = await this.getMySkills(userId);})(),
+            (async () => {
+                mySkills = await this.getMySkills(userId);
+            })()
         ]);
 
         // Create lookup table for idf
@@ -54,42 +58,50 @@ class Recommend {
         const employeeVectors = await this.calculateTFIDFVectors(myVector);
 
         // Calculate cosine of angle between query and each employee
-        const employees = employeeVectors.map(employeeVector => {
-            const cos = vector.cosine(employeeVector.vector, myVector);
-            // For easier readability when testing recommendations
-            // const skillList = employeeVector.employee.skills.map(skill => {return skill.id;}) || [];
-            // return {
+        const employees = employeeVectors
+            .map(employeeVector => {
+                const cos = vector.cosine(employeeVector.vector, myVector);
+                // For easier readability when testing recommendations
+                // const skillList = employeeVector.employee.skills.map(skill => {return skill.id;}) || [];
+                // return {
                 //     employeeId: employeeVector.employee.id,
                 //     skills: skillList,
                 //     cosine: cos
                 // }
+                const {id, company, user, skills, role} = employeeVector.employee;
                 return {
-                    employee: employeeVector.employee,
+                    employee: {
+                        employeeId: id,
+                        role: role,
+                        ...company.get(),
+                        skills: skills,
+                        ...user.get()
+                    },
                     cosine: cos
+                };
+            })
+            // Sort employees according to cosine similarity in descending order
+            .sort((a, b) => {
+                // Both cosines are well-defined and non-zero
+                if (a.cosine && b.cosine) {
+                    if (a.cosine > b.cosine) return -1;
+                    if (b.cosine > a.cosine) return 1;
+                    return 0;
                 }
-        })
-        // Sort employees according to cosine similarity in descending order
-        .sort((a, b) => {
-            // Both cosines are well-defined and non-zero
-            if (a.cosine && b.cosine) {
-                if (a.cosine > b.cosine) return -1;
-                if (b.cosine > a.cosine) return 1;
+
+                // Check if first cosine is well-defined
+                if (a.cosine) {
+                    return -1;
+                }
+
+                // check if second cosine is well-defined
+                if (b.cosine) {
+                    return 1;
+                }
+
+                // Both are bad
                 return 0;
-            }
-
-            // Check if first cosine is well-defined
-            if (a.cosine) {
-                return -1;
-            }
-
-            // check if second cosine is well-defined
-            if (b.cosine) {
-                return 1;
-            }
-
-            // Both are bad
-            return 0
-        });
+            });
 
         // Return employees in recommended order
         return employees;
@@ -100,41 +112,57 @@ class Recommend {
 
     async getSkills() {
         this.skills = await this.skillModel.findAll({
-            include: [{
-                model: this.employeeModel,
-                required: false
-            },
-            {
-                model: this.jobseekerModel,
-                required: true
-            }]
+            include: [
+                {
+                    model: this.employeeModel,
+                    required: false
+                },
+                {
+                    model: this.jobseekerModel,
+                    required: true
+                }
+            ]
         });
     }
 
     async getMySkills(id) {
         return await this.skillModel.findAll({
-            include: [{
-                model: this.jobseekerModel,
-                where: {id: id}
-            }]
+            include: [
+                {
+                    model: this.jobseekerModel,
+                    where: {id: id}
+                }
+            ]
         });
     }
 
     async getEmployees() {
         this.employees = await this.employeeModel.findAll({
-            include: [{
-                model: this.skillModel,
-                required: true
-            }]
+            include: [
+                {
+                    model: this.skillModel,
+                    required: true
+                },
+                {
+                    model: this.userModel,
+                    required: true
+                },
+                {
+                    model:this.companyModel,
+                    required: true
+                }
+            ]
         });
     }
 
     async getJobseekers() {
         this.jobseekers = await this.jobseekerModel.findAll({
-            include: [{
-                model: this.skillModel,
-                required: true
-            }]
+            include: [
+                {
+                    model: this.skillModel,
+                    required: true
+                }
+            ]
         });
     }
 
@@ -143,7 +171,8 @@ class Recommend {
             const employeeCount = this.employees.length;
             for (const skill of this.skills) {
                 const docFreq = skill.employees.length;
-                this.idf[skill.id] = 1 + Math.log(employeeCount / (1 + docFreq));
+                this.idf[skill.id] =
+                    1 + Math.log(employeeCount / (1 + docFreq));
             }
 
             resolve(true);
@@ -158,14 +187,15 @@ class Recommend {
                 for (const skill of employee.skills) {
                     // Only care about skills (terms) in jobseeker (query)
                     if (queryVector[skill.id]) {
-                        employeeVector[skill.id] = (1 / employee.skills.length) * this.idf[skill.id];
+                        employeeVector[skill.id] =
+                            (1 / employee.skills.length) * this.idf[skill.id];
                     }
                 }
 
                 return {
                     employee: employee,
                     vector: employeeVector
-                }
+                };
             });
 
             resolve(vectors);
