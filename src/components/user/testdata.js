@@ -1,6 +1,28 @@
 // Hash of passord123
 const testPasswordHash = "$2b$10$6B3pYDPoXgXtMd35NS6lPOdVWzV3Pz2OVl8p9hkFdMOZPNXAofOhi";
 const testUsers = [
+    // Companies
+    {
+        userContext: {
+            "email": "ask@dnb.no",
+            "name": "DNB",
+            "firstName": "Ask",
+            "lastName": "DNB-sjef",
+            "userType": "company",
+            "orgNumber": 987654321
+        },
+        passwordHash: testPasswordHash
+    },{
+        userContext: {
+            "email": "kontakt@inmarket.as",
+            "name": "InMarket",
+            "firstName": "aske",
+            "lastName": "ashes",
+            "userType": "company",
+            "orgNumber": 123456789
+        },
+        passwordHash: testPasswordHash
+    },
     // Jobseekers
     {
         userContext: {
@@ -82,7 +104,9 @@ const testUsers = [
             "firstName": "bossman",
             "lastName": "ashes",
             "userType": "employee",
-            "skills": [3, 4, 5]
+            "skills": [3, 4, 5],
+            "companyId": 2,
+            "role": "Teknologisk leder"
         },
         passwordHash: testPasswordHash
     },{
@@ -91,7 +115,9 @@ const testUsers = [
             "firstName": "filip",
             "lastName": "heya",
             "userType": "employee",
-            "skills": [5, 6, 7]
+            "skills": [5, 6, 7],
+            "companyId": 2,
+            "role": "Utviklerbossman"
         },
         passwordHash: testPasswordHash
     },{
@@ -100,7 +126,9 @@ const testUsers = [
             "firstName": "marcuxz",
             "lastName": "yuo",
             "userType": "employee",
-            "skills": [8, 9, 10]
+            "skills": [8, 9, 10],
+            "companyId": 2,
+            "role": "Utviklerbro"
         },
         passwordHash: testPasswordHash
     },{
@@ -109,7 +137,9 @@ const testUsers = [
             "firstName": "samuel",
             "lastName": "biggyboi",
             "userType": "employee",
-            "skills": [6, 5, 1]
+            "skills": [6, 5, 1],
+            "companyId": 2,
+            "role": "Daglig leder"
         },
         passwordHash: testPasswordHash
     },{
@@ -118,7 +148,9 @@ const testUsers = [
             "firstName": "skrettebarg",
             "lastName": "samuel",
             "userType": "employee",
-            "skills": [3, 1, 5]
+            "skills": [3, 1, 5],
+            "companyId": 2,
+            "role": "Personalansvarlig"
         },
         passwordHash: testPasswordHash
     },{
@@ -127,16 +159,20 @@ const testUsers = [
             "firstName": "izraeli",
             "lastName": "bonny",
             "userType": "employee",
-            "skills": [4, 6, 7]
+            "skills": [4, 6, 7],
+            "companyId": 2,
+            "role": "Markedsføringsansvarlig"
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "kontakt@inmarket.as",
+            "email": "post@inmarket.as",
             "firstName": "anon",
             "lastName": "yuo",
             "userType": "employee",
-            "skills": [2, 6, 3]
+            "skills": [2, 6, 3],
+            "companyId": 2,
+            "role": "Postbud"
         },
         passwordHash: testPasswordHash
     },{
@@ -145,10 +181,13 @@ const testUsers = [
             "firstName": "øyvind",
             "lastName": "aleksander",
             "userType": "employee",
-            "skills": [3, 4, 2]
+            "skills": [3, 4, 2],
+            "companyId": 2,
+            "role": "Nestleder"
         },
         passwordHash: testPasswordHash
     },
+
 ];
 
 module.exports = testUsers;
