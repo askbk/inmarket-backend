@@ -42,6 +42,7 @@ Jobseeker.User = Jobseeker.belongsTo(User);
 Jobseeker.MonitoringCompany = Jobseeker.belongsTo(Company, {as: "monitoringCompany"});
 Company.User = Company.belongsTo(User);
 Company.Empoyees = Company.hasMany(Employee, {as: "employees"});
+Employee.Company = Employee.belongsTo(Company);
 
 Jobseeker.Activities = Jobseeker.belongsToMany(Activity, {through: "activityParticipant"});
 Jobseeker.ActivityInvirations = Jobseeker.belongsToMany(Activity, {through: "activityInvitation"});
