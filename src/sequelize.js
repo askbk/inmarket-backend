@@ -140,5 +140,6 @@ module.exports = {
     EmployeeSkill,
     Interest,
     JobseekerInterest,
+    EmployeeInterest,
     Contact
 }

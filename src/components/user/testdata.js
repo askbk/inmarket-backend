@@ -30,7 +30,8 @@ const testUsers = [
             "firstName": "aske",
             "lastName": "ashes",
             "userType": "jobseeker",
-            "skills": [1, 2, 3]
+            "skills": [1, 2, 3],
+            "interests": [6, 4, 5]
         },
         passwordHash: testPasswordHash
     },{
@@ -39,7 +40,8 @@ const testUsers = [
             "firstName": "aske",
             "lastName": "ashes",
             "userType": "jobseeker",
-            "skills": [10, 9, 8]
+            "skills": [10, 9, 8],
+            "interests": [2, 7, 5]
         },
         passwordHash: testPasswordHash
     },{
@@ -48,7 +50,8 @@ const testUsers = [
             "firstName": "asko",
             "lastName": "ashes",
             "userType": "jobseeker",
-            "skills": [4, 2, 7]
+            "skills": [4, 2, 7],
+            "interests": [1, 7, 3]
         },
         passwordHash: testPasswordHash
     },{
@@ -57,7 +60,8 @@ const testUsers = [
             "firstName": "filip",
             "lastName": "ashes",
             "userType": "jobseeker",
-            "skills": [6, 5, 4]
+            "skills": [6, 5, 4],
+            "interests": [8, 9, 7]
         },
         passwordHash: testPasswordHash
     },{
@@ -66,7 +70,8 @@ const testUsers = [
             "firstName": "yo",
             "lastName": "ta",
             "userType": "jobseeker",
-            "skills": [8, 6, 5]
+            "skills": [8, 6, 5],
+            "interests": [5, 9, 1]
         },
         passwordHash: testPasswordHash
     },{
@@ -75,7 +80,8 @@ const testUsers = [
             "firstName": "tord",
             "lastName": "stord",
             "userType": "jobseeker",
-            "skills": [1, 9, 8]
+            "skills": [1, 9, 8],
+            "interests": [2, 5, 7]
         },
         passwordHash: testPasswordHash
     },{
@@ -84,7 +90,8 @@ const testUsers = [
             "firstName": "agugs",
             "lastName": "ashes",
             "userType": "jobseeker",
-            "skills": [9, 2, 6]
+            "skills": [9, 2, 6],
+            "interests": [2, 3, 9]
         },
         passwordHash: testPasswordHash
     },{
@@ -93,7 +100,8 @@ const testUsers = [
             "firstName": "filip",
             "lastName": "ashes",
             "userType": "jobseeker",
-            "skills": [7, 5, 4]
+            "skills": [7, 5, 4],
+            "interests": [6, 9, 8]
         },
         passwordHash: testPasswordHash
     },
@@ -106,7 +114,8 @@ const testUsers = [
             "userType": "employee",
             "skills": [3, 4, 5],
             "companyId": 2,
-            "role": "Teknologisk leder"
+            "role": "Teknologisk leder",
+            "interests": [8, 2, 1]
         },
         passwordHash: testPasswordHash
     },{
@@ -117,7 +126,8 @@ const testUsers = [
             "userType": "employee",
             "skills": [5, 6, 7],
             "companyId": 2,
-            "role": "Utviklerbossman"
+            "role": "Utviklerbossman",
+            "interests": [5, 8, 3]
         },
         passwordHash: testPasswordHash
     },{
@@ -128,7 +138,8 @@ const testUsers = [
             "userType": "employee",
             "skills": [8, 9, 10],
             "companyId": 2,
-            "role": "Utviklerbro"
+            "role": "Utviklerbro",
+            "interests": [2, 5, 9]
         },
         passwordHash: testPasswordHash
     },{
@@ -139,7 +150,8 @@ const testUsers = [
             "userType": "employee",
             "skills": [6, 5, 1],
             "companyId": 2,
-            "role": "Daglig leder"
+            "role": "Daglig leder",
+            "interests": [2, 4, 7]
         },
         passwordHash: testPasswordHash
     },{
@@ -150,7 +162,8 @@ const testUsers = [
             "userType": "employee",
             "skills": [3, 1, 5],
             "companyId": 2,
-            "role": "Personalansvarlig"
+            "role": "Personalansvarlig",
+            "interests": [2, 9, 7]
         },
         passwordHash: testPasswordHash
     },{
@@ -161,7 +174,8 @@ const testUsers = [
             "userType": "employee",
             "skills": [4, 6, 7],
             "companyId": 2,
-            "role": "Markedsføringsansvarlig"
+            "role": "Markedsføringsansvarlig",
+            "interests": [7, 2, 1]
         },
         passwordHash: testPasswordHash
     },{
@@ -172,7 +186,8 @@ const testUsers = [
             "userType": "employee",
             "skills": [2, 6, 3],
             "companyId": 2,
-            "role": "Postbud"
+            "role": "Postbud",
+            "interests": [5, 4, 3]
         },
         passwordHash: testPasswordHash
     },{
@@ -183,7 +198,8 @@ const testUsers = [
             "userType": "employee",
             "skills": [3, 4, 2],
             "companyId": 2,
-            "role": "Nestleder"
+            "role": "Nestleder",
+            "interests": [9, 3, 2]
         },
         passwordHash: testPasswordHash
     },
