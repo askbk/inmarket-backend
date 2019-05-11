@@ -4,17 +4,37 @@ class Recommend {
     constructor(models) {
         this.jobseekerModel = models.Jobseeker;
         this.employeeModel = models.Employee;
-        this.jobseekerSkillModel = models.JobseekerSkill;
-        this.employeeSkillModel = models.EmployeeSkill;
-        this.skillModel = models.Skill;
         this.userModel = models.User;
         this.companyModel = models.Company;
+
         this.contactModel = models.Contact;
 
-        this.idf = {};
+        this.skillModel = models.Skill;
+        this.interestModel = models.Interest;
+
+        this.jobseekerSkillModel = models.JobseekerSkill;
+        this.employeeSkillModel = models.EmployeeSkill;
+
+        this.jobseekerInterestModel = models.JobseekerInterest;
+        this.employeeInterestModel = models.JobseekerInterest;
+
+        this.idf = {
+            employees: {
+                skills: [],
+                interests: []
+            },
+            jobseekers: {
+                skills: [],
+                interests: []
+            }
+        };
+
         this.skills = [];
+        this.interests = [];
         this.employees = [];
         this.jobseekers = [];
+
+        this.myVector = {skills: [], interests: []};
 
         this.employeeVectorMap = this.employeeVectorMap.bind(this);
         this.jobseekerVectorMap = this.jobseekerVectorMap.bind(this);
@@ -23,69 +43,122 @@ class Recommend {
     // TODO: clean up code.
     // TODO: add same calculation for interests.
     // TODO: Reduce database load by implementing caching for stuff like IDF, skills, etc.
-    // TODO: Implement jobseeker recommendations for employees
 
     // This method assumes the user requesting recommendations is a jobseeker
     async employeeRecommendations(context) {
         const userId = context.userId;
 
-        let mySkills, myContacts;
+        let mySkills, myInterests, myContacts;
 
         // Use Promise.all to perform tasks in parallel
         await Promise.all([
             // Get all employees (documents)
-            (async () => {this.employees = await this.getEmployees();})(),
+            (async () => {
+                this.employees = await this.getEmployees();
+            })(),
             // Get all skills (terms)
-            (async () => {this.skills = await this.getSkills();})(),
+            (async () => {
+                this.skills = await this.getSkills();
+            })(),
+            // Get all interests (terms)
+            (async () => {
+                this.interests = await this.getInterests();
+            })(),
             // Get all contacts/contact requests for current user
-            (async () => {myContacts = await this.getContactIds(userId);})(),
+            (async () => {
+                myContacts = await this.getContactIds(userId);
+            })(),
             // List of skills for current user (query)
             (async () => {
                 mySkills = await this.getMyJobseekerSkills(userId);
+            })(),
+            (async () => {
+                myInterests = await this.getMyJobseekerInterests(userId);
             })()
         ]);
 
-
-        return await this.getRecommendations(mySkills, myContacts, this.employees, this.employeeVectorMap);
+        return await this.getRecommendations(
+            mySkills,
+            myInterests,
+            myContacts,
+            this.employees,
+            this.employeeVectorMap
+        );
     }
 
     // Same as above, but assume the requesting user is an employee
     async jobseekerRecommendations(context) {
         const userId = context.userId;
-        let mySkills, myContacts;
+        let mySkills, myInterests, myContacts;
 
         // Use Promise.all to perform tasks in parallel
         await Promise.all([
             // Get all employees (documents)
-            (async () => {this.jobseekers = await this.getJobseekers();})(),
+            (async () => {
+                this.jobseekers = await this.getJobseekers();
+            })(),
             // Get all skills (terms)
-            (async () => {this.skills = await this.getSkills();})(),
+            (async () => {
+                this.skills = await this.getSkills();
+            })(),
+            // Get all interests (terms)
+            (async () => {
+                this.interests = await this.getInterests();
+            })(),
             // Get all contacts/contact requests for current user
-            (async () => {myContacts = await this.getContactIds(userId);})(),
+            (async () => {
+                myContacts = await this.getContactIds(userId);
+            })(),
             // List of skills for current user (query)
             (async () => {
                 mySkills = await this.getMyEmployeeSkills(userId);
+            })(),
+            (async () => {
+                myInterests = await this.getMyJobseekerInterests(userId);
             })()
         ]);
 
-        return await this.getRecommendations(mySkills, myContacts, this.jobseekers, this.jobseekerVectorMap);
+        return await this.getRecommendations(
+            mySkills,
+            myInterests,
+            myContacts,
+            this.jobseekers,
+            this.jobseekerVectorMap
+        );
     }
 
-    async getRecommendations(mySkills, myContacts, audience, mapFunction, userType) {
+    async getRecommendations(
+        mySkills,
+        myInterests,
+        myContacts,
+        audience,
+        mapFunction,
+        userType
+    ) {
         // Create lookup table for idf
         this.idf = await this.calculateIDF();
-        console.log(this.idf);
 
         // Calculate tfidf vector of query
-        this.myVector = [];
-        const myIdf = userType === "jobseeker" ? this.idf.jobseeker : this.idf.employee;
+        this.myVectors = {skills: [], interests: []};
+        const myIdf =
+            userType === "jobseeker" ? this.idf.jobseekers : this.idf.employees;
         for (const mySkill of mySkills) {
-            this.myVector[mySkill.id] = (1 / mySkills.length) * myIdf[mySkill.id];
+            this.myVector.skills[mySkill.id] =
+                (1 / mySkills.length) * myIdf.skills[mySkill.id];
+        }
+        for (const myInterest of myInterests) {
+            this.myVector.interests[myInterest.id] =
+                (1 / myInterests.length) * myIdf.interests[myInterest.id];
         }
 
-        const idf = userType === "jobseeker" ? this.idf.employee : this.idf.jobseeker;
+        const idf =
+            userType === "jobseeker" ? this.idf.employees : this.idf.jobseekers;
         // Calculate tfidf vector for every user
-        const userVectors = await this.calculateTFIDFVectors(audience, myContacts, idf);
+        const userVectors = await this.calculateTFIDFVectors(
+            audience,
+            myContacts,
+            idf
+        );
 
         // Calculate cosine of angle between query and each user (cosine similarity)
         const users = userVectors
@@ -111,7 +184,24 @@ class Recommend {
                 },
                 {
                     model: this.jobseekerModel,
-                    required: true
+                    required: false
+                }
+            ]
+        });
+    }
+
+    // Get all interests in database including employees and jobseekers that have
+    // each interest.
+    async getInterests() {
+        return await this.interestModel.findAll({
+            include: [
+                {
+                    model: this.employeeModel,
+                    required: false
+                },
+                {
+                    model: this.jobseekerModel,
+                    required: false
                 }
             ]
         });
@@ -141,13 +231,40 @@ class Recommend {
         });
     }
 
+    // Get interests of current user (assumes it is a jobseeker)
+    async getMyJobseekerInterests(id) {
+        return await this.interestModel.findAll({
+            include: [
+                {
+                    model: this.jobseekerModel,
+                    where: {id: id}
+                }
+            ]
+        });
+    }
+
+    // Get interests of current user (assumes it is a jobseeker)
+    async getMyEmployeeInterests(id) {
+        return await this.interestModel.findAll({
+            include: [
+                {
+                    model: this.employeeModel,
+                    where: {id: id}
+                }
+            ]
+        });
+    }
     // Get all employees
     async getEmployees() {
         return await this.employeeModel.findAll({
             include: [
                 {
                     model: this.skillModel,
-                    required: true
+                    required: false
+                },
+                {
+                    model: this.interestModel,
+                    required: false
                 },
                 {
                     model: this.userModel,
@@ -167,7 +284,11 @@ class Recommend {
             include: [
                 {
                     model: this.skillModel,
-                    required: true
+                    required: false
+                },
+                {
+                    model: this.interestModel,
+                    required: false
                 },
                 {
                     model: this.userModel,
@@ -182,22 +303,42 @@ class Recommend {
     async getContactIds(userId) {
         return await this.contactModel.findAll({
             where: {userId: userId},
-            attributes: ['contactId']
+            attributes: ["contactId"]
         });
     }
 
-    // Calculate inverse document frequency for each skill
+    // Calculate inverse document frequency for each skill and interest
     calculateIDF() {
         return new Promise((resolve, reject) => {
             const employeeCount = this.employees.length,
                 jobseekerCount = this.jobseekers.length;
-            const idf = {employee: [], jobseeker: []};
+
+            const idf = {
+                employees: {
+                    skills: [],
+                    interests: []
+                },
+                jobseekers: {
+                    skills: [],
+                    interests: []
+                }
+            };
+
             for (const skill of this.skills) {
                 const employeeFreq = skill.employees.length,
                     jobseekerFreq = skill.jobseekers.length;
-                idf.employee[skill.id] =
+                idf.employees.skills[skill.id] =
                     1 + Math.log(employeeCount / (1 + employeeFreq));
-                idf.jobseeker[skill.id] =
+                idf.jobseekers.skills[skill.id] =
+                    1 + Math.log(jobseekerCount / (1 + jobseekerFreq));
+            }
+
+            for (const interest of this.interests) {
+                const employeeFreq = interest.employees.length,
+                    jobseekerFreq = interest.jobseekers.length;
+                idf.employees.interests[interest.id] =
+                    1 + Math.log(employeeCount / (1 + employeeFreq));
+                idf.jobseekers.interests[interest.id] =
                     1 + Math.log(jobseekerCount / (1 + jobseekerFreq));
             }
 
@@ -209,24 +350,35 @@ class Recommend {
     // who hasn't already received a contact request from the current user.
     calculateTFIDFVectors(users, myContacts, idf) {
         return new Promise((resolve, reject) => {
-            const vectors = users.filter(user => {
-                return !myContacts.includes(user.user.id);
-            }).map(user => {
-                const userVector = [];
+            const vectors = users
+                .filter(user => {
+                    return !myContacts.includes(user.user.id);
+                })
+                .map(user => {
+                    const userVector = {skills: [], interests: []};
 
-                for (const skill of user.skills) {
-                    // Only care about skills in query
-                    if (this.myVector[skill.id]) {
-                        userVector[skill.id] =
-                            (1/user.skills.length) * idf[skill.id];
+                    for (const skill of user.skills) {
+                        // Only care about skills in query
+                        if (this.myVector.skills[skill.id]) {
+                            userVector.skills[skill.id] =
+                                (1 / user.skills.length) * idf.skills[skill.id];
+                        }
                     }
-                }
 
-                return {
-                    user: user,
-                    vector: userVector
-                };
-            });
+                    for (const interest of user.interests) {
+                        // Only care about skills in query
+                        if (this.myVector.interests[interest.id]) {
+                            userVector.interests[interest.id] =
+                                (1 / user.interests.length) *
+                                idf.interests[interest.id];
+                        }
+                    }
+
+                    return {
+                        user: user,
+                        vector: userVector
+                    };
+                });
 
             resolve(vectors);
         });
@@ -256,46 +408,65 @@ class Recommend {
     }
 
     employeeVectorMap(employeeVector) {
-        const cos = vector.cosine(employeeVector.vector, this.myVector);
-        // For easier readability when testing recommendations
-        // const skillList = employeeVector.employee.skills.map(skill => {return skill.id;}) || [];
-        // return {
-        //     employeeId: employeeVector.employee.id,
-        //     skills: skillList,
-        //     cosine: cos
-        // }
-        const {id, company, user, skills, role} = employeeVector.user;
+        const skillCos = vector.cosine(
+            employeeVector.vector.skills,
+            this.myVector.skills
+        );
+        const interestCos = vector.cosine(
+            employeeVector.vector.interests,
+            this.myVector.interests
+        );
+
+        const {
+            id,
+            company,
+            user,
+            skills,
+            interests,
+            role
+        } = employeeVector.user;
         return {
             employee: {
                 employeeId: id,
                 role: role,
                 ...company.get(),
                 skills: skills,
+                interests: interests,
                 ...user.get()
             },
-            cosine: cos
+            cosine: (skillCos + interestCos) / 2
         };
     }
 
     jobseekerVectorMap(jobseekerVector) {
-        const cos = vector.cosine(jobseekerVector.vector, this.myVector);
-        // For easier readability when testing recommendations
-        // const skillList = employeeVector.employee.skills.map(skill => {return skill.id;}) || [];
-        // return {
-        //     employeeId: employeeVector.employee.id,
-        //     skills: skillList,
-        //     cosine: cos
-        // }
-        const {id, education, user, skills, type} = jobseekerVector.user;
+        const skillCos = vector.cosine(
+            jobseekerVector.vector.skills,
+            this.myVector.skills
+        );
+        const interestCos = vector.cosine(
+            jobseekerVector.vector.interests,
+            this.myVector.interests
+        );
+
+        const {
+            id,
+            education,
+            user,
+            skills,
+            interests,
+            type
+        } = jobseekerVector.user;
+
         return {
             jobseeker: {
                 jobseekerId: id,
                 type: type,
                 education: education,
                 skills: skills,
+                interests: interests,
                 ...user.get()
             },
-            cosine: cos
+            cosine: (skillCos + interestCos) / 2
         };
     }
 }

@@ -79,7 +79,7 @@ class UserController {
                     }
                 });
 
-                // this.jobseekerSkillModel.bulkCreate(jobseekerSkills);
+                this.jobseekerSkillModel.bulkCreate(jobseekerSkills);
 
                 const jobseekerInterests = userContext.interests.map(interest => {
                     return {
