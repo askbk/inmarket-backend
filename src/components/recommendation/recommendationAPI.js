@@ -11,9 +11,33 @@ class RecommendationAPI {
             userId: req.params.id
         };
 
-        const skills = await this.recommend.employeeRecommendations(userContext);
+        try {
+            const employees = await this.recommend.employeeRecommendations(userContext);
 
-        res.send(skills);
+            res.status(200).send(employees);
+        } catch (e) {
+            res.status(500).send({
+                "success": "false",
+                "message": `Error when retrieving employee recommendations: ${e}`
+            });
+        }
+    }
+
+    async getJobseekerRecommendations(req, res, next) {
+        const userContext = {
+            userId: req.params.id
+        };
+
+        try {
+            const jobseekers = await this.recommend.jobseekerRecommendations(userContext);
+
+            res.status(200).send(jobseekers);
+        } catch (e) {
+            res.status(500).send({
+                "success": "false",
+                "message": `Error when retrieving jobseeker recommendations: ${e}`
+            });
+        }
     }
 }
 
