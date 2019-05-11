@@ -30,6 +30,7 @@ const EmployeeSkill     = Models.EmployeeSkill(sq, Sq);
 const Interest          = Models.Interest(sq, Sq);
 const InterestRating    = Models.InterestRating(sq, Sq);
 const JobseekerInterest = Models.JobseekerInterest(sq, Sq);
+const EmployeeInterest  = Models.EmployeeInterest(sq, Sq);
 const User              = Models.User(sq, Sq);
 const Conversation      = Models.Conversation(sq, Sq);
 const Message           = Models.Message(sq, Sq);
@@ -56,11 +57,19 @@ Conversation.hasMany(Message);
 User.belongsToMany(Conversation, {through: "conversationParticipant"});
 Message.belongsTo(User, {as: "sender"});
 
+Jobseeker.Interests = Jobseeker.belongsToMany(Interest, {through: JobseekerInterest});
+Interest.Jobseekers = Interest.belongsToMany(Jobseeker, {through: JobseekerInterest});
+Interest.Employees = Interest.belongsToMany(Employee, {through: EmployeeInterest});
+Employee.InterestsWanted = Employee.belongsToMany(Interest, {through: EmployeeInterest});
+JobseekerInterest.Ratings = JobseekerInterest.hasMany(InterestRating);
+InterestRating.Employee = InterestRating.belongsTo(Employee);
+InterestRating.Company = InterestRating.belongsTo(Company);
+
 Jobseeker.Skills = Jobseeker.belongsToMany(Skill, {through: JobseekerSkill});
 Skill.Jobseekers = Skill.belongsToMany(Jobseeker, {through: JobseekerSkill});
 Skill.Employees = Skill.belongsToMany(Employee, {through: EmployeeSkill});
 Employee.SkillsWanted = Employee.belongsToMany(Skill, {through: EmployeeSkill});
-JobseekerSkill.Ratings = JobseekerSkill.hasMany(SkillRating)
+JobseekerSkill.Ratings = JobseekerSkill.hasMany(SkillRating);
 SkillRating.Employee = SkillRating.belongsTo(Employee, {as: "ratedByEmployee"});
 SkillRating.Company = SkillRating.belongsTo(Company, {as: "ratedByCompany"});
 
@@ -109,6 +118,12 @@ sq.sync(
     Interest.findOrCreate({where: {name: "Transformers"}});
     Interest.findOrCreate({where: {name: "Lese bøker"}});
     Interest.findOrCreate({where: {name: "Rappe"}});
+    Interest.findOrCreate({where: {name: "Avengers"}});
+    Interest.findOrCreate({where: {name: "Musikk"}});
+    Interest.findOrCreate({where: {name: "Fotografi"}});
+    Interest.findOrCreate({where: {name: "Fjellturer"}});
+    Interest.findOrCreate({where: {name: "Svømming"}});
+    Interest.findOrCreate({where: {name: "Fotball"}});
 }).catch(e => {
     console.log(`error: ${e}`);
 });
