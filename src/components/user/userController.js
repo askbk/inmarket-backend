@@ -1,13 +1,19 @@
 class UserController {
     constructor(models) {
         this.userModel = models.User;
+        this.loginModel = models.Login;
+
         this.jobseekerModel = models.Jobseeker;
         this.employeeModel = models.Employee;
         this.companyModel = models.Company;
-        this.loginModel = models.Login;
+
         this.jobseekerSkillModel = models.JobseekerSkill;
         this.employeeSkillModel = models.EmployeeSkill;
         this.skillModel = models.Skill;
+
+        this.jobseekerInterestModel = models.JobseekerInterest;
+        this.employeeInterestModel = models.EmployeeInterest;
+        this.interestModel = models.Interest;
     }
 
     async getAll() {
@@ -34,38 +40,57 @@ class UserController {
                     userId: user.id
                 });
             } else if (userContext.userType === "employee") {
-                this.employeeModel.create({
+                const employee = await this.employeeModel.create({
                     ...userContext,
                     userId: user.id,
-                }).then(employee => {
-                    const employeeSkills = userContext.skills.map(skill => {
-                        return {
-                            employeeId: employee.id,
-                            skillId: skill,
-                            isActive: true
-                        }
-                    });
-                    this.employeeSkillModel.bulkCreate(employeeSkills);
-                })
+                });
+
+                const employeeSkills = userContext.skills.map(skill => {
+                    return {
+                        employeeId: employee.id,
+                        skillId: skill,
+                        isActive: true
+                    }
+                });
+
+                this.employeeSkillModel.bulkCreate(employeeSkills);
+
+                const employeeInterests = userContext.interests.map(interest => {
+                    return {
+                        employeeId: employee.id,
+                        interestId: interest,
+                        isActive: true
+                    }
+                });
+
+                this.employeeInterestModel.bulkCreate(employeeInterests);
             } else if (userContext.userType === "jobseeker") {
 
-                this.jobseekerModel.create({
+                const jobseeker = await this.jobseekerModel.create({
                     ...userContext,
                     userId: user.id
-                }).then(jobseeker => {
-                    const jobseekerSkills = userContext.skills.map(skill => {
-                        return {
-                            jobseekerId: jobseeker.id,
-                            skillId: skill,
-                            isActive: true
-                        }
-                    });
-                    this.jobseekerSkillModel.bulkCreate(jobseekerSkills);
-                })
-            }
+                });
 
-            // TODO: need to insert skills that jobseeker has or that employee
-            // wants
+                const jobseekerSkills = userContext.skills.map(skill => {
+                    return {
+                        jobseekerId: jobseeker.id,
+                        skillId: skill,
+                        isActive: true
+                    }
+                });
+
+                // this.jobseekerSkillModel.bulkCreate(jobseekerSkills);
+
+                const jobseekerInterests = userContext.interests.map(interest => {
+                    return {
+                        jobseekerId: jobseeker.id,
+                        interestId: interest,
+                        isActive: true
+                    }
+                });
+
+                this.jobseekerInterestModel.bulkCreate(jobseekerInterests);
+            }
 
             this.loginModel.create({
                 email: userContext.email,
