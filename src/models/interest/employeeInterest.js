@@ -8,7 +8,7 @@ module.exports = (sequelize, Sq) => {
         }
     }, {
         sequelize,
-        modelName: "EmployeeInterest"
+        modelName: "employeeInterest"
     });
 
     return EmployeeInterest;

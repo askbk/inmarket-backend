@@ -73,12 +73,6 @@ JobseekerSkill.Ratings = JobseekerSkill.hasMany(SkillRating);
 SkillRating.Employee = SkillRating.belongsTo(Employee, {as: "ratedByEmployee"});
 SkillRating.Company = SkillRating.belongsTo(Company, {as: "ratedByCompany"});
 
-Jobseeker.Interests = Jobseeker.belongsToMany(Interest, {through: JobseekerInterest});
-Employee.InterestsWanted = Employee.belongsToMany(Interest, {through: "employeeWantsInterest"});
-JobseekerInterest.Ratings = JobseekerInterest.hasMany(InterestRating)
-InterestRating.Employee = InterestRating.belongsTo(Employee, {as: "ratedByEmployee"});
-InterestRating.Company = InterestRating.belongsTo(Company, {as: "ratedByCompany"});
-
 //  This is only for testing purposes to be able to log in with the dummy users
 const Auth = require("./components/auth/auth.js");
 const auth = new Auth();
