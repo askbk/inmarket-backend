@@ -9,33 +9,36 @@ class Recommend {
         this.skillModel = models.Skill;
         this.userModel = models.User;
         this.companyModel = models.Company;
+        this.contactModel = models.Contact;
 
         this.idf = [];
         this.skills = [];
         this.employees = [];
-        this.employeeCount = 0;
     }
 
     // TODO: clean up code.
     // TODO: add same calculation for interests.
     // TODO: Reduce database load by implementing caching for stuff like IDF, skills, etc.
+    // TODO: Implement jobseeker recommendations for employees
 
     // This method assumes the user requesting recommendations is a jobseeker
     async employeeRecommendations(context) {
         const userId = context.userId;
 
-        let mySkills;
+        let mySkills, myContacts;
 
         // Use Promise.all to perform tasks in parallel
         await Promise.all([
             // Get all employees (documents)
-            this.getEmployees(),
+            (async () => {this.employees = await this.getEmployees();})(),
             // Get all skills (terms)
             // Is it better to just use this.employees, as it already contains
             // relevant skills? Would then have to manually count number of
             // employees looking for a specific skill. Check if there is some
             // performance to be gained here.
-            this.getSkills(),
+            (async () => {this.skills = await this.getSkills();})(),
+            // Get all contacts/contact requests for current user
+            (async () => {myContacts = await this.getContactIds(userId);})(),
             // List of skills for current user (query)
             (async () => {
                 mySkills = await this.getMySkills(userId);
@@ -43,10 +46,7 @@ class Recommend {
         ]);
 
         // Create lookup table for idf
-        await this.calculateIDF();
-
-        // Count skills (query length)
-        const mySkillCount = mySkills.length;
+        this.idf = await this.calculateIDF();
 
         // Calculate tfidf vector of query
         const myVector = [];
@@ -55,9 +55,9 @@ class Recommend {
         }
 
         // Calculate tfidf vector for every employee
-        const employeeVectors = await this.calculateTFIDFVectors(myVector);
+        const employeeVectors = await this.calculateTFIDFVectors(myVector, myContacts);
 
-        // Calculate cosine of angle between query and each employee
+        // Calculate cosine of angle between query and each employee (cosine similarity)
         const employees = employeeVectors
             .map(employeeVector => {
                 const cos = vector.cosine(employeeVector.vector, myVector);
@@ -99,7 +99,7 @@ class Recommend {
                     return 1;
                 }
 
-                // Both are bad
+                // Both are 0/null/NaN
                 return 0;
             });
 
@@ -110,8 +110,10 @@ class Recommend {
         // return {myskills: mySkillList, employees: employees};
     }
 
+    // Get all skills in database including employees and jobseekers that have
+    // each skill.
     async getSkills() {
-        this.skills = await this.skillModel.findAll({
+        return await this.skillModel.findAll({
             include: [
                 {
                     model: this.employeeModel,
@@ -125,6 +127,7 @@ class Recommend {
         });
     }
 
+    // Get skills of current user
     async getMySkills(id) {
         return await this.skillModel.findAll({
             include: [
@@ -136,8 +139,9 @@ class Recommend {
         });
     }
 
+    // Get all employees
     async getEmployees() {
-        this.employees = await this.employeeModel.findAll({
+        return await this.employeeModel.findAll({
             include: [
                 {
                     model: this.skillModel,
@@ -148,15 +152,25 @@ class Recommend {
                     required: true
                 },
                 {
-                    model:this.companyModel,
+                    model: this.companyModel,
                     required: true
                 }
             ]
         });
     }
 
+    // Get userIds of all users that the current user either already has contact
+    // with, or that the current user already has sent a contact request to.
+    async getContactIds(userId) {
+        return await this.contactModel.findAll({
+            where: {userId: userId},
+            attributes: ['contactId']
+        });
+    }
+
+    // Get all jobseekers
     async getJobseekers() {
-        this.jobseekers = await this.jobseekerModel.findAll({
+        return await this.jobseekerModel.findAll({
             include: [
                 {
                     model: this.skillModel,
@@ -166,22 +180,28 @@ class Recommend {
         });
     }
 
+    // Calculate inverse document frequency for each skill
     calculateIDF() {
         return new Promise((resolve, reject) => {
             const employeeCount = this.employees.length;
+            const idf = [];
             for (const skill of this.skills) {
                 const docFreq = skill.employees.length;
-                this.idf[skill.id] =
+                idf[skill.id] =
                     1 + Math.log(employeeCount / (1 + docFreq));
             }
 
-            resolve(true);
+            resolve(idf);
         });
     }
 
-    calculateTFIDFVectors(queryVector) {
+    // Calculate vectors for each employee that isn't already a contact and
+    // who hasn't already received a contact request from the current user.
+    calculateTFIDFVectors(queryVector, myContacts) {
         return new Promise((resolve, reject) => {
-            const vectors = this.employees.map(employee => {
+            const vectors = this.employees.filter(employee => {
+                return !myContacts.includes(employee.user.id);
+            }).map(employee => {
                 const employeeVector = [];
 
                 for (const skill of employee.skills) {

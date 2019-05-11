@@ -154,6 +154,7 @@ class UserAPI {
     async contact(req, res, next) {
         const contactee = req.params.id;
         const contacterToken = req.body.jwt;
+        res.status(200).send({success: true, message: "Contact request sent."});
     }
 
     async insertTestData(req, res, next) {

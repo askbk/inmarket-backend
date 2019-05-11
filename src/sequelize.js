@@ -50,7 +50,7 @@ Employee.hasMany(Activity, {as: "createdActivities"});
 Company.hasMany(Activity);
 Activity.hasMany(ActivityException, {as: "exceptions"});
 
-User.belongsToMany(User, {through: Contact, as: "contacts"});
+User.Contacts = User.belongsToMany(User, {through: Contact, as: "contacts"});
 
 Conversation.hasMany(Message);
 User.belongsToMany(Conversation, {through: "conversationParticipant"});
@@ -88,6 +88,10 @@ sq.sync(
             {email: "ask@ask.no", passwordHash: passHash, userId: users[0].id},
             {email: "yo@yo.net", passwordHash: passHash, userId: users[1].id}
         ]);
+        Contact.bulkCreate([
+            {userId: users[0].id, contactId: users[1].id},
+            {userId: users[1].id, contactId: users[0].id}
+        ])
     });
 
     Skill.findOrCreate({where: {name: "Videoredigering"}});
@@ -120,5 +124,6 @@ module.exports = {
     JobseekerSkill,
     EmployeeSkill,
     Interest,
-    JobseekerInterest
+    JobseekerInterest,
+    Contact
 }
