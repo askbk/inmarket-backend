@@ -2,8 +2,6 @@ class RecommendationAPI {
     constructor(recommend, auth) {
         this.recommend = recommend;
         this.auth = auth;
-
-        console.log(this.recommend);
     }
 
     async getEmployeeRecommendations(req, res, next) {
