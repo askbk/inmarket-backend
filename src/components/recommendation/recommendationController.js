@@ -41,33 +41,16 @@ class Recommend {
     }
 
     // TODO: clean up code.
-    // TODO: add same calculation for interests.
     // TODO: Reduce database load by implementing caching for stuff like IDF, skills, etc.
 
     // This method assumes the user requesting recommendations is a jobseeker
     async employeeRecommendations(context) {
         const userId = context.userId;
 
-        let mySkills, myInterests, myContacts;
+        let mySkills, myInterests;
 
         // Use Promise.all to perform tasks in parallel
         await Promise.all([
-            // Get all employees (documents)
-            (async () => {
-                this.employees = await this.getEmployees();
-            })(),
-            // Get all skills (terms)
-            (async () => {
-                this.skills = await this.getSkills();
-            })(),
-            // Get all interests (terms)
-            (async () => {
-                this.interests = await this.getInterests();
-            })(),
-            // Get all contacts/contact requests for current user
-            (async () => {
-                myContacts = await this.getContactIds(userId);
-            })(),
             // List of skills for current user (query)
             (async () => {
                 mySkills = await this.getMyJobseekerSkills(userId);
@@ -77,13 +60,15 @@ class Recommend {
             })()
         ]);
 
-        return await this.getRecommendations(
-            mySkills,
-            myInterests,
-            myContacts,
-            this.employees,
-            this.employeeVectorMap
-        );
+        const recommendationContext = {
+            userId: userId,
+            mySkills: mySkills,
+            myInterests: myInterests,
+            userType: "jobseeker",
+            mapFunction: this.employeeVectorMap
+        };
+
+        return await this.getRecommendations(recommendationContext);
     }
 
     // Same as above, but assume the requesting user is an employee
@@ -93,7 +78,37 @@ class Recommend {
 
         // Use Promise.all to perform tasks in parallel
         await Promise.all([
-            // Get all employees (documents)
+            // List of skills for current user (query)
+            (async () => {
+                mySkills = await this.getMyEmployeeSkills(userId);
+            })(),
+            (async () => {
+                myInterests = await this.getMyJobseekerInterests(userId);
+            })()
+        ]);
+
+        const recommendationContext = {
+            userId: userId,
+            mySkills: mySkills,
+            myInterests: myInterests,
+            userType: "employee",
+            mapFunction: this.jobseekerVectorMap
+        };
+
+        return await this.getRecommendations(recommendationContext);
+    }
+
+    async getRecommendations(context) {
+        const {mySkills, myInterests, mapFunction, userType, userId} = context;
+
+        let myContacts;
+
+        // Use Promise.all to perform tasks in parallel
+        await Promise.all([
+            // Get all employees and jobseekers
+            (async () => {
+                this.employees = await this.getEmployees();
+            })(),
             (async () => {
                 this.jobseekers = await this.getJobseekers();
             })(),
@@ -108,33 +123,12 @@ class Recommend {
             // Get all contacts/contact requests for current user
             (async () => {
                 myContacts = await this.getContactIds(userId);
-            })(),
-            // List of skills for current user (query)
-            (async () => {
-                mySkills = await this.getMyEmployeeSkills(userId);
-            })(),
-            (async () => {
-                myInterests = await this.getMyJobseekerInterests(userId);
             })()
         ]);
 
-        return await this.getRecommendations(
-            mySkills,
-            myInterests,
-            myContacts,
-            this.jobseekers,
-            this.jobseekerVectorMap
-        );
-    }
+        const audience =
+            userType === "jobseeker" ? this.employees : this.jobseekers;
 
-    async getRecommendations(
-        mySkills,
-        myInterests,
-        myContacts,
-        audience,
-        mapFunction,
-        userType
-    ) {
         // Create lookup table for idf
         this.idf = await this.calculateIDF();
 
@@ -142,14 +136,16 @@ class Recommend {
         this.myVectors = {skills: [], interests: []};
         const myIdf =
             userType === "jobseeker" ? this.idf.jobseekers : this.idf.employees;
-        for (const mySkill of mySkills) {
+
+        mySkills.forEach(mySkill => {
             this.myVector.skills[mySkill.id] =
                 (1 / mySkills.length) * myIdf.skills[mySkill.id];
-        }
-        for (const myInterest of myInterests) {
+        });
+
+        myInterests.forEach(myInterest => {
             this.myVector.interests[myInterest.id] =
                 (1 / myInterests.length) * myIdf.interests[myInterest.id];
-        }
+        });
 
         const idf =
             userType === "jobseeker" ? this.idf.employees : this.idf.jobseekers;
@@ -190,7 +186,7 @@ class Recommend {
         });
     }
 
-    // Get all interests in database including employees and jobseekers that have
+    // Get all interests in database, including employees and jobseekers that have
     // each interest.
     async getInterests() {
         return await this.interestModel.findAll({
@@ -219,7 +215,7 @@ class Recommend {
         });
     }
 
-    // Get skills of current user (assumes it is a jobseeker)
+    // Get skills of current user (assumes it is an employee)
     async getMyEmployeeSkills(id) {
         return await this.skillModel.findAll({
             include: [
@@ -243,7 +239,7 @@ class Recommend {
         });
     }
 
-    // Get interests of current user (assumes it is a jobseeker)
+    // Get interests of current user (assumes it is an employee)
     async getMyEmployeeInterests(id) {
         return await this.interestModel.findAll({
             include: [
@@ -254,6 +250,7 @@ class Recommend {
             ]
         });
     }
+
     // Get all employees
     async getEmployees() {
         return await this.employeeModel.findAll({
@@ -324,23 +321,23 @@ class Recommend {
                 }
             };
 
-            for (const skill of this.skills) {
+            this.skills.forEach(skill => {
                 const employeeFreq = skill.employees.length,
                     jobseekerFreq = skill.jobseekers.length;
                 idf.employees.skills[skill.id] =
                     1 + Math.log(employeeCount / (1 + employeeFreq));
                 idf.jobseekers.skills[skill.id] =
                     1 + Math.log(jobseekerCount / (1 + jobseekerFreq));
-            }
+            });
 
-            for (const interest of this.interests) {
+            this.interests.forEach(interest => {
                 const employeeFreq = interest.employees.length,
                     jobseekerFreq = interest.jobseekers.length;
                 idf.employees.interests[interest.id] =
                     1 + Math.log(employeeCount / (1 + employeeFreq));
                 idf.jobseekers.interests[interest.id] =
                     1 + Math.log(jobseekerCount / (1 + jobseekerFreq));
-            }
+            });
 
             resolve(idf);
         });
@@ -352,27 +349,28 @@ class Recommend {
         return new Promise((resolve, reject) => {
             const vectors = users
                 .filter(user => {
+                    // Filter out contacts and recipients of contact requests
                     return !myContacts.includes(user.user.id);
                 })
                 .map(user => {
                     const userVector = {skills: [], interests: []};
 
-                    for (const skill of user.skills) {
+                    user.skills.forEach(skill => {
                         // Only care about skills in query
                         if (this.myVector.skills[skill.id]) {
                             userVector.skills[skill.id] =
                                 (1 / user.skills.length) * idf.skills[skill.id];
                         }
-                    }
+                    });
 
-                    for (const interest of user.interests) {
+                    user.interests.forEach(interest => {
                         // Only care about skills in query
                         if (this.myVector.interests[interest.id]) {
                             userVector.interests[interest.id] =
                                 (1 / user.interests.length) *
                                 idf.interests[interest.id];
                         }
-                    }
+                    });
 
                     return {
                         user: user,
@@ -425,6 +423,7 @@ class Recommend {
             interests,
             role
         } = employeeVector.user;
+
         return {
             employee: {
                 employeeId: id,
