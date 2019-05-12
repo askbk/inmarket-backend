@@ -169,141 +169,6 @@ class Recommend {
         // return {myskills: mySkillList, employees: employees};
     }
 
-    // Get all skills in database including employees and jobseekers that have
-    // each skill.
-    async getSkills() {
-        return await this.skillModel.findAll({
-            include: [
-                {
-                    model: this.employeeModel,
-                    required: false
-                },
-                {
-                    model: this.jobseekerModel,
-                    required: false
-                }
-            ]
-        });
-    }
-
-    // Get all interests in database, including employees and jobseekers that have
-    // each interest.
-    async getInterests() {
-        return await this.interestModel.findAll({
-            include: [
-                {
-                    model: this.employeeModel,
-                    required: false
-                },
-                {
-                    model: this.jobseekerModel,
-                    required: false
-                }
-            ]
-        });
-    }
-
-    // Get skills of current user (assumes it is a jobseeker)
-    async getMyJobseekerSkills(id) {
-        return await this.skillModel.findAll({
-            include: [
-                {
-                    model: this.jobseekerModel,
-                    where: {id: id}
-                }
-            ]
-        });
-    }
-
-    // Get skills of current user (assumes it is an employee)
-    async getMyEmployeeSkills(id) {
-        return await this.skillModel.findAll({
-            include: [
-                {
-                    model: this.employeeModel,
-                    where: {id: id}
-                }
-            ]
-        });
-    }
-
-    // Get interests of current user (assumes it is a jobseeker)
-    async getMyJobseekerInterests(id) {
-        return await this.interestModel.findAll({
-            include: [
-                {
-                    model: this.jobseekerModel,
-                    where: {id: id}
-                }
-            ]
-        });
-    }
-
-    // Get interests of current user (assumes it is an employee)
-    async getMyEmployeeInterests(id) {
-        return await this.interestModel.findAll({
-            include: [
-                {
-                    model: this.employeeModel,
-                    where: {id: id}
-                }
-            ]
-        });
-    }
-
-    // Get all employees
-    async getEmployees() {
-        return await this.employeeModel.findAll({
-            include: [
-                {
-                    model: this.skillModel,
-                    required: false
-                },
-                {
-                    model: this.interestModel,
-                    required: false
-                },
-                {
-                    model: this.userModel,
-                    required: true
-                },
-                {
-                    model: this.companyModel,
-                    required: true
-                }
-            ]
-        });
-    }
-
-    // Get all jobseekers
-    async getJobseekers() {
-        return await this.jobseekerModel.findAll({
-            include: [
-                {
-                    model: this.skillModel,
-                    required: false
-                },
-                {
-                    model: this.interestModel,
-                    required: false
-                },
-                {
-                    model: this.userModel,
-                    required: true
-                }
-            ]
-        });
-    }
-
-    // Get userIds of all users that the current user either already has contact
-    // with, or that the current user already has sent a contact request to.
-    async getContactIds(userId) {
-        return await this.contactModel.findAll({
-            where: {userId: userId},
-            attributes: ["contactId"]
-        });
-    }
-
     // Calculate inverse document frequency for each skill and interest
     calculateIDF() {
         return new Promise((resolve, reject) => {
@@ -467,6 +332,141 @@ class Recommend {
             },
             cosine: (skillCos + interestCos) / 2
         };
+    }
+
+    // Get all skills in database including employees and jobseekers that have
+    // each skill.
+    async getSkills() {
+        return await this.skillModel.findAll({
+            include: [
+                {
+                    model: this.employeeModel,
+                    required: false
+                },
+                {
+                    model: this.jobseekerModel,
+                    required: false
+                }
+            ]
+        });
+    }
+
+    // Get all interests in database, including employees and jobseekers that have
+    // each interest.
+    async getInterests() {
+        return await this.interestModel.findAll({
+            include: [
+                {
+                    model: this.employeeModel,
+                    required: false
+                },
+                {
+                    model: this.jobseekerModel,
+                    required: false
+                }
+            ]
+        });
+    }
+
+    // Get skills of current user (assumes it is a jobseeker)
+    async getMyJobseekerSkills(id) {
+        return await this.skillModel.findAll({
+            include: [
+                {
+                    model: this.jobseekerModel,
+                    where: {id: id}
+                }
+            ]
+        });
+    }
+
+    // Get skills of current user (assumes it is an employee)
+    async getMyEmployeeSkills(id) {
+        return await this.skillModel.findAll({
+            include: [
+                {
+                    model: this.employeeModel,
+                    where: {id: id}
+                }
+            ]
+        });
+    }
+
+    // Get interests of current user (assumes it is a jobseeker)
+    async getMyJobseekerInterests(id) {
+        return await this.interestModel.findAll({
+            include: [
+                {
+                    model: this.jobseekerModel,
+                    where: {id: id}
+                }
+            ]
+        });
+    }
+
+    // Get interests of current user (assumes it is an employee)
+    async getMyEmployeeInterests(id) {
+        return await this.interestModel.findAll({
+            include: [
+                {
+                    model: this.employeeModel,
+                    where: {id: id}
+                }
+            ]
+        });
+    }
+
+    // Get all employees
+    async getEmployees() {
+        return await this.employeeModel.findAll({
+            include: [
+                {
+                    model: this.skillModel,
+                    required: false
+                },
+                {
+                    model: this.interestModel,
+                    required: false
+                },
+                {
+                    model: this.userModel,
+                    required: true
+                },
+                {
+                    model: this.companyModel,
+                    required: true
+                }
+            ]
+        });
+    }
+
+    // Get all jobseekers
+    async getJobseekers() {
+        return await this.jobseekerModel.findAll({
+            include: [
+                {
+                    model: this.skillModel,
+                    required: false
+                },
+                {
+                    model: this.interestModel,
+                    required: false
+                },
+                {
+                    model: this.userModel,
+                    required: true
+                }
+            ]
+        });
+    }
+
+    // Get userIds of all users that the current user either already has contact
+    // with, or that the current user already has sent a contact request to.
+    async getContactIds(userId) {
+        return await this.contactModel.findAll({
+            where: {userId: userId},
+            attributes: ["contactId"]
+        });
     }
 }
 
