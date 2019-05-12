@@ -290,14 +290,12 @@ class Recommend {
         } = employeeVector.user;
 
         return {
-            employee: {
-                employeeId: id,
-                role: role,
-                ...company.get(),
-                skills: skills,
-                interests: interests,
-                ...user.get()
-            },
+            employeeId: id,
+            role: role,
+            ...company.get(),
+            skills: skills,
+            interests: interests,
+            ...user.get(),
             cosine: (skillCos + interestCos) / 2
         };
     }
@@ -322,14 +320,12 @@ class Recommend {
         } = jobseekerVector.user;
 
         return {
-            jobseeker: {
-                jobseekerId: id,
-                type: type,
-                education: education,
-                skills: skills,
-                interests: interests,
-                ...user.get()
-            },
+            jobseekerId: id,
+            type: type,
+            education: education,
+            skills: skills,
+            interests: interests,
+            ...user.get(),
             cosine: (skillCos + interestCos) / 2
         };
     }
