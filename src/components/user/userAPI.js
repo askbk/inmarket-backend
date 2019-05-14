@@ -151,51 +151,25 @@ class UserAPI {
         const contactee = parseInt(req.params.id);
 
         if (isNaN(contactee)) {
-            res.status(500).send({
+            res.status(400).send({
                 success: false,
                 message: 'ID must be a integer'
             });
-            return;
+
+            return false;
         }
 
         let contacter;
         try {
             const authenticated = await this.auth.authenticate(req, res, next);
             contacter = authenticated.sub;
-
-            if (contacter === contactee) {
-                res.status(500).send({
-                    success: false,
-                    message: "You can't connect with yourself"
-                });
-            }
         } catch (e) {
             res.status(500).send({
                 success: false,
-                message: 'Authentication failed'
+                message: `Authentication failed: ${e}`
             });
-            return;
-        }
 
-        try {
-            const hasContacted = await this.userController.hasContactOnOneSide(
-                contacter,
-                contactee
-            );
-
-            if (hasContacted) {
-                res.status(500).send({
-                    success: false,
-                    message: 'The contacter has already requested the contactee'
-                });
-                return;
-            }
-        } catch (e) {
-            res.status(500).send({
-                success: false,
-                message: `Error when contacting: ${e}`
-            });
-            return;
+            return false;
         }
 
         try {
@@ -203,13 +177,17 @@ class UserAPI {
 
             res.status(200).send({
                 success: true,
-                message: ''
+                message: 'Created contact'
             });
+
+            return true;
         } catch (e) {
             res.status(500).send({
-                success: false,
-                message: 'Could not create a contact'
+                succuss: false,
+                message: `Error when creating contact: ${e}`
             });
+
+            return false;
         }
     }
 }

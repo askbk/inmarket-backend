@@ -28,9 +28,26 @@ const JobseekerInterest = Models.JobseekerInterest(sq, Sq);
 const User = Models.User(sq, Sq);
 const Conversation = Models.Conversation(sq, Sq);
 const Message = Models.Message(sq, Sq);
-const Contact = Models.Contact(sq, Sq);
+// Contact model has to be defined here because we want the foreign keys to also be primary keys
+const Contact = sq.define('contact', {
+    contactee: {
+        type: Sq.INTEGER,
+        unique: 'contactIndex',
+        references: {
+            model: User,
+            key: 'id'
+        }
+    },
+    contacter: {
+        type: Sq.INTEGER,
+        unique: 'contactIndex',
+        references: {
+            model: User,
+            key: 'id'
+        }
+    }
+});
 
-//  Define relations here...
 Login.User = Login.belongsTo(User);
 Employee.User = Employee.belongsTo(User);
 Jobseeker.User = Jobseeker.belongsTo(User);
@@ -49,8 +66,6 @@ Jobseeker.ActivityInvirations = Jobseeker.belongsToMany(Activity, {
 Employee.hasMany(Activity, { as: 'createdActivities' });
 Company.hasMany(Activity);
 Activity.hasMany(ActivityException, { as: 'exceptions' });
-
-User.belongsToMany(User, { through: Contact, as: 'contacts' });
 
 Conversation.hasMany(Message);
 User.belongsToMany(Conversation, { through: 'conversationParticipant' });
