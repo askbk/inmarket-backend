@@ -15,15 +15,19 @@ class UserAPI {
                         //get ID of the logged in person
                         id = authenticated.sub.toString();
                     } else {
-                        res.status(500).send({
+                        res.status(400).send({
                             success: false,
                             message: 'ID must be a integer or me'
                         });
-                        return;
+
+                        return false;
                     }
                 }
+
                 const user = await this.userController.getByID(id);
                 res.status(200).send(user);
+
+                return true;
             }
         } catch (e) {
             return false;
