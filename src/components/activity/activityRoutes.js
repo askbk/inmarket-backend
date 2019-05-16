@@ -1,5 +1,5 @@
 module.exports = (router, activites) => {
-    router.get('', (rq, rs, n) => {
+    router.get('/users/:id', (rq, rs, n) => {
         activites.getAll(rq, rs, n);
     });
     router.get('/:id', (rq, rs, n) => {

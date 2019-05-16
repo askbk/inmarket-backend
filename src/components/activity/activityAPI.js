@@ -6,7 +6,8 @@ class ActivityAPI {
 
     async getAll(req, res, next) {
         try {
-            const result = await this.activityController.getAll();
+            const userId = res.params.id;
+            const result = await this.activityController.getAll(userId);
 
             res.status(200).send(result);
 

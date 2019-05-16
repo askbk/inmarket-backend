@@ -1,11 +1,16 @@
 class ActivityController {
     constructor(models) {
         this.activityModel = models.Activity;
+        this.userModel = models.User;
     }
 
-    async getAll() {
-        return this.activityModel.finControllerl().then(activites => {
-            return activites;
+    async getAll(userId) {
+        // TODO: Filter out activities where end date is in the past
+        const activities = await this.userModel.findByPk(userId, {
+            include: [{
+                model: this.activityModel,
+                required: true
+            }]
         });
     }
 
