@@ -5,8 +5,20 @@ class ActivityAPI {
     }
 
     async getAll(req, res, next) {
-        let result = await this.activityController.getAll();
-        res.send(result);
+        try {
+            const result = await this.activityController.getAll();
+
+            res.status(200).send(result);
+
+            return true;
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Error when fetching activities: ${e}`
+            });
+
+            return false;
+        }
     }
 
     async getByID(req, res, next) {
@@ -16,8 +28,16 @@ class ActivityAPI {
             // }
             const id = req.params.id;
             const activity = await this.activityController.getByID(id);
+
             res.status(200).send(activity);
+
+            return true;
         } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Error when fetching activity: ${e}`
+            });
+
             return false;
         }
     }
@@ -34,7 +54,7 @@ class ActivityAPI {
         } = req.body;
 
         try {
-            const success = await this.activityController.create({
+            await this.activityController.create({
                 name,
                 description,
                 startDateUTC,
@@ -44,18 +64,19 @@ class ActivityAPI {
                 recurrencePattern
             });
 
-            if (success) {
-                res.status(200).send({
-                    success: true,
-                    message: 'Activity created'
-                });
-            }
+            res.status(200).send({
+                success: true,
+                message: 'Activity created'
+            });
+
+            return true;
         } catch (e) {
-            console.log(e);
             res.status(500).send({
                 success: false,
-                message: 'Error when creating user'
+                message: `Error when creating activity: {e}`
             });
+
+            return false;
         }
     }
 }
