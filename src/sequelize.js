@@ -57,16 +57,18 @@ Jobseeker.MonitoringCompany = Jobseeker.belongsTo(Company, {
     as: 'monitoringCompany'
 });
 Company.User = Company.belongsTo(User);
-Company.Empoyees = Company.hasMany(Employee, { as: 'employees' });
+Company.Employees = Company.hasMany(Employee);
 Employee.Company = Employee.belongsTo(Company);
 
-Jobseeker.Activities = Jobseeker.belongsToMany(Activity, {
-    through: 'activityParticipant'
+User.Activities = User.belongsToMany(Activity, {
+    through: 'activityParticipant', as: "activities"
 });
-Jobseeker.ActivityInvirations = Jobseeker.belongsToMany(Activity, {
-    through: 'activityInvitation'
+User.ActivityInvitations = User.belongsToMany(Activity, {
+    through: 'activityInvitation', as: 'activityInvitations'
 });
-Employee.hasMany(Activity, { as: 'createdActivities' });
+Activity.InvitedUsers = Activity.belongsToMany(User, {
+    through: 'activityInvitation', as: 'InvitedUsers'
+});
 Company.hasMany(Activity);
 Activity.hasMany(ActivityException, { as: 'exceptions' });
 
