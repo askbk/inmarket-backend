@@ -61,7 +61,10 @@ User.Activities = User.belongsToMany(Activity, {
     through: 'activityParticipant'
 });
 User.ActivityInvitations = User.belongsToMany(Activity, {
-    through: 'activityInvitation'
+    through: 'activityInvitation', as: 'ActivityInvitations'
+});
+Activity.InvitedUsers = Activity.belongsToMany(User, {
+    through: 'activityInvitation', as: 'InvitedUsers'
 });
 Company.hasMany(Activity);
 Activity.hasMany(ActivityException, { as: 'exceptions' });

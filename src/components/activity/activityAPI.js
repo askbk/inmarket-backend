@@ -80,6 +80,29 @@ class ActivityAPI {
             return false;
         }
     }
+
+    async invite(req, res, next) {
+        const userId = req.params.userId,
+            activityId = req.params.activityId;
+
+        try {
+            await this.activityController.invite(userId, activityId);
+
+            res.status(200).send({
+                success: true,
+                message: "Activity invitation sent."
+            });
+
+            return true;
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Error when sending activity invitation: ${e}`
+            });
+
+            return false;
+        }
+    }
 }
 
 module.exports = ActivityAPI;

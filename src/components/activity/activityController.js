@@ -29,6 +29,16 @@ class ActivityController {
             throw e;
         }
     }
+
+    async invite(userId, activityId) {
+        try {
+            const user = await this.userModel.findByPk(userId);
+            
+            return await user.addActivityInvitations(activityId);
+        } catch (e) {
+            throw e;
+        }
+    }
 }
 
 module.exports = ActivityController;
