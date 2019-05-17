@@ -34,6 +34,7 @@ const Message = Models.Message(sq, Sq);
 const Contact = sq.define('contact', {
     contactee: {
         type: Sq.INTEGER,
+        notNull: true,
         unique: 'contactIndex',
         references: {
             model: User,
@@ -42,6 +43,7 @@ const Contact = sq.define('contact', {
     },
     contacter: {
         type: Sq.INTEGER,
+        notNull: true,
         unique: 'contactIndex',
         references: {
             model: User,
@@ -72,7 +74,7 @@ Activity.InvitedUsers = Activity.belongsToMany(User, {
 Company.hasMany(Activity);
 Activity.hasMany(ActivityException, { as: 'exceptions' });
 
-User.Contacts = User.belongsToMany(User, { through: Contact, as: 'contacts' });
+// User.Contacts = User.belongsToMany(User, { through: Contact, as: 'contacts' });
 
 Conversation.hasMany(Message);
 User.belongsToMany(Conversation, { through: 'conversationParticipant' });

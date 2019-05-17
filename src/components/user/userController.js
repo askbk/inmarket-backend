@@ -41,10 +41,7 @@ class UserController {
 
             return true;
         } catch (e) {
-            res.status(500).send({
-                success: false,
-                message: `Error when creating contact: ${e}. You probably have already sent a contact request to this user.`
-            });
+            throw `Error when creating contact: ${e}. You probably have already sent a contact request to this user.`;
 
             return false;
         }
