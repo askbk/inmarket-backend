@@ -9,7 +9,8 @@ const testUsers = [
             "firstName": "Ask",
             "lastName": "DNB-sjef",
             "userType": "company",
-            "orgNumber": 987654321
+            "orgNumber": 987654321,
+            "profilePicturePath": "images/DefaultCompanyPage.png"
         },
         passwordHash: testPasswordHash
     },{
@@ -30,8 +31,12 @@ const testUsers = [
             "firstName": "aske",
             "lastName": "ashes",
             "userType": "jobseeker",
+            "education": "Bachelor Informatikk",
+            "type": "Arbeidssøker",
             "skills": [1, 2, 3],
-            "interests": [6, 4, 5]
+            "interests": [6, 4, 5],
+            "profilePicturePath": "images/temp2.png"
+
         },
         passwordHash: testPasswordHash
     },{
@@ -41,7 +46,9 @@ const testUsers = [
             "lastName": "ashes",
             "userType": "jobseeker",
             "skills": [10, 9, 8],
-            "interests": [2, 7, 5]
+            "interests": [2, 7, 5],
+            "education": "Media og kommunikasjon",
+            "type": "Elev"
         },
         passwordHash: testPasswordHash
     },{
@@ -51,7 +58,9 @@ const testUsers = [
             "lastName": "ashes",
             "userType": "jobseeker",
             "skills": [4, 2, 7],
-            "interests": [1, 7, 3]
+            "interests": [1, 7, 3],
+            "education": "Master i datateknologi",
+            "type": "Student"
         },
         passwordHash: testPasswordHash
     },{
@@ -61,7 +70,9 @@ const testUsers = [
             "lastName": "ashes",
             "userType": "jobseeker",
             "skills": [6, 5, 4],
-            "interests": [8, 9, 7]
+            "interests": [8, 9, 7],
+            "education": "Ski VGS",
+            "type": "Arbeidssøker"
         },
         passwordHash: testPasswordHash
     },{
@@ -71,7 +82,9 @@ const testUsers = [
             "lastName": "ta",
             "userType": "jobseeker",
             "skills": [8, 6, 5],
-            "interests": [5, 9, 1]
+            "interests": [5, 9, 1],
+            "education": "Bachelor i datasikkerhet",
+            "type": "Student"
         },
         passwordHash: testPasswordHash
     },{
@@ -81,7 +94,9 @@ const testUsers = [
             "lastName": "stord",
             "userType": "jobseeker",
             "skills": [1, 9, 8],
-            "interests": [2, 5, 7]
+            "interests": [2, 5, 7],
+            "education": "Fagbrev tømrer",
+            "type": "Elev"
         },
         passwordHash: testPasswordHash
     },{
@@ -91,7 +106,9 @@ const testUsers = [
             "lastName": "ashes",
             "userType": "jobseeker",
             "skills": [9, 2, 6],
-            "interests": [2, 3, 9]
+            "interests": [2, 3, 9],
+            "education": "Fagbrev elektriker",
+            "type": "Arbeidssøker"
         },
         passwordHash: testPasswordHash
     },{
@@ -101,7 +118,9 @@ const testUsers = [
             "lastName": "ashes",
             "userType": "jobseeker",
             "skills": [7, 5, 4],
-            "interests": [6, 9, 8]
+            "interests": [6, 9, 8],
+            "education": "Sandsli videregående",
+            "type": "Elev"
         },
         passwordHash: testPasswordHash
     },
@@ -115,7 +134,9 @@ const testUsers = [
             "skills": [3, 4, 5],
             "companyId": 2,
             "role": "Teknologisk leder",
-            "interests": [8, 2, 1]
+            "interests": [8, 2, 1],
+            "profilePicturePath": "images/temp2.png"
+
         },
         passwordHash: testPasswordHash
     },{
