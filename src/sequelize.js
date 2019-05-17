@@ -22,9 +22,11 @@ const Jobseeker = Models.Jobseeker(sq, Sq);
 const Skill = Models.Skill(sq, Sq);
 const SkillRating = Models.SkillRating(sq, Sq);
 const JobseekerSkill = Models.JobseekerSkill(sq, Sq);
+const EmployeeSkill = Models.EmployeeSkill(sq, Sq);
 const Interest = Models.Interest(sq, Sq);
 const InterestRating = Models.InterestRating(sq, Sq);
 const JobseekerInterest = Models.JobseekerInterest(sq, Sq);
+const EmployeeInterest = Models.EmployeeInterest(sq, Sq);
 const User = Models.User(sq, Sq);
 const Conversation = Models.Conversation(sq, Sq);
 const Message = Models.Message(sq, Sq);
@@ -56,6 +58,7 @@ Jobseeker.MonitoringCompany = Jobseeker.belongsTo(Company, {
 });
 Company.User = Company.belongsTo(User);
 Company.Empoyees = Company.hasMany(Employee, { as: 'employees' });
+Employee.Company = Employee.belongsTo(Company);
 
 Jobseeker.Activities = Jobseeker.belongsToMany(Activity, {
     through: 'activityParticipant'
@@ -67,33 +70,39 @@ Employee.hasMany(Activity, { as: 'createdActivities' });
 Company.hasMany(Activity);
 Activity.hasMany(ActivityException, { as: 'exceptions' });
 
+User.Contacts = User.belongsToMany(User, { through: Contact, as: 'contacts' });
+
 Conversation.hasMany(Message);
 User.belongsToMany(Conversation, { through: 'conversationParticipant' });
 Message.belongsTo(User, { as: 'sender' });
 
+Jobseeker.Interests = Jobseeker.belongsToMany(Interest, {
+    through: JobseekerInterest
+});
+Interest.Jobseekers = Interest.belongsToMany(Jobseeker, {
+    through: JobseekerInterest
+});
+Interest.Employees = Interest.belongsToMany(Employee, {
+    through: EmployeeInterest
+});
+Employee.InterestsWanted = Employee.belongsToMany(Interest, {
+    through: EmployeeInterest
+});
+JobseekerInterest.Ratings = JobseekerInterest.hasMany(InterestRating);
+InterestRating.Employee = InterestRating.belongsTo(Employee);
+InterestRating.Company = InterestRating.belongsTo(Company);
+
 Jobseeker.Skills = Jobseeker.belongsToMany(Skill, { through: JobseekerSkill });
+Skill.Jobseekers = Skill.belongsToMany(Jobseeker, { through: JobseekerSkill });
+Skill.Employees = Skill.belongsToMany(Employee, { through: EmployeeSkill });
 Employee.SkillsWanted = Employee.belongsToMany(Skill, {
-    through: 'employeeWantsSkill'
+    through: EmployeeSkill
 });
 JobseekerSkill.Ratings = JobseekerSkill.hasMany(SkillRating);
 SkillRating.Employee = SkillRating.belongsTo(Employee, {
     as: 'ratedByEmployee'
 });
 SkillRating.Company = SkillRating.belongsTo(Company, { as: 'ratedByCompany' });
-
-Jobseeker.Interests = Jobseeker.belongsToMany(Interest, {
-    through: JobseekerInterest
-});
-Employee.InterestsWanted = Employee.belongsToMany(Interest, {
-    through: 'employeeWantsInterest'
-});
-JobseekerInterest.Ratings = JobseekerInterest.hasMany(InterestRating);
-InterestRating.Employee = InterestRating.belongsTo(Employee, {
-    as: 'ratedByEmployee'
-});
-InterestRating.Company = InterestRating.belongsTo(Company, {
-    as: 'ratedByCompany'
-});
 
 //  This is only for testing purposes to be able to log in with the dummy users
 const Auth = require('./components/auth/auth.js');
@@ -130,17 +139,33 @@ sq.sync({ force: true })
                     userId: users[1].id
                 }
             ]);
+            Contact.bulkCreate([
+                { userId: users[0].id, contactId: users[1].id },
+                { userId: users[1].id, contactId: users[0].id }
+            ]);
         });
 
         Skill.findOrCreate({ where: { name: 'Videoredigering' } });
         Skill.findOrCreate({ where: { name: 'Salg' } });
         Skill.findOrCreate({ where: { name: 'Vasking' } });
         Skill.findOrCreate({ where: { name: 'Baking' } });
+        Skill.findOrCreate({ where: { name: 'Sterk' } });
+        Skill.findOrCreate({ where: { name: 'Sykkelreparasjon' } });
+        Skill.findOrCreate({ where: { name: 'Grafisk design' } });
+        Skill.findOrCreate({ where: { name: 'Tekstredigering' } });
+        Skill.findOrCreate({ where: { name: 'Nettverksbygging' } });
+        Skill.findOrCreate({ where: { name: 'Programmering' } });
 
         Interest.findOrCreate({ where: { name: 'Avengers' } });
         Interest.findOrCreate({ where: { name: 'Transformers' } });
         Interest.findOrCreate({ where: { name: 'Lese bøker' } });
         Interest.findOrCreate({ where: { name: 'Rappe' } });
+        Interest.findOrCreate({ where: { name: 'Avengers' } });
+        Interest.findOrCreate({ where: { name: 'Musikk' } });
+        Interest.findOrCreate({ where: { name: 'Fotografi' } });
+        Interest.findOrCreate({ where: { name: 'Fjellturer' } });
+        Interest.findOrCreate({ where: { name: 'Svømming' } });
+        Interest.findOrCreate({ where: { name: 'Fotball' } });
     })
     .catch(e => {
         console.log(`error: ${e}`);
@@ -155,7 +180,9 @@ module.exports = {
     Jobseeker,
     Skill,
     JobseekerSkill,
+    EmployeeSkill,
     Interest,
     JobseekerInterest,
+    EmployeeInterest,
     Contact
 };
