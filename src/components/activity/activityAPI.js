@@ -6,7 +6,7 @@ class ActivityAPI {
 
     async getAll(req, res, next) {
         try {
-            const userId = res.params.id;
+            const userId = req.params.id;
             const result = await this.activityController.getAll(userId);
 
             res.status(200).send(result);
@@ -81,6 +81,8 @@ class ActivityAPI {
         }
     }
 
+    // TODO: Authenticate the user sending the invitation.
+    // TODO: Verify that the user sending the invitation has permission to do so.
     async invite(req, res, next) {
         const userId = req.params.userId,
             activityId = req.params.activityId;
@@ -98,6 +100,30 @@ class ActivityAPI {
             res.status(500).send({
                 success: false,
                 message: `Error when sending activity invitation: ${e}`
+            });
+
+            return false;
+        }
+    }
+
+    // TODO: Authenticate user
+    async acceptInvitation(req, res, next) {
+        const userId = req.params.userId,
+            activityId = req.params.activityId;
+
+        try {
+            await this.activityController.acceptInvitation(userId, activityId);
+
+            res.status(200).send({
+                success: true,
+                message: "Activity invitation accepted."
+            });
+
+            return true;
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Error when accepting activity invitation: ${e}`
             });
 
             return false;

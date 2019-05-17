@@ -58,10 +58,10 @@ Company.User = Company.belongsTo(User);
 Company.Employees = Company.hasMany(Employee);
 
 User.Activities = User.belongsToMany(Activity, {
-    through: 'activityParticipant'
+    through: 'activityParticipant', as: "activities"
 });
 User.ActivityInvitations = User.belongsToMany(Activity, {
-    through: 'activityInvitation', as: 'ActivityInvitations'
+    through: 'activityInvitation', as: 'activityInvitations'
 });
 Activity.InvitedUsers = Activity.belongsToMany(User, {
     through: 'activityInvitation', as: 'InvitedUsers'
