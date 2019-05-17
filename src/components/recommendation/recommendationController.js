@@ -46,11 +46,12 @@ class Recommend {
     // This method assumes the user requesting recommendations is a jobseeker
     async employeeRecommendations(context) {
         const userId = context.userId;
-        const jobseekerId = this.jobseekerModel.findOne({
+        const jobseeker = await this.jobseekerModel.findOne({
             where: {userId: userId},
-            attributes: ["id"]
+            attributes: ["id"],
+            raw: true
         });
-
+        const jobseekerId = jobseeker.id;
         let mySkills, myInterests;
 
         // Use Promise.all to perform tasks in parallel
@@ -79,10 +80,12 @@ class Recommend {
     // Same as above, but assume the requesting user is an employee
     async jobseekerRecommendations(context) {
         const userId = context.userId;
-        const employeeId = this.employeeModel.findOne({
+        const employee = await this.employeeModel.findOne({
             where: {userId: userId},
-            attributes: ["id"]
+            attributes: ["id"],
+            raw: true
         });
+        const employeeId = employee.id;
         let mySkills, myInterests;
 
         // Use Promise.all to perform tasks in parallel
@@ -92,7 +95,7 @@ class Recommend {
                 mySkills = await this.getMyEmployeeSkills(employeeId);
             })(),
             (async () => {
-                myInterests = await this.getMyJobseekerInterests(employeeId);
+                myInterests = await this.getMyEmployeeInterests(employeeId);
             })()
         ]);
 
@@ -176,7 +179,7 @@ class Recommend {
         return users;
         // For easier testing of recommendations
         // const mySkillList = mySkills.map(skill => {return skill.id;});
-        // return {myskills: mySkillList, employees: employees};
+        // return {myskills: mySkillList, users: users};
     }
 
     // Calculate inverse document frequency for each skill and interest
@@ -469,10 +472,13 @@ class Recommend {
     // Get userIds of all users that the current user either already has contact
     // with, or that the current user already has sent a contact request to.
     async getContactIds(userId) {
-        return await this.contactModel.findAll({
+        const contacts = await this.contactModel.findAll({
             where: {contacter: userId},
-            attributes: ["contactee"]
+            attributes: ["contactee"],
+            raw: true
         });
+
+        return contacts.map(contact => {return contact.contactee;});
     }
 }
 
