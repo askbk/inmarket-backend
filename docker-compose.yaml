@@ -6,20 +6,44 @@ services:
         restart: always
         volumes:
             - ./db/workdir:/var/lib/mysql
-        ports:
-            - 3306:3306
+        expose:
+            - "80"
+        networks:
+            - backend-network
         environment:
             MYSQL_ROOT_PASSWORD: "root"
             MYSQL_USER: "ask"
             MYSQL_PASSWORD: "123"
             MYSQL_DATABASE: "inmarket_db"
-    webserver:
+    node:
         build: .
         volumes:
             - .:/usr/app
-        ports:
-            - 5000:5000
-            - 9229:9229
+        expose:
+            - "80"
+        networks:
+            - backend-network
+            - proxy-network
         command: npm start
         depends_on:
             - database
+    nginx:
+        image: nginx:stable
+        container_name: production_nginx
+        depends_on:
+            - node
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+            - ./nginx/mime.types:/etc/nginx/mime.types
+            - ./nginx/error.log:/etc/nginx/error_log.log
+            - ./nginx/cache/:/etc/nginx/cache
+            - ./nginx/www:/usr/share/nginx/inmarket/html
+            # - /etc/letsencrypt/:/etc/letsencrypt/
+        ports:
+            - 80:80
+            - 443:443
+        networks:
+            - proxy-network
+networks:
+    backend-network:
+    proxy-network:
