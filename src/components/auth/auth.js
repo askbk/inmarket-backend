@@ -61,12 +61,12 @@ class Auth {
 
             const fullName = `${user.lastName} ${user.firstName}`;
             const isAdmin = user.isAdmin;
+            const userType = user.userType;
             const userContext = { userId, fullName, isAdmin };
 
             const jwt = await this.tokenIssuer.issue(userContext);
 
-            console.log(jwt);
-            return jwt;
+            return {jwt, userType};
         }
 
         //  Password doesn't match

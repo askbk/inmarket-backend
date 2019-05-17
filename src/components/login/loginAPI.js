@@ -17,12 +17,13 @@ class LoginAPI {
             return;
         }
 
-        const jwt = await this.auth.login(email, password);
+        const authenticated = await this.auth.login(email, password);
 
-        if (jwt) {
+        if (authenticated) {
             res.status(200).send({
                 success: true,
-                jwt: jwt
+                jwt: authenticated.jwt,
+                userType: authenticated.userType
             });
 
             return true;
