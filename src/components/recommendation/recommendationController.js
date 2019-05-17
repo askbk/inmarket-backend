@@ -46,6 +46,10 @@ class Recommend {
     // This method assumes the user requesting recommendations is a jobseeker
     async employeeRecommendations(context) {
         const userId = context.userId;
+        const jobseekerId = this.jobseekerModel.findOne({
+            where: {userId: userId},
+            attributes: ["id"]
+        });
 
         let mySkills, myInterests;
 
@@ -53,15 +57,16 @@ class Recommend {
         await Promise.all([
             // List of skills for current user (query)
             (async () => {
-                mySkills = await this.getMyJobseekerSkills(userId);
+                mySkills = await this.getMyJobseekerSkills(jobseekerId);
             })(),
             (async () => {
-                myInterests = await this.getMyJobseekerInterests(userId);
+                myInterests = await this.getMyJobseekerInterests(jobseekerId);
             })()
         ]);
 
         const recommendationContext = {
             userId: userId,
+            id: jobseekerId,
             mySkills: mySkills,
             myInterests: myInterests,
             userType: "jobseeker",
@@ -74,21 +79,26 @@ class Recommend {
     // Same as above, but assume the requesting user is an employee
     async jobseekerRecommendations(context) {
         const userId = context.userId;
-        let mySkills, myInterests, myContacts;
+        const employeeId = this.employeeModel.findOne({
+            where: {userId: userId},
+            attributes: ["id"]
+        });
+        let mySkills, myInterests;
 
         // Use Promise.all to perform tasks in parallel
         await Promise.all([
             // List of skills for current user (query)
             (async () => {
-                mySkills = await this.getMyEmployeeSkills(userId);
+                mySkills = await this.getMyEmployeeSkills(employeeId);
             })(),
             (async () => {
-                myInterests = await this.getMyJobseekerInterests(userId);
+                myInterests = await this.getMyJobseekerInterests(employeeId);
             })()
         ]);
 
         const recommendationContext = {
             userId: userId,
+            id: employeeId,
             mySkills: mySkills,
             myInterests: myInterests,
             userType: "employee",
@@ -99,7 +109,7 @@ class Recommend {
     }
 
     async getRecommendations(context) {
-        const {mySkills, myInterests, mapFunction, userType, userId} = context;
+        const {mySkills, myInterests, mapFunction, userType, userId, id} = context;
 
         let myContacts;
 
