@@ -460,8 +460,8 @@ class Recommend {
     // with, or that the current user already has sent a contact request to.
     async getContactIds(userId) {
         return await this.contactModel.findAll({
-            where: {userId: userId},
-            attributes: ["contactId"]
+            where: {contacter: userId},
+            attributes: ["contactee"]
         });
     }
 }
