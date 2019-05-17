@@ -129,6 +129,28 @@ class ActivityAPI {
             return false;
         }
     }
+
+    async update(req, res, next) {
+        const activity = {...req.body, activityId: req.params.id};
+
+        try {
+            await this.activityController.update(activity);
+
+            res.status(200).send({
+                success: true,
+                message: "Activity updated."
+            });
+
+            return true;
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Error when updating activity${req.params.id}: ${e}`
+            });
+
+            return false;
+        }
+    }
 }
 
 module.exports = ActivityAPI;

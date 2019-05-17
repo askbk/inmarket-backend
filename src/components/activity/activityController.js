@@ -36,6 +36,18 @@ class ActivityController {
         }
     }
 
+    async update(activityContext) {
+        try {
+            const activity = await this.activityModel.findByPk(activityContext.activityId);
+
+            await activity.update(activityContext);
+            console.log(activityContext);
+            return true;
+        } catch (e) {
+            throw e;
+        }
+    }
+
     async invite(userId, activityId) {
         try {
             const user = await this.userModel.findByPk(userId);
