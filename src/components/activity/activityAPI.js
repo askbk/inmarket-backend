@@ -4,6 +4,7 @@ class ActivityAPI {
         this.auth = auth;
     }
 
+    // TODO: Add authentication
     async getAll(req, res, next) {
         try {
             const userId = req.params.id;
@@ -22,6 +23,8 @@ class ActivityAPI {
         }
     }
 
+    // TODO: Add authentication
+    // TODO: Verify that user has permission to get the activity
     async getByID(req, res, next) {
         try {
             // const authenticated = await this.auth.authenticate(req, res, next);
@@ -43,6 +46,7 @@ class ActivityAPI {
         }
     }
 
+    // TODO: Add authentication
     async create(req, res, next) {
         const {
             name,
@@ -130,6 +134,8 @@ class ActivityAPI {
         }
     }
 
+    // TODO: Authenticate user
+    // TODO: Verify that the user has permission to edit the activity
     async update(req, res, next) {
         const activity = {...req.body, activityId: req.params.id};
 

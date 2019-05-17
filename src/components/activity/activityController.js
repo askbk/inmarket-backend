@@ -6,7 +6,7 @@ class ActivityController {
 
     // Returns all activities and invitations to activities for a user.
     async getAll(userId) {
-        // TODO: Filter out activities where end date is in the past
+        // TODO: Filter out activities where end date is in the past?
         const user = await this.userModel.findByPk(userId, {
             include: [{
                 model: this.activityModel,
@@ -21,16 +21,16 @@ class ActivityController {
     }
 
     async getByID(id) {
-        return this.activityModel.findByPk(id).then(activity => {
-            return activity;
-        });
+        return await this.activityModel.findByPk(id);
     }
 
     async create(activity) {
         try {
-            const result = await this.activityModel.create({
+            await this.activityModel.create({
                 ...activity
             });
+
+            return true;
         } catch (e) {
             throw e;
         }
@@ -41,7 +41,7 @@ class ActivityController {
             const activity = await this.activityModel.findByPk(activityContext.activityId);
 
             await activity.update(activityContext);
-            console.log(activityContext);
+
             return true;
         } catch (e) {
             throw e;
