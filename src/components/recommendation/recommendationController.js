@@ -51,6 +51,11 @@ class Recommend {
             attributes: ["id"],
             raw: true
         });
+
+        if (!jobseeker) {
+            throw `UserId ${userId} doesn't belong to any jobseeker.`;
+        }
+        
         const jobseekerId = jobseeker.id;
         let mySkills, myInterests;
 
@@ -85,6 +90,11 @@ class Recommend {
             attributes: ["id"],
             raw: true
         });
+
+        if (!employee) {
+            throw `UserId ${userId} doesn't belong to any employee.`;
+        }
+
         const employeeId = employee.id;
         let mySkills, myInterests;
 
