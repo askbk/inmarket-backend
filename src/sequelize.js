@@ -63,13 +63,16 @@ Company.Employees = Company.hasMany(Employee);
 Employee.Company = Employee.belongsTo(Company);
 
 User.Activities = User.belongsToMany(Activity, {
-    through: 'activityParticipant', as: "activities"
+    through: 'activityParticipant',
+    as: 'activities'
 });
 User.ActivityInvitations = User.belongsToMany(Activity, {
-    through: 'activityInvitation', as: 'activityInvitations'
+    through: 'activityInvitation',
+    as: 'activityInvitations'
 });
 Activity.InvitedUsers = Activity.belongsToMany(User, {
-    through: 'activityInvitation', as: 'InvitedUsers'
+    through: 'activityInvitation',
+    as: 'InvitedUsers'
 });
 Company.hasMany(Activity);
 Activity.hasMany(ActivityException, { as: 'exceptions' });
@@ -144,9 +147,18 @@ sq.sync({ force: true })
                 }
             ]);
             Contact.bulkCreate([
-                { userId: users[0].id, contactId: users[1].id },
-                { userId: users[1].id, contactId: users[0].id }
+                { contacter: users[0].id, contactee: users[1].id },
+                { contacter: users[1].id, contactee: users[0].id }
             ]);
+            Employee.create({
+                userId: users[0].id,
+                role: 'Rekrutteringsansvarlig'
+            });
+            Jobseeker.create({
+                userId: users[1].id,
+                type: 'Student',
+                education: 'Bachelor i sykepleie'
+            });
         });
 
         Skill.findOrCreate({ where: { name: 'Videoredigering' } });
