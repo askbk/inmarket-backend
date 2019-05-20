@@ -12,11 +12,14 @@ class RecommendationAPI {
         try {
             const employees = await this.recommend.employeeRecommendations(userContext);
 
-            res.status(200).send(employees);
+            res.status(200).send({
+                success: true,
+                data: employees
+            });
         } catch (e) {
             res.status(500).send({
-                "success": "false",
-                "message": `Error when retrieving employee recommendations: ${e}`
+                success: "false",
+                message: `Error when retrieving employee recommendations: ${e}`
             });
         }
     }
@@ -29,11 +32,14 @@ class RecommendationAPI {
         try {
             const jobseekers = await this.recommend.jobseekerRecommendations(userContext);
 
-            res.status(200).send(jobseekers);
+            res.status(200).send({
+                success: true,
+                data: jobseekers
+            });
         } catch (e) {
             res.status(500).send({
-                "success": "false",
-                "message": `Error when retrieving jobseeker recommendations: ${e}`
+                success: "false",
+                message: `Error when retrieving jobseeker recommendations: ${e}`
             });
         }
     }
