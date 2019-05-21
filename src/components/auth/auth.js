@@ -34,8 +34,6 @@ class Auth {
                 success: false,
                 message: 'No token provided.'
             });
-
-            throw 'No token provided';
         }
     }
 
