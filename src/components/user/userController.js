@@ -1,3 +1,6 @@
+const Sq = require('sequelize');
+const Op = Sq.Op;
+
 class UserController {
     constructor(models) {
         this.userModel = models.User;
@@ -20,6 +23,28 @@ class UserController {
         return this.userModel.findAll().then(users => {
             return users;
         });
+    }
+
+    async getFilteredOnName(filter) {
+        return this.userModel
+            .findAll({
+                where: {
+                    [Op.and]: [
+                        Sq.where(
+                            Sq.fn(
+                                'concat',
+                                Sq.col('firstName'),
+                                ' ',
+                                Sq.col('lastName')
+                            ),
+                            { [Op.like]: '%' + filter + '%' }
+                        )
+                    ]
+                }
+            })
+            .then(users => {
+                return users;
+            });
     }
 
     async getByID(id) {
