@@ -78,6 +78,52 @@ class UserController {
         }
     }
 
+    // TODO: Create a contactRequest model - the way it is now is becoming
+    // impractical.
+    async getContactRequests(userId) {
+        const contactRequests = await this.contactModel.findAll({
+            where: {
+                contactee: userId
+            },
+            include: [
+                {
+                    model: this.userModel,
+                    required: true,
+                    include: [
+                        {
+                            model: this.employeeModel
+                        },
+                        {
+                            model: this.jobseekerModel
+                        }
+                    ]
+                }
+            ]
+        });
+    }
+
+    async getContacts(userId) {
+        return await this.contactModel.findAll({
+            where: {
+                contactee: userId
+            },
+            include: [
+                {
+                    model: this.userModel,
+                    required: true,
+                    include: [
+                        {
+                            model: this.employeeModel
+                        },
+                        {
+                            model: this.jobseekerModel
+                        }
+                    ]
+                }
+            ]
+        });
+    }
+
     async hasContactOnOneSide(senderId, receiverId) {
         const count = await this.contactModel.count({
             where: { contacter: senderId, contactee: receiverId }

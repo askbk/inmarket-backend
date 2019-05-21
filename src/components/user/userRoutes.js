@@ -18,10 +18,20 @@ module.exports = (router, users) => {
     router.post('/:id/contact/decline', (rq, rs, n) => {
         users.declineRequest(rq, rs, n);
     });
-    
+
     // Send a contact request to the user
     router.post('/:id/contact', (rq, rs, n) => {
         users.contact(rq, rs, n);
+    });
+
+    // Get contact requests (both sent and received)
+    router.get('/:id/contacts/requests', (rq, rs, n) => {
+        users.getContactRequests(rq, rs, n);
+    });
+
+    // Get contacts
+    router.get('/:id/contacts', (rq, rs, n) => {
+        users.getContact(rq, rs, n);
     });
 
     // Create a new user

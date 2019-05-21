@@ -253,6 +253,83 @@ class UserAPI {
         }
     }
 
+    async getContactRequests(req, res, next) {
+        const paramId = parseInt(req.params.id);
+
+        if (isNaN(paramId)) {
+            res.status(400).send({
+                success: false,
+                message: 'ID must be an integer'
+            });
+
+            return false;
+        }
+
+        let userId;
+        try {
+            const authenticated = await this.auth.authenticate(req, res, next);
+            userId = authenticated.sub;
+
+            if (paramId != userId) {
+                res.status(403).send({
+                    success: false,
+                    message: `Can only view your own contact requests`
+                });
+
+                return false
+            }
+
+            const requests = await this.userController.getContactRequests(userId);
+
+            res.status(200).send({
+                success: true,
+                data: requests
+            });
+
+            return true;
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Authentication failed: ${e}`
+            });
+
+            return false;
+        }
+    }
+
+    async getContacts(req, res, next) {
+        const paramId = parseInt(req.params.id);
+
+        if (isNaN(paramId)) {
+            res.status(400).send({
+                success: false,
+                message: 'ID must be an integer'
+            });
+
+            return false;
+        }
+
+        try {
+            const authenticated = await this.auth.authenticate(req, res, next);
+
+            const contacts = await this.userController.getContacts(paramId);
+
+            res.status(200).send({
+                success: true,
+                data: contacts
+            });
+
+            return true;
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Authentication failed: ${e}`
+            });
+
+            return false;
+        }
+    }
+
     async insertTestData(req, res, next) {
         testData.forEach(user => {
             this.userController.create(user.userContext, user.passwordHash);
