@@ -10,7 +10,9 @@ class RecommendationAPI {
         };
 
         try {
-            const employees = await this.recommend.employeeRecommendations(userContext);
+            const employees = await this.recommend.employeeRecommendations(
+                userContext
+            );
 
             res.status(200).send({
                 success: true,
@@ -18,7 +20,7 @@ class RecommendationAPI {
             });
         } catch (e) {
             res.status(500).send({
-                success: "false",
+                success: false,
                 message: `Error when retrieving employee recommendations: ${e}`
             });
         }
@@ -30,7 +32,9 @@ class RecommendationAPI {
         };
 
         try {
-            const jobseekers = await this.recommend.jobseekerRecommendations(userContext);
+            const jobseekers = await this.recommend.jobseekerRecommendations(
+                userContext
+            );
 
             res.status(200).send({
                 success: true,
@@ -38,7 +42,7 @@ class RecommendationAPI {
             });
         } catch (e) {
             res.status(500).send({
-                success: "false",
+                success: false,
                 message: `Error when retrieving jobseeker recommendations: ${e}`
             });
         }
