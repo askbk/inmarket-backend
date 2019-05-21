@@ -3,6 +3,10 @@ module.exports = (router, users) => {
         users.getByID(rq, rs, n);
     });
 
+    router.get('', (rq, rs, n) => {
+        users.getAll(rq, rs, n);
+    });
+
     router.put('/:id', (rq, rs, n) => {
         users.updateProfile(rq, rs, n);
     });
