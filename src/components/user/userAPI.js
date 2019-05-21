@@ -209,6 +209,50 @@ class UserAPI {
         }
     }
 
+    async declineRequest(req, res, next) {
+        const contacter = parseInt(req.params.id);
+
+        if (isNaN(contacter)) {
+            res.status(400).send({
+                success: false,
+                message: 'ID must be an integer'
+            });
+
+            return false;
+        }
+
+        let contactee;
+        try {
+            const authenticated = await this.auth.authenticate(req, res, next);
+            contactee = authenticated.sub;
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Authentication failed: ${e}`
+            });
+
+            return false;
+        }
+
+        try {
+            await this.userController.declineRequest(contacter, contactee);
+
+            res.status(200).send({
+                success: true,
+                message: 'Contact request declined.'
+            });
+
+            return true;
+        } catch (e) {
+            res.status(500).send({
+                succuss: false,
+                message: `Error when declining contact request: ${e}`
+            });
+
+            return false;
+        }
+    }
+
     async insertTestData(req, res, next) {
         testData.forEach(user => {
             this.userController.create(user.userContext, user.passwordHash);

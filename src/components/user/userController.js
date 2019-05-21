@@ -1,3 +1,6 @@
+const Sq = require('sequelize');
+const Op = Sq.Op;
+
 class UserController {
     constructor(models) {
         this.userModel = models.User;
@@ -47,9 +50,37 @@ class UserController {
         }
     }
 
+    async declineRequest(senderId, receiverId) {
+        if (senderId === receiverId) {
+            throw `Error when declining contact request: Sender and receiver are the same (userId=${senderId}).`;
+        }
+
+        try {
+            await this.contactModel.update(
+                {
+                    isDeclined: true
+                },
+                {
+                    where: {
+                        [Op.and]: {
+                            contacter: senderId,
+                            contactee: receiverId
+                        }
+                    }
+                }
+            );
+
+            return true;
+        } catch (e) {
+            throw `Error when declining contact request: ${e}.`;
+
+            return false;
+        }
+    }
+
     async hasContactOnOneSide(senderId, receiverId) {
         const count = await this.contactModel.count({
-            where: { userId: senderId, contactId: receiverId }
+            where: { contacter: senderId, contactee: receiverId }
         });
 
         if (count > 0) return true;

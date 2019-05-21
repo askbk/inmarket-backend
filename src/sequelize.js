@@ -34,7 +34,7 @@ const Message = Models.Message(sq, Sq);
 const Contact = sq.define('contact', {
     contactee: {
         type: Sq.INTEGER,
-        notNull: true,
+        allowNull: false,
         unique: 'contactIndex',
         references: {
             model: User,
@@ -43,12 +43,17 @@ const Contact = sq.define('contact', {
     },
     contacter: {
         type: Sq.INTEGER,
-        notNull: true,
+        allowNull: false,
         unique: 'contactIndex',
         references: {
             model: User,
             key: 'id'
         }
+    },
+    isDeclined: {
+        type: Sq.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     }
 });
 
