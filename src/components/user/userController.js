@@ -13,7 +13,7 @@ class UserController {
         this.jobseekerSkillModel = models.JobseekerSkill;
         this.employeeSkillModel = models.EmployeeSkill;
         this.skillModel = models.Skill;
-        this.contactModel = models.Contact;
+        this.contactRequestModel = models.ContactRequest;
         this.jobseekerInterestModel = models.JobseekerInterest;
         this.employeeInterestModel = models.EmployeeInterest;
         this.interestModel = models.Interest;
@@ -31,32 +31,61 @@ class UserController {
         });
     }
 
-    async createContact(senderId, receiverId) {
-        if (senderId === receiverId) {
-            throw "Error when creating contact: Cant't contact yourself.";
+    // Create contact between two users (accept request from contacter)
+    async createContact(contacterId, contacteeId) {
+        if (contacterId === contacteeId) {
+            throw "Cant't contact yourself.";
         }
 
-        try {
-            await this.contactModel.create({
-                contacter: senderId,
-                contactee: receiverId
-            });
+        await this.contactRequestModel.destroy({
+            where: {
+                contactee: contacteeId
+            }
+        });
 
+        try {
+            const contactee = await this.userModel.findByPk(contacteeId);
+            const contacter = await this.userModel.findByPk(contacterId);
+
+            contactee.addContact(contacter);
+            contacter.addContact(contactee);
+            
             return true;
         } catch (e) {
-            throw `Error when creating contact: ${e}. You probably have already sent a contact request to this user.`;
+            throw e;
 
             return false;
         }
     }
 
-    async declineRequest(senderId, receiverId) {
-        if (senderId === receiverId) {
-            throw `Error when declining contact request: Sender and receiver are the same (userId=${senderId}).`;
+    // Send contact request to contactee
+    async createContactRequest(contacterId, contacteeId) {
+        if (contacterId === contacteeId) {
+            throw "Cant't contact yourself.";
         }
 
         try {
-            await this.contactModel.update(
+            await this.contactRequestModel.create({
+                contacter: contacterId,
+                contactee: contacteeId
+            });
+
+            return true;
+        } catch (e) {
+            throw e;
+
+            return false;
+        }
+    }
+
+    // Decline contact request from contacter
+    async declineRequest(contacterId, contacteeId) {
+        if (contacterId === contacteeId) {
+            throw `Sender and receiver are the same (userId=${senderId}).`;
+        }
+
+        try {
+            await this.contactRequestModel.update(
                 {
                     isDeclined: true
                 },
@@ -72,73 +101,33 @@ class UserController {
 
             return true;
         } catch (e) {
-            throw `Error when declining contact request: ${e}.`;
+            throw e;
 
             return false;
         }
     }
 
-    // TODO: Create a contactRequest model - the way it is now is becoming
-    // impractical.
+    // Get all received contact requests
     async getContactRequests(userId) {
-        const contactRequests = await this.contactModel.findAll({
-            where: {
-                contactee: userId
-            },
+        const user = await this.userModel.findByPk(userId);
+
+        return await user.getContactRequests({
             include: [
-                {
-                    model: this.userModel,
-                    required: true,
-                    include: [
-                        {
-                            model: this.employeeModel
-                        },
-                        {
-                            model: this.jobseekerModel
-                        }
-                    ]
-                }
+                { model: this.employeeModel },
+                { model: this.jobseekerModel }
             ]
         });
     }
 
     async getContacts(userId) {
-        return await this.contactModel.findAll({
-            where: {
-                contactee: userId
-            },
+        const user = await this.userModel.findByPk(userId);
+
+        return await user.getContacts({
             include: [
-                {
-                    model: this.userModel,
-                    required: true,
-                    include: [
-                        {
-                            model: this.employeeModel
-                        },
-                        {
-                            model: this.jobseekerModel
-                        }
-                    ]
-                }
+                { model: this.employeeModel },
+                { model: this.jobseekerModel }
             ]
         });
-    }
-
-    async hasContactOnOneSide(senderId, receiverId) {
-        const count = await this.contactModel.count({
-            where: { contacter: senderId, contactee: receiverId }
-        });
-
-        if (count > 0) return true;
-
-        return false;
-    }
-
-    async hasEstablishedContact(id1, id2) {
-        if (!(await hasContactOnOneSide(id1, id2))) return false;
-        if (!(await hascontactOnOneSide(id2, id1))) return false;
-
-        return true;
     }
 
     async create(userContext, passwordHash) {

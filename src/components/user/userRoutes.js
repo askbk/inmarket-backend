@@ -1,4 +1,9 @@
 module.exports = (router, users) => {
+    // Create a new user
+    router.post('', (rq, rs, n) => {
+        users.create(rq, rs, n);
+    });
+
     // Get specific user
     router.get('/:id', (rq, rs, n) => {
         users.getByID(rq, rs, n);
@@ -9,14 +14,14 @@ module.exports = (router, users) => {
         users.updateProfile(rq, rs, n);
     });
 
-    // Send a contact request to the user
-    router.post('/:id/contact', (rq, rs, n) => {
-        users.contact(rq, rs, n);
-    });
-
     // Decline a contact request from the user
     router.post('/:id/contact/decline', (rq, rs, n) => {
-        users.declineRequest(rq, rs, n);
+        users.declineContactRequest(rq, rs, n);
+    });
+
+    // Accept a contact request from the user
+    router.post('/:id/contact/accept', (rq, rs, n) => {
+        users.acceptContactRequest(rq, rs, n);
     });
 
     // Send a contact request to the user
@@ -24,19 +29,14 @@ module.exports = (router, users) => {
         users.contact(rq, rs, n);
     });
 
-    // Get contact requests (both sent and received)
+    // Get contact requests
     router.get('/:id/contacts/requests', (rq, rs, n) => {
         users.getContactRequests(rq, rs, n);
     });
 
     // Get contacts
     router.get('/:id/contacts', (rq, rs, n) => {
-        users.getContact(rq, rs, n);
-    });
-
-    // Create a new user
-    router.post('', (rq, rs, n) => {
-        users.create(rq, rs, n);
+        users.getContacts(rq, rs, n);
     });
 
     // Insert test data into database

@@ -165,6 +165,7 @@ class UserAPI {
         }
     }
 
+    // TODO: make code related to contact requests less redundant
     async contact(req, res, next) {
         const contactee = parseInt(req.params.id);
 
@@ -191,7 +192,7 @@ class UserAPI {
         }
 
         try {
-            await this.userController.createContact(contacter, contactee);
+            await this.userController.createContactRequest(contacter, contactee);
 
             res.status(200).send({
                 success: true,
@@ -247,6 +248,50 @@ class UserAPI {
             res.status(500).send({
                 succuss: false,
                 message: `Error when declining contact request: ${e}`
+            });
+
+            return false;
+        }
+    }
+
+    async acceptRequest(req, res, next) {
+        const contacter = parseInt(req.params.id);
+
+        if (isNaN(contacter)) {
+            res.status(400).send({
+                success: false,
+                message: 'ID must be an integer'
+            });
+
+            return false;
+        }
+
+        let contactee;
+        try {
+            const authenticated = await this.auth.authenticate(req, res, next);
+            contactee = authenticated.sub;
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Authentication failed: ${e}`
+            });
+
+            return false;
+        }
+
+        try {
+            await this.userController.createContact(contacter, contactee);
+
+            res.status(200).send({
+                success: true,
+                message: 'Contact request accepted.'
+            });
+
+            return true;
+        } catch (e) {
+            res.status(500).send({
+                succuss: false,
+                message: `Error when accepting contact request: ${e}`
             });
 
             return false;
