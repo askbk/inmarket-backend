@@ -132,6 +132,7 @@ sq.sync({ force: true })
                 lastName: 'yo',
                 profilePicturePath: 'Hello',
                 profileDescription: 'Hei, jeg er en kul type!',
+                userType: 'employee',
                 login: {
                     email: 'ask@ask.no',
                     passwordHash: passHash
@@ -144,6 +145,7 @@ sq.sync({ force: true })
                 include: [
                     {
                         association: User.Login,
+                    }, {
                         association: User.Employee
                     }
                 ]
@@ -154,6 +156,7 @@ sq.sync({ force: true })
                 firstName: 'ask',
                 lastName: 'nje',
                 profilePicturePath: '/usr/bin/firefox',
+                userType: 'jobseeker',
                 login: {
                     email: 'yo@yo.net',
                     passwordHash: passHash
@@ -166,7 +169,8 @@ sq.sync({ force: true })
             {
                 include: [
                     {
-                        association: User.Login,
+                        association: User.Login
+                    }, {
                         association: User.Jobseeker
                     }
                 ]
