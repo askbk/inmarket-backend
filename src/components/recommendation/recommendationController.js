@@ -495,8 +495,16 @@ class Recommend {
             raw: true
         });
 
-        return contacts.map(contact => {
-            return contact.contacteeId;
+        const contactRequests = await this.contactRequestModel.findAll({
+            where: {
+                contacterId: userId
+            },
+            attributes: [['contacteeId', 'id']],
+            raw: true
+        });
+
+        return [...contacts, ...contactRequests].map(contact => {
+            return contact.id;
         });
     }
 }
