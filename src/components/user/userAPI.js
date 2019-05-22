@@ -32,7 +32,7 @@ class UserAPI {
             if (authenticated) {
                 const myId = authenticated.sub;
                 if (req.query.search) {
-                    const users = await this.userController.getFilteredOnName(
+                    const users = await this.userController.getFilterByNameOrCompany(
                         req.query.search,
                         myId
                     );

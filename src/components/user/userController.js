@@ -41,7 +41,30 @@ class UserController {
         return userConnections;
     }
 
-    async getFilteredOnName(filter, myId) {
+    async getFilterByNameOrCompany(filter, myId) {
+        const usersByCompany = await this.employeeModel
+            .findAll({
+                include: [
+                    {
+                        model: this.userModel,
+                        required: true
+                    },
+                    {
+                        model: this.companyModel,
+                        required: true
+                    }
+                ],
+                where: { '$company.name$': { [Op.like]: '%' + filter + '%' } }
+            })
+            .then(employees => {
+                return employees.map(e => {
+                    return {
+                        name: e.company.name,
+                        ...e.user.get()
+                    };
+                });
+            });
+
         const filteredUsers = await this.userModel.findAll({
             where: {
                 [Op.and]: [
