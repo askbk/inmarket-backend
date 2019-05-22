@@ -39,7 +39,7 @@ class UserController {
 
         await this.contactRequestModel.destroy({
             where: {
-                contactee: contacteeId
+                contacteeId
             }
         });
 
@@ -49,7 +49,7 @@ class UserController {
 
             contactee.addContact(contacter);
             contacter.addContact(contactee);
-            
+
             return true;
         } catch (e) {
             throw e;
@@ -66,8 +66,8 @@ class UserController {
 
         try {
             await this.contactRequestModel.create({
-                contacter: contacterId,
-                contactee: contacteeId
+                contacterId,
+                contacteeId
             });
 
             return true;
@@ -81,7 +81,7 @@ class UserController {
     // Decline contact request from contacter
     async declineRequest(contacterId, contacteeId) {
         if (contacterId === contacteeId) {
-            throw `Sender and receiver are the same (userId=${senderId}).`;
+            throw `Sender and receiver are the same (userId=${contacterId}).`;
         }
 
         try {
@@ -92,8 +92,8 @@ class UserController {
                 {
                     where: {
                         [Op.and]: {
-                            contacter: senderId,
-                            contactee: receiverId
+                            contacterId,
+                            contacteeId
                         }
                     }
                 }

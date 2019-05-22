@@ -315,14 +315,14 @@ class UserAPI {
             const authenticated = await this.auth.authenticate(req, res, next);
             userId = authenticated.sub;
 
-            if (paramId != userId) {
-                res.status(403).send({
-                    success: false,
-                    message: `Can only view your own contact requests`
-                });
-
-                return false
-            }
+            // if (paramId != userId) {
+            //     res.status(403).send({
+            //         success: false,
+            //         message: `Can only view your own contact requests`
+            //     });
+            //
+            //     return false
+            // }
 
             const requests = await this.userController.getContactRequests(userId);
 

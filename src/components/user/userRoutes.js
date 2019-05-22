@@ -16,12 +16,12 @@ module.exports = (router, users) => {
 
     // Decline a contact request from the user
     router.post('/:id/contact/decline', (rq, rs, n) => {
-        users.declineContactRequest(rq, rs, n);
+        users.declineRequest(rq, rs, n);
     });
 
     // Accept a contact request from the user
     router.post('/:id/contact/accept', (rq, rs, n) => {
-        users.acceptContactRequest(rq, rs, n);
+        users.acceptRequest(rq, rs, n);
     });
 
     // Send a contact request to the user
@@ -30,7 +30,7 @@ module.exports = (router, users) => {
     });
 
     // Get contact requests
-    router.get('/:id/contacts/requests', (rq, rs, n) => {
+    router.get('/:id/contact/requests', (rq, rs, n) => {
         users.getContactRequests(rq, rs, n);
     });
 
