@@ -26,7 +26,7 @@ class UserAPI {
                 }
 
                 const user = await this.userController.getByID(id);
-                
+
                 res.status(200).send({
                     success: true,
                     data: user
@@ -71,6 +71,7 @@ class UserAPI {
 
     async create(req, res, next) {
         const body = { ...req.body };
+        const passwordHash = await this.auth.hash(body.password);
 
         const userInfo = {
             firstName: body.firstName,
@@ -78,7 +79,11 @@ class UserAPI {
             email: body.email,
             phoneNumber: body.phoneNumber,
             municipality: body.municipality,
-            userType: body.userType
+            userType: body.userType,
+            login: {
+                email: body.email,
+                passwordHash: passwordHash
+            }
         };
 
         let userContext, skills;
@@ -86,25 +91,33 @@ class UserAPI {
         switch (true) {
             case userInfo.userType === 'company':
                 userContext = {
-                    name: body.name,
-                    webpage: body.webpage,
-                    registrationCode: body.registrationCode,
-                    orgNumber: body.orgNumber,
+                    company: {
+                        name: body.name,
+                        webpage: body.webpage,
+                        registrationCode: body.registrationCode,
+                        orgNumber: body.orgNumber
+                    },
                     ...userInfo
                 };
                 break;
 
             case userInfo.userType === 'employee':
                 userContext = {
-                    role: body.role,
+                    employee: {
+                        role: body.role,
+                    },
+                    interests: body.interests,
                     skills: body.skills,
                     ...userInfo
                 };
                 break;
             case userInfo.userType === 'jobseeker':
                 userContext = {
-                    type: body.type,
-                    education: body.education,
+                    jobseeker: {
+                        type: body.type,
+                        education: body.education,
+                    },
+                    interests: body.interests,
                     skills: body.skills,
                     ...userInfo
                 };
@@ -114,10 +127,8 @@ class UserAPI {
                 break;
         }
 
-        const passwordHash = await this.auth.hash(body.password);
-
         try {
-            await this.userController.create(userContext, passwordHash);
+            await this.userController.create(userContext);
 
             res.status(200).send({
                 success: true,
@@ -226,7 +237,10 @@ class UserAPI {
         }
 
         try {
-            await this.userController.createContactRequest(contacter, contactee);
+            await this.userController.createContactRequest(
+                contacter,
+                contactee
+            );
 
             res.status(200).send({
                 success: true,
@@ -358,7 +372,9 @@ class UserAPI {
             //     return false
             // }
 
-            const requests = await this.userController.getContactRequests(userId);
+            const requests = await this.userController.getContactRequests(
+                userId
+            );
 
             res.status(200).send({
                 success: true,
