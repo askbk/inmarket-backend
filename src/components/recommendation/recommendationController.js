@@ -320,10 +320,13 @@ class Recommend {
         } = employeeVector.user;
 
         return {
-            employeeId: id,
-            role: role,
-            // ...company.get(),
-            company: company,
+            employee: {
+                employeeId: id,
+                role: role,
+                // ...company.get(),
+                company: company,
+            },
+            connectionStatus: "noContact",
             skills: skills,
             interests: interests,
             ...user.get(),
@@ -351,9 +354,12 @@ class Recommend {
         } = jobseekerVector.user;
 
         return {
-            jobseekerId: id,
-            type: type,
-            education: education,
+            jobseeker: {
+                jobseekerId: id,
+                type: type,
+                education: education,
+            },
+            connectionStatus: "noContact",
             skills: skills,
             interests: interests,
             ...user.get(),
