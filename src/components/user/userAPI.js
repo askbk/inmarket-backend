@@ -236,7 +236,7 @@ class UserAPI {
             return true;
         } catch (e) {
             res.status(500).send({
-                succuss: false,
+                success: false,
                 message: `Error when creating contact: ${e}`
             });
 
