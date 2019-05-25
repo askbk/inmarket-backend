@@ -75,13 +75,46 @@ class UserController {
                     include: this.companyModel
                 },
                 {
-                    model: this.jobseekerModel,
+                    model: this.jobseekerModel
                 },
                 this.companyModel
             ]
         });
 
-        return user;
+        // Find out what status is between user and current user
+        let connectionStatus = 'noContact';
+
+        const contacts = await user.getContacts();
+
+        for (const contact of contacts) {
+            if (contact.id == myId) {
+                connectionStatus = 'contact';
+                break;
+            }
+        }
+
+        if (connectionStatus === 'noContact') {
+            const request = await this.contactRequestModel.findOne({
+                where: { contacterId: myId, contacteeId: id }
+            });
+
+            if (request) {
+                connectionStatus = 'request';
+            } else {
+                const requested = await this.contactRequestModel.findOne({
+                    where: {
+                        contacterId: id,
+                        contacteeId: myId
+                    }
+                });
+                if (requested) {
+                    connectionStatus = 'requested';
+                }
+            }
+        }
+
+        const userValues = user.get();
+        return { ...userValues, connectionStatus };
     }
 
     // Create contact between two users (accept request from contacter)
