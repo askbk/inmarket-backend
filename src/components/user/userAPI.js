@@ -26,7 +26,11 @@ class UserAPI {
                 }
 
                 const user = await this.userController.getByID(id);
-                res.status(200).send(user);
+                
+                res.status(200).send({
+                    success: true,
+                    data: user
+                });
 
                 return true;
             }
