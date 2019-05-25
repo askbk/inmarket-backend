@@ -13,7 +13,7 @@ sq.authenticate()
         console.error('Unable to connect to database:', err);
     });
 
-const Company = Models.Company(sq, Sq);
+// const Company = Models.Company(sq, Sq);
 const Login = Models.Login(sq, Sq);
 const Employee = Models.Employee(sq, Sq);
 const Activity = Models.Activity(sq, Sq);
@@ -214,7 +214,7 @@ module.exports = {
     User,
     Login,
     Activity,
-    Company,
+    // Company,
     Employee,
     Jobseeker,
     Skill,
