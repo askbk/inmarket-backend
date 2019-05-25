@@ -9,24 +9,11 @@ class UserAPI {
         try {
             const authenticated = await this.auth.authenticate(req, res, next);
             if (authenticated) {
-                let id = req.params.id;
+                const id = req.params.id;
+                const myId = authenticated.sub;
 
-                if (isNaN(parseInt(id))) {
-                    if (id.toLowerCase() === 'me') {
-                        //get ID of the logged in person
-                        id = authenticated.sub.toString();
-                    } else {
-                        res.status(400).send({
-                            success: false,
-                            message: 'ID must be a integer or me'
-                        });
+                const user = await this.userController.getByID(id, myId);
 
-                        return false;
-                    }
-                }
-
-                const user = await this.userController.getByID(id);
-                
                 res.status(200).send({
                     success: true,
                     data: user

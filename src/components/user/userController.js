@@ -47,15 +47,43 @@ class UserController {
             });
     }
 
-    async getByID(id) {
+    async getByID(id, myId) {
+        // Return all info
+        if (id === myId) {
+            const user = await this.userModel.findByPk(id, {
+                include: [
+                    {
+                        model: this.employeeModel,
+                        include: this.companyModel
+                    },
+                    this.jobseekerModel,
+                    this.companyModel
+                ]
+            });
+
+            return user;
+        }
+
+        // Restrict some of the info being returned.
+        // Should also add variable showing connection status to current user.
+        // E.g. "connected", "requested", etc.
         const user = await this.userModel.findByPk(id, {
             include: [
                 {
                     model: this.employeeModel,
                     include: this.companyModel
                 },
-                this.jobseekerModel,
+                {
+                    model: this.jobseekerModel,
+                    attributes: ['type']
+                },
                 this.companyModel
+            ],
+            attributes: [
+                'firstName',
+                'userType',
+                'profileDescription',
+                'profilePicturePath'
             ]
         });
 
