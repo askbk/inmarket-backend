@@ -2,28 +2,28 @@
 const testPasswordHash = "$2b$10$6B3pYDPoXgXtMd35NS6lPOdVWzV3Pz2OVl8p9hkFdMOZPNXAofOhi";
 const testUsers = [
     // Companies
-    {
-        userContext: {
-            "email": "ask@dnb.no",
-            "name": "DNB",
-            "firstName": "Ask",
-            "lastName": "DNB-sjef",
-            "userType": "company",
-            "orgNumber": 987654321,
-            "profilePicturePath": "images/DefaultCompanyPage.png"
-        },
-        passwordHash: testPasswordHash
-    },{
-        userContext: {
-            "email": "kontakt@inmarket.as",
-            "name": "InMarket",
-            "firstName": "aske",
-            "lastName": "ashes",
-            "userType": "company",
-            "orgNumber": 123456789
-        },
-        passwordHash: testPasswordHash
-    },
+    // {
+    //     userContext: {
+    //         "email": "ask@dnb.no",
+    //         "name": "DNB",
+    //         "firstName": "Ask",
+    //         "lastName": "DNB-sjef",
+    //         "userType": "company",
+    //         "orgNumber": 987654321,
+    //         "profilePicturePath": "images/DefaultCompanyPage.png"
+    //     },
+    //     passwordHash: testPasswordHash
+    // },{
+    //     userContext: {
+    //         "email": "kontakt@inmarket.as",
+    //         "name": "InMarket",
+    //         "firstName": "aske",
+    //         "lastName": "ashes",
+    //         "userType": "company",
+    //         "orgNumber": 123456789
+    //     },
+    //     passwordHash: testPasswordHash
+    // },
     // Jobseekers
     {
         userContext: {
@@ -131,6 +131,7 @@ const testUsers = [
             "firstName": "bossman",
             "lastName": "ashes",
             "userType": "employee",
+            "company": "InMarket",
             "skills": [3, 4, 5],
             "companyId": 2,
             "role": "Teknologisk leder",
@@ -145,6 +146,7 @@ const testUsers = [
             "firstName": "filip",
             "lastName": "heya",
             "userType": "employee",
+            "company": "InMarket",
             "skills": [5, 6, 7],
             "companyId": 2,
             "role": "Utviklerbossman",
@@ -157,6 +159,7 @@ const testUsers = [
             "firstName": "marcuxz",
             "lastName": "yuo",
             "userType": "employee",
+            "company": "InMarket",
             "skills": [8, 9, 10],
             "companyId": 2,
             "role": "Utviklerbro",
@@ -169,6 +172,7 @@ const testUsers = [
             "firstName": "samuel",
             "lastName": "biggyboi",
             "userType": "employee",
+            "company": "InMarket",
             "skills": [6, 5, 1],
             "companyId": 2,
             "role": "Daglig leder",
@@ -181,6 +185,7 @@ const testUsers = [
             "firstName": "skrettebarg",
             "lastName": "samuel",
             "userType": "employee",
+            "company": "InMarket",
             "skills": [3, 1, 5],
             "companyId": 2,
             "role": "Personalansvarlig",
@@ -193,6 +198,7 @@ const testUsers = [
             "firstName": "izraeli",
             "lastName": "bonny",
             "userType": "employee",
+            "company": "InMarket",
             "skills": [4, 6, 7],
             "companyId": 2,
             "role": "Markedsføringsansvarlig",
@@ -205,6 +211,7 @@ const testUsers = [
             "firstName": "anon",
             "lastName": "yuo",
             "userType": "employee",
+            "company": "InMarket",
             "skills": [2, 6, 3],
             "companyId": 2,
             "role": "Postbud",
@@ -217,6 +224,7 @@ const testUsers = [
             "firstName": "øyvind",
             "lastName": "aleksander",
             "userType": "employee",
+            "company": "InMarket",
             "skills": [3, 4, 2],
             "companyId": 2,
             "role": "Nestleder",

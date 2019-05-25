@@ -56,17 +56,17 @@ User.ContactRequests = User.belongsToMany(User, {
 Login.User = Login.belongsTo(User);
 User.Login = User.hasOne(Login);
 User.Employee = User.hasOne(Employee);
-User.Company = User.hasOne(Company);
+// User.Company = User.hasOne(Company);
 
 Employee.User = Employee.belongsTo(User);
 User.Jobseeker = User.hasOne(Jobseeker);
 Jobseeker.User = Jobseeker.belongsTo(User);
-Jobseeker.MonitoringCompany = Jobseeker.belongsTo(Company, {
-    as: 'monitoringCompany'
-});
-Company.User = Company.belongsTo(User);
-Company.Employees = Company.hasMany(Employee);
-Employee.Company = Employee.belongsTo(Company);
+// Jobseeker.MonitoringCompany = Jobseeker.belongsTo(Company, {
+//     as: 'monitoringCompany'
+// });
+// Company.User = Company.belongsTo(User);
+// Company.Employees = Company.hasMany(Employee);
+// Employee.Company = Employee.belongsTo(Company);
 
 User.Activities = User.belongsToMany(Activity, {
     through: 'activityParticipant',
@@ -80,7 +80,7 @@ Activity.InvitedUsers = Activity.belongsToMany(User, {
     through: 'activityInvitation',
     as: 'InvitedUsers'
 });
-Company.hasMany(Activity);
+// Company.hasMany(Activity);
 Activity.hasMany(ActivityException, { as: 'exceptions' });
 
 // User.Contacts = User.belongsToMany(User, { through: Contact, as: 'contacts' });
@@ -103,7 +103,7 @@ Employee.InterestsWanted = Employee.belongsToMany(Interest, {
 });
 JobseekerInterest.Ratings = JobseekerInterest.hasMany(InterestRating);
 InterestRating.Employee = InterestRating.belongsTo(Employee);
-InterestRating.Company = InterestRating.belongsTo(Company);
+// InterestRating.Company = InterestRating.belongsTo(Company);
 
 Jobseeker.Skills = Jobseeker.belongsToMany(Skill, { through: JobseekerSkill });
 Skill.Jobseekers = Skill.belongsToMany(Jobseeker, { through: JobseekerSkill });
@@ -115,7 +115,7 @@ JobseekerSkill.Ratings = JobseekerSkill.hasMany(SkillRating);
 SkillRating.Employee = SkillRating.belongsTo(Employee, {
     as: 'ratedByEmployee'
 });
-SkillRating.Company = SkillRating.belongsTo(Company, { as: 'ratedByCompany' });
+// SkillRating.Company = SkillRating.belongsTo(Company, { as: 'ratedByCompany' });
 
 //  This is only for testing purposes to be able to log in with the dummy users
 const Auth = require('./components/auth/auth.js');
@@ -139,7 +139,8 @@ sq.sync({ force: true })
                     passwordHash: passHash
                 },
                 employee: {
-                    role: 'Rekrutteringsansvarlig'
+                    role: 'Rekrutteringsansvarlig',
+                    company: "DNB"
                 }
             },
             {
