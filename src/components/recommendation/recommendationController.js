@@ -322,7 +322,7 @@ class Recommend {
         return {
             employeeId: id,
             role: role,
-            ...company.get(),
+            // ...company.get(),
             skills: skills,
             interests: interests,
             ...user.get(),
@@ -457,10 +457,10 @@ class Recommend {
                 {
                     model: this.userModel,
                     required: true
-                },
-                {
-                    model: this.companyModel,
-                    required: true
+                // },
+                // {
+                //     model: this.companyModel,
+                //     required: true
                 }
             ]
         });
