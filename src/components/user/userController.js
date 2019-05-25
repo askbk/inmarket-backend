@@ -19,32 +19,59 @@ class UserController {
         this.interestModel = models.Interest;
     }
 
-    async getAll() {
-        return this.userModel.findAll().then(users => {
-            return users;
+    async getAll(myId) {
+        const users = await this.userModel.findAll({
+            where: {
+                id: {
+                    [Op.ne]: myId
+                }
+            }
         });
+
+        const userConnections = await Promise.all(
+            users.map(async user => {
+                const connectionStatus = await this.getConnectionStatus(
+                    user.id,
+                    myId
+                );
+                return { ...user.get(), connectionStatus };
+            })
+        );
+
+        return userConnections;
     }
 
-    async getFilteredOnName(filter) {
-        return this.userModel
-            .findAll({
-                where: {
-                    [Op.and]: [
-                        Sq.where(
-                            Sq.fn(
-                                'concat',
-                                Sq.col('firstName'),
-                                ' ',
-                                Sq.col('lastName')
-                            ),
-                            { [Op.like]: '%' + filter + '%' }
-                        )
-                    ]
+    async getFilteredOnName(filter, myId) {
+        const filteredUsers = await this.userModel.findAll({
+            where: {
+                [Op.and]: [
+                    Sq.where(
+                        Sq.fn(
+                            'concat',
+                            Sq.col('firstName'),
+                            ' ',
+                            Sq.col('lastName')
+                        ),
+                        { [Op.like]: '%' + filter + '%' }
+                    )
+                ],
+                id: {
+                    [Op.ne]: myId
                 }
+            }
+        });
+
+        const userConnections = await Promise.all(
+            filteredUsers.map(async user => {
+                const connectionStatus = await this.getConnectionStatus(
+                    user.id,
+                    myId
+                );
+                return { ...user.get(), connectionStatus };
             })
-            .then(users => {
-                return users;
-            });
+        );
+
+        return userConnections;
     }
 
     async getByID(id, myId) {
@@ -65,8 +92,6 @@ class UserController {
         }
 
         // TODO: Restrict some of the info being returned.
-        // Should also add variable showing connection status to current user.
-        // E.g. "connected", "requested", etc.
 
         const user = await this.userModel.findByPk(id, {
             include: [
