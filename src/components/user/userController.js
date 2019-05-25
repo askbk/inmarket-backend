@@ -175,31 +175,11 @@ class UserController {
                         },
                         {
                             association: this.userModel.Employee,
-                            model: this.employeeModel,
-                            include: [
-                                {
-                                    association: this.employeeModel.SkillsWanted,
-                                    model: this.skillModel
-                                },
-                                {
-                                    association: this.employeeModel.InterestsWanted,
-                                    model: this.interestModel
-                                }
-                            ]
+                            model: this.employeeModel
                         },
                         {
                             association: this.userModel.Jobseeker,
-                            model: this.jobseekerModel,
-                            include: [
-                                {
-                                    association: this.jobseekerModel.Skills,
-                                    model: this.skillModel
-                                },
-                                {
-                                    association: this.jobseekerModel.Interests,
-                                    model: this.interestModel
-                                }
-                            ]
+                            model: this.jobseekerModel
                         },
                         {
                             association: this.userModel.Company,
