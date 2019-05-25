@@ -64,9 +64,10 @@ class UserController {
             return user;
         }
 
-        // Restrict some of the info being returned.
+        // TODO: Restrict some of the info being returned.
         // Should also add variable showing connection status to current user.
         // E.g. "connected", "requested", etc.
+
         const user = await this.userModel.findByPk(id, {
             include: [
                 {
@@ -75,15 +76,8 @@ class UserController {
                 },
                 {
                     model: this.jobseekerModel,
-                    attributes: ['type']
                 },
                 this.companyModel
-            ],
-            attributes: [
-                'firstName',
-                'userType',
-                'profileDescription',
-                'profilePicturePath'
             ]
         });
 
