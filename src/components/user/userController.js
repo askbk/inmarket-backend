@@ -19,47 +19,96 @@ class UserController {
         this.interestModel = models.Interest;
     }
 
-    async getAll() {
-        return this.userModel.findAll().then(users => {
-            return users;
-        });
-    }
-
-    async getFilteredOnName(filter) {
-        return this.userModel
-            .findAll({
-                where: {
-                    [Op.and]: [
-                        Sq.where(
-                            Sq.fn(
-                                'concat',
-                                Sq.col('firstName'),
-                                ' ',
-                                Sq.col('lastName')
-                            ),
-                            { [Op.like]: '%' + filter + '%' }
-                        )
-                    ]
+    async getAll(myId) {
+        const users = await this.userModel.findAll({
+            where: {
+                id: {
+                    [Op.ne]: myId
                 }
+            }
+        });
+
+        const userConnections = await Promise.all(
+            users.map(async user => {
+                const connectionStatus = await this.getConnectionStatus(
+                    user.id,
+                    myId
+                );
+                return { ...user.get(), connectionStatus };
             })
-            .then(users => {
-                return users;
-            });
+        );
+
+        return userConnections;
     }
 
-    async getByID(id) {
+    async getFilteredOnName(filter, myId) {
+        const filteredUsers = await this.userModel.findAll({
+            where: {
+                [Op.and]: [
+                    Sq.where(
+                        Sq.fn(
+                            'concat',
+                            Sq.col('firstName'),
+                            ' ',
+                            Sq.col('lastName')
+                        ),
+                        { [Op.like]: '%' + filter + '%' }
+                    )
+                ],
+                id: {
+                    [Op.ne]: myId
+                }
+            }
+        });
+
+        const userConnections = await Promise.all(
+            filteredUsers.map(async user => {
+                const connectionStatus = await this.getConnectionStatus(
+                    user.id,
+                    myId
+                );
+                return { ...user.get(), connectionStatus };
+            })
+        );
+
+        return userConnections;
+    }
+
+    async getByID(id, myId) {
+        // Return all info
+        if (id === myId) {
+            const user = await this.userModel.findByPk(id, {
+                include: [
+                    {
+                        model: this.employeeModel,
+                        include: this.companyModel
+                    },
+                    this.jobseekerModel,
+                    this.companyModel
+                ]
+            });
+
+            return user;
+        }
+
+        // TODO: Restrict some of the info being returned.
+
         const user = await this.userModel.findByPk(id, {
             include: [
                 {
                     model: this.employeeModel,
                     include: this.companyModel
                 },
-                this.jobseekerModel,
+                {
+                    model: this.jobseekerModel
+                },
                 this.companyModel
             ]
         });
+        const connectionStatus = await this.getConnectionStatus(myId, id);
+        const userValues = user.get();
 
-        return user;
+        return { ...userValues, connectionStatus };
     }
 
     // Create contact between two users (accept request from contacter)
@@ -169,6 +218,43 @@ class UserController {
         return contacts.map(user => {
             return {...user.get(), connectionStatus: "contact"}
         })
+    }
+
+    async getConnectionStatus(myId, id) {
+        const user = await this.userModel.findByPk(id);
+
+        let connectionStatus = 'noContact';
+
+        const contacts = await user.getContacts();
+
+        for (const contact of contacts) {
+            if (contact.id == myId) {
+                connectionStatus = 'contact';
+                break;
+            }
+        }
+
+        if (connectionStatus === 'noContact') {
+            const requestSent = await this.contactRequestModel.findOne({
+                where: { contacterId: myId, contacteeId: id }
+            });
+
+            if (requestSent) {
+                connectionStatus = 'requestSent';
+            } else {
+                const requestReceived = await this.contactRequestModel.findOne({
+                    where: {
+                        contacterId: id,
+                        contacteeId: myId
+                    }
+                });
+                if (requestReceived) {
+                    connectionStatus = 'requestReceived';
+                }
+            }
+        }
+
+        return connectionStatus;
     }
 
     async create(userContext, passwordHash) {
