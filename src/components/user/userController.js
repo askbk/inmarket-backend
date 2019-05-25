@@ -58,7 +58,8 @@ class UserController {
                 id: {
                     [Op.ne]: myId
                 }
-            }
+            },
+            include: [this.jobseekerModel, this.employeeModel]
         });
 
         const userConnections = await Promise.all(
@@ -105,7 +106,7 @@ class UserController {
                 this.companyModel
             ]
         });
-        const connectionStatus = await this.getConnectionStatus(myId, id);
+        const connectionStatus = await this.getConnectionStatus(id, myId);
         const userValues = user.get();
 
         return { ...userValues, connectionStatus };
@@ -220,7 +221,7 @@ class UserController {
         })
     }
 
-    async getConnectionStatus(myId, id) {
+    async getConnectionStatus(id, myId) {
         const user = await this.userModel.findByPk(id);
 
         let connectionStatus = 'noContact';
@@ -235,20 +236,20 @@ class UserController {
         }
 
         if (connectionStatus === 'noContact') {
-            const requestSent = await this.contactRequestModel.findOne({
+            const requestSent = await this.contactRequestModel.count({
                 where: { contacterId: myId, contacteeId: id }
             });
 
             if (requestSent) {
                 connectionStatus = 'requestSent';
             } else {
-                const requestReceived = await this.contactRequestModel.findOne({
+                const requestReceived = await this.contactRequestModel.count({
                     where: {
                         contacterId: id,
                         contacteeId: myId
                     }
                 });
-                if (requestReceived) {
+                if (requestReceived > 0) {
                     connectionStatus = 'requestReceived';
                 }
             }
