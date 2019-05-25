@@ -55,8 +55,9 @@ User.ContactRequests = User.belongsToMany(User, {
 
 Login.User = Login.belongsTo(User);
 User.Login = User.hasOne(Login);
-
 User.Employee = User.hasOne(Employee);
+User.Company = User.hasOne(Company);
+
 Employee.User = Employee.belongsTo(User);
 User.Jobseeker = User.hasOne(Jobseeker);
 Jobseeker.User = Jobseeker.belongsTo(User);

@@ -25,10 +25,41 @@ class UserController {
         });
     }
 
+    async getFilteredOnName(filter) {
+        return this.userModel
+            .findAll({
+                where: {
+                    [Op.and]: [
+                        Sq.where(
+                            Sq.fn(
+                                'concat',
+                                Sq.col('firstName'),
+                                ' ',
+                                Sq.col('lastName')
+                            ),
+                            { [Op.like]: '%' + filter + '%' }
+                        )
+                    ]
+                }
+            })
+            .then(users => {
+                return users;
+            });
+    }
+
     async getByID(id) {
-        return this.userModel.findByPk(id).then(user => {
-            return user;
+        const user = await this.userModel.findByPk(id, {
+            include: [
+                {
+                    model: this.employeeModel,
+                    include: this.companyModel
+                },
+                this.jobseekerModel,
+                this.companyModel
+            ]
         });
+
+        return user;
     }
 
     // Create contact between two users (accept request from contacter)

@@ -1,4 +1,4 @@
-const testData = require("./testdata.js");
+const testData = require('./testdata.js');
 class UserAPI {
     constructor(userController, auth) {
         this.userController = userController;
@@ -26,11 +26,45 @@ class UserAPI {
                 }
 
                 const user = await this.userController.getByID(id);
-                res.status(200).send(user);
+                
+                res.status(200).send({
+                    success: true,
+                    data: user
+                });
 
                 return true;
             }
         } catch (e) {
+            return false;
+        }
+    }
+
+    async getAll(req, res, next) {
+        try {
+            const authenticated = await this.auth.authenticate(req, res, next);
+            if (authenticated) {
+                if (req.query.search) {
+                    const users = await this.userController.getFilteredOnName(
+                        req.query.search
+                    );
+                    res.status(200).send({
+                        success: true,
+                        data: users
+                    });
+                } else {
+                    const users = await this.userController.getAll(req);
+                    res.status(200).send({
+                        success: true,
+                        data: users
+                    });
+                }
+                return true;
+            }
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Error when retrieving users: ${e}`
+            });
             return false;
         }
     }
