@@ -142,23 +142,33 @@ class UserController {
     async getContactRequests(userId) {
         const user = await this.userModel.findByPk(userId);
 
-        return await user.getContactRequests({
+        const contactRequests = await user.getContactRequests({
             include: [
                 { model: this.employeeModel },
                 { model: this.jobseekerModel }
             ]
         });
+
+        return contactRequests.filter(user => {
+            return !user.contactRequest.isDeclined;
+        }).map(user => {
+            return {...user.get(), connectionStatus: "requestReceived"}
+        })
     }
 
     async getContacts(userId) {
         const user = await this.userModel.findByPk(userId);
 
-        return await user.getContacts({
+        const contacts = await user.getContacts({
             include: [
                 { model: this.employeeModel },
                 { model: this.jobseekerModel }
             ]
         });
+
+        return contacts.map(user => {
+            return {...user.get(), connectionStatus: "contact"}
+        })
     }
 
     async create(userContext, passwordHash) {
