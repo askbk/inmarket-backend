@@ -53,6 +53,9 @@ const Contact = sq.define('contact', {
 });
 
 Login.User = Login.belongsTo(User);
+User.hasOne(Employee);
+User.hasOne(Jobseeker);
+User.hasOne(Company);
 Employee.User = Employee.belongsTo(User);
 Jobseeker.User = Jobseeker.belongsTo(User);
 Jobseeker.MonitoringCompany = Jobseeker.belongsTo(Company, {

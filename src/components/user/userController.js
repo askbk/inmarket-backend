@@ -48,9 +48,18 @@ class UserController {
     }
 
     async getByID(id) {
-        return this.userModel.findByPk(id).then(user => {
-            return user;
+        const user = await this.userModel.findByPk(id, {
+            include: [
+                {
+                    model: this.employeeModel,
+                    include: this.companyModel
+                },
+                this.jobseekerModel,
+                this.companyModel
+            ]
         });
+
+        return user;
     }
 
     async createContact(senderId, receiverId) {
