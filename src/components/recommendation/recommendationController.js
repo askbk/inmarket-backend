@@ -323,6 +323,7 @@ class Recommend {
             employeeId: id,
             role: role,
             // ...company.get(),
+            company: company,
             skills: skills,
             interests: interests,
             ...user.get(),
