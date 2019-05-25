@@ -80,40 +80,9 @@ class UserController {
                 this.companyModel
             ]
         });
-
-        // Find out what status is between user and current user
-        let connectionStatus = 'noContact';
-
-        const contacts = await user.getContacts();
-
-        for (const contact of contacts) {
-            if (contact.id == myId) {
-                connectionStatus = 'contact';
-                break;
-            }
-        }
-
-        if (connectionStatus === 'noContact') {
-            const request = await this.contactRequestModel.findOne({
-                where: { contacterId: myId, contacteeId: id }
-            });
-
-            if (request) {
-                connectionStatus = 'request';
-            } else {
-                const requested = await this.contactRequestModel.findOne({
-                    where: {
-                        contacterId: id,
-                        contacteeId: myId
-                    }
-                });
-                if (requested) {
-                    connectionStatus = 'requested';
-                }
-            }
-        }
-
+        const connectionStatus = await this.getConnectionStatus(myId, id);
         const userValues = user.get();
+
         return { ...userValues, connectionStatus };
     }
 
@@ -214,6 +183,43 @@ class UserController {
                 { model: this.jobseekerModel }
             ]
         });
+    }
+
+    async getConnectionStatus(myId, id) {
+        const user = await this.userModel.findByPk(id);
+
+        let connectionStatus = 'noContact';
+
+        const contacts = await user.getContacts();
+
+        for (const contact of contacts) {
+            if (contact.id == myId) {
+                connectionStatus = 'contact';
+                break;
+            }
+        }
+
+        if (connectionStatus === 'noContact') {
+            const requestSent = await this.contactRequestModel.findOne({
+                where: { contacterId: myId, contacteeId: id }
+            });
+
+            if (requestSent) {
+                connectionStatus = 'requestSent';
+            } else {
+                const requestReceived = await this.contactRequestModel.findOne({
+                    where: {
+                        contacterId: id,
+                        contacteeId: myId
+                    }
+                });
+                if (requestReceived) {
+                    connectionStatus = 'requestReceived';
+                }
+            }
+        }
+
+        return connectionStatus;
     }
 
     async create(userContext, passwordHash) {
