@@ -30,33 +30,36 @@ const EmployeeInterest = Models.EmployeeInterest(sq, Sq);
 const User = Models.User(sq, Sq);
 const Conversation = Models.Conversation(sq, Sq);
 const Message = Models.Message(sq, Sq);
-// Contact model has to be defined here because we want the foreign keys to also be primary keys
-const Contact = sq.define('contact', {
-    contactee: {
-        type: Sq.INTEGER,
-        notNull: true,
-        unique: 'contactIndex',
-        references: {
-            model: User,
-            key: 'id'
-        }
-    },
-    contacter: {
-        type: Sq.INTEGER,
-        notNull: true,
-        unique: 'contactIndex',
-        references: {
-            model: User,
-            key: 'id'
-        }
+
+const ContactRequest = sq.define('contactRequest', {
+    isDeclined: {
+        type: Sq.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     }
 });
 
+User.Contacts = User.belongsToMany(User, {
+    as: 'Contacts',
+    through: 'contacts',
+    otherKey: 'contacterId',
+    foreignKey: 'contacteeId'
+});
+
+User.ContactRequests = User.belongsToMany(User, {
+    as: 'ContactRequests',
+    through: ContactRequest,
+    otherKey: 'contacterId',
+    foreignKey: 'contacteeId'
+});
+
 Login.User = Login.belongsTo(User);
-User.hasOne(Employee);
-User.hasOne(Jobseeker);
-User.hasOne(Company);
+User.Login = User.hasOne(Login);
+User.Employee = User.hasOne(Employee);
+User.Company = User.hasOne(Company);
+
 Employee.User = Employee.belongsTo(User);
+User.Jobseeker = User.hasOne(Jobseeker);
 Jobseeker.User = Jobseeker.belongsTo(User);
 Jobseeker.MonitoringCompany = Jobseeker.belongsTo(Company, {
     as: 'monitoringCompany'
@@ -124,44 +127,60 @@ sq.sync({ force: true })
         return auth.hash('passord123');
     })
     .then(passHash => {
-        User.bulkCreate([
+        const user1 = User.build(
             {
                 firstName: 'ask',
                 lastName: 'yo',
                 profilePicturePath: 'Hello',
-                profileDescription: 'Hei, jeg er en kul type!'
+                profileDescription: 'Hei, jeg er en kul type!',
+                userType: 'employee',
+                login: {
+                    email: 'ask@ask.no',
+                    passwordHash: passHash
+                },
+                employee: {
+                    role: 'Rekrutteringsansvarlig'
+                }
             },
+            {
+                include: [
+                    {
+                        association: User.Login,
+                    }, {
+                        association: User.Employee
+                    }
+                ]
+            }
+        );
+        const user2 = User.build(
             {
                 firstName: 'ask',
                 lastName: 'nje',
-                profilePicturePath: '/usr/bin/firefox'
-            }
-        ]).then(users => {
-            Login.bulkCreate([
-                {
-                    email: 'ask@ask.no',
-                    passwordHash: passHash,
-                    userId: users[0].id
-                },
-                {
+                profilePicturePath: '/usr/bin/firefox',
+                userType: 'jobseeker',
+                login: {
                     email: 'yo@yo.net',
-                    passwordHash: passHash,
-                    userId: users[1].id
+                    passwordHash: passHash
+                },
+                jobseeker: {
+                    type: 'Student',
+                    education: 'Bachelor i sykepleie'
                 }
-            ]);
-            Contact.bulkCreate([
-                { contacter: users[0].id, contactee: users[1].id },
-                { contacter: users[1].id, contactee: users[0].id }
-            ]);
-            Employee.create({
-                userId: users[0].id,
-                role: 'Rekrutteringsansvarlig'
-            });
-            Jobseeker.create({
-                userId: users[1].id,
-                type: 'Student',
-                education: 'Bachelor i sykepleie'
-            });
+            },
+            {
+                include: [
+                    {
+                        association: User.Login
+                    }, {
+                        association: User.Jobseeker
+                    }
+                ]
+            }
+        );
+
+        Promise.all([user1.save(), user2.save()]).then(() => {
+            user1.addContact(user2);
+            user2.addContact(user1);
         });
 
         Skill.findOrCreate({ where: { name: 'Videoredigering' } });
@@ -203,5 +222,5 @@ module.exports = {
     Interest,
     JobseekerInterest,
     EmployeeInterest,
-    Contact
+    ContactRequest
 };
