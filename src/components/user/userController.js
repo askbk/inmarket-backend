@@ -50,8 +50,11 @@ class UserController {
     async getByID(id) {
         const user = await this.userModel.findByPk(id, {
             include: [
+                {
+                    model: this.employeeModel,
+                    include: this.companyModel
+                },
                 this.jobseekerModel,
-                this.employeeModel,
                 this.companyModel
             ]
         });
