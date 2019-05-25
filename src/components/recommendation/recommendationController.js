@@ -1,4 +1,4 @@
-const vector = require("../math/vector.js");
+const vector = require('../math/vector.js');
 
 class Recommend {
     constructor(models) {
@@ -7,7 +7,7 @@ class Recommend {
         this.userModel = models.User;
         this.companyModel = models.Company;
 
-        this.contactModel = models.Contact;
+        this.contactRequestModel = models.ContactRequest;
 
         this.skillModel = models.Skill;
         this.interestModel = models.Interest;
@@ -34,7 +34,7 @@ class Recommend {
         this.employees = [];
         this.jobseekers = [];
 
-        this.myVector = {skills: [], interests: []};
+        this.myVector = { skills: [], interests: [] };
 
         this.employeeVectorMap = this.employeeVectorMap.bind(this);
         this.jobseekerVectorMap = this.jobseekerVectorMap.bind(this);
@@ -47,15 +47,15 @@ class Recommend {
     async employeeRecommendations(context) {
         const userId = context.userId;
         const jobseeker = await this.jobseekerModel.findOne({
-            where: {userId: userId},
-            attributes: ["id"],
+            where: { userId: userId },
+            attributes: ['id'],
             raw: true
         });
 
         if (!jobseeker) {
             throw `UserId ${userId} doesn't belong to any jobseeker.`;
         }
-        
+
         const jobseekerId = jobseeker.id;
         let mySkills, myInterests;
 
@@ -75,7 +75,7 @@ class Recommend {
             id: jobseekerId,
             mySkills: mySkills,
             myInterests: myInterests,
-            userType: "jobseeker",
+            userType: 'jobseeker',
             mapFunction: this.employeeVectorMap
         };
 
@@ -86,8 +86,8 @@ class Recommend {
     async jobseekerRecommendations(context) {
         const userId = context.userId;
         const employee = await this.employeeModel.findOne({
-            where: {userId: userId},
-            attributes: ["id"],
+            where: { userId: userId },
+            attributes: ['id'],
             raw: true
         });
 
@@ -114,7 +114,7 @@ class Recommend {
             id: employeeId,
             mySkills: mySkills,
             myInterests: myInterests,
-            userType: "employee",
+            userType: 'employee',
             mapFunction: this.jobseekerVectorMap
         };
 
@@ -122,7 +122,14 @@ class Recommend {
     }
 
     async getRecommendations(context) {
-        const {mySkills, myInterests, mapFunction, userType, userId, id} = context;
+        const {
+            mySkills,
+            myInterests,
+            mapFunction,
+            userType,
+            userId,
+            id
+        } = context;
 
         let myContacts;
 
@@ -150,15 +157,15 @@ class Recommend {
         ]);
 
         const audience =
-            userType === "jobseeker" ? this.employees : this.jobseekers;
+            userType === 'jobseeker' ? this.employees : this.jobseekers;
 
         // Create lookup table for idf
         this.idf = await this.calculateIDF();
 
         // Calculate tfidf vector of query
-        this.myVectors = {skills: [], interests: []};
+        this.myVectors = { skills: [], interests: [] };
         const myIdf =
-            userType === "jobseeker" ? this.idf.jobseekers : this.idf.employees;
+            userType === 'jobseeker' ? this.idf.jobseekers : this.idf.employees;
 
         mySkills.forEach(mySkill => {
             this.myVector.skills[mySkill.id] =
@@ -171,7 +178,7 @@ class Recommend {
         });
 
         const idf =
-            userType === "jobseeker" ? this.idf.employees : this.idf.jobseekers;
+            userType === 'jobseeker' ? this.idf.employees : this.idf.jobseekers;
         // Calculate tfidf vector for every user
         const userVectors = await this.calculateTFIDFVectors(
             audience,
@@ -241,7 +248,7 @@ class Recommend {
                     return !myContacts.includes(user.user.id);
                 })
                 .map(user => {
-                    const userVector = {skills: [], interests: []};
+                    const userVector = { skills: [], interests: [] };
 
                     user.skills.forEach(skill => {
                         // Only care about skills in query
@@ -393,7 +400,7 @@ class Recommend {
             include: [
                 {
                     model: this.jobseekerModel,
-                    where: {id: id}
+                    where: { id: id }
                 }
             ]
         });
@@ -405,7 +412,7 @@ class Recommend {
             include: [
                 {
                     model: this.employeeModel,
-                    where: {id: id}
+                    where: { id: id }
                 }
             ]
         });
@@ -417,7 +424,7 @@ class Recommend {
             include: [
                 {
                     model: this.jobseekerModel,
-                    where: {id: id}
+                    where: { id: id }
                 }
             ]
         });
@@ -429,7 +436,7 @@ class Recommend {
             include: [
                 {
                     model: this.employeeModel,
-                    where: {id: id}
+                    where: { id: id }
                 }
             ]
         });
@@ -482,13 +489,23 @@ class Recommend {
     // Get userIds of all users that the current user either already has contact
     // with, or that the current user already has sent a contact request to.
     async getContactIds(userId) {
-        const contacts = await this.contactModel.findAll({
-            where: {contacter: userId},
-            attributes: ["contactee"],
+        const user = await this.userModel.findByPk(userId);
+        const contacts = await user.getContacts({
+            attributes: ['id'],
             raw: true
         });
 
-        return contacts.map(contact => {return contact.contactee;});
+        const contactRequests = await this.contactRequestModel.findAll({
+            where: {
+                contacterId: userId
+            },
+            attributes: [['contacteeId', 'id']],
+            raw: true
+        });
+
+        return [...contacts, ...contactRequests].map(contact => {
+            return contact.id;
+        });
     }
 }
 
