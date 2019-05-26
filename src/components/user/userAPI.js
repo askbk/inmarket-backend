@@ -416,7 +416,7 @@ class UserAPI {
 
     async insertTestData(req, res, next) {
         testData.forEach(user => {
-            this.userController.create(user.userContext, user.passwordHash);
+            this.userController.create(user.userContext);
         });
 
         res.status(200);
