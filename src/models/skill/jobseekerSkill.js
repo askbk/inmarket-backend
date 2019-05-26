@@ -5,6 +5,7 @@ module.exports = (sequelize, Sq) => {
         {
             isActive: {
                 type: Sq.BOOLEAN,
+                defaultValue: true,
                 allowNull: false
             }
         },

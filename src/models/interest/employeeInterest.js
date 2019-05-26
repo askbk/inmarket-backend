@@ -4,6 +4,7 @@ module.exports = (sequelize, Sq) => {
     EmployeeInterest.init({
         isActive: {
             type: Sq.BOOLEAN,
+            defaultValue: true,
             allowNull: false
         }
     }, {
