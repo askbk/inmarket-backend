@@ -6,6 +6,10 @@ module.exports = (sequelize, Sq) => {
             role: {
                 type: Sq.STRING,
                 allowNull: true
+            },
+            company: {
+                type: Sq.STRING,
+                allowNull: false
             }
         },
         {
