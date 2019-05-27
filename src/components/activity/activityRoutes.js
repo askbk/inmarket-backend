@@ -25,7 +25,7 @@ module.exports = (router, activities) => {
     });
 
     // Accept an invitation to an activity
-    router.put('/:activityId/invitations/:userId', (rq, rs, n) =>  {
+    router.put('/:activityId/invitations/:userId', (rq, rs, n) => {
         activities.acceptInvitation(rq, rs, n);
     });
 

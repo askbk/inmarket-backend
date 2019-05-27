@@ -140,14 +140,15 @@ sq.sync({ force: true })
                 },
                 employee: {
                     role: 'Rekrutteringsansvarlig',
-                    company: "DNB"
+                    company: 'DNB'
                 }
             },
             {
                 include: [
                     {
-                        association: User.Login,
-                    }, {
+                        association: User.Login
+                    },
+                    {
                         association: User.Employee
                     }
                 ]
@@ -172,7 +173,8 @@ sq.sync({ force: true })
                 include: [
                     {
                         association: User.Login
-                    }, {
+                    },
+                    {
                         association: User.Jobseeker
                     }
                 ]

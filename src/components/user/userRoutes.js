@@ -8,12 +8,12 @@ module.exports = (router, users) => {
     router.get('/:id', (rq, rs, n) => {
         users.getByID(rq, rs, n);
     });
-    
+
     // Get all users
     router.get('', (rq, rs, n) => {
         users.getAll(rq, rs, n);
     });
-  
+
     // Update user profile
     router.put('/:id', (rq, rs, n) => {
         users.updateProfile(rq, rs, n);

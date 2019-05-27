@@ -96,7 +96,7 @@ class ActivityAPI {
 
             res.status(200).send({
                 success: true,
-                message: "Activity invitation sent."
+                message: 'Activity invitation sent.'
             });
 
             return true;
@@ -120,7 +120,7 @@ class ActivityAPI {
 
             res.status(200).send({
                 success: true,
-                message: "Activity invitation accepted."
+                message: 'Activity invitation accepted.'
             });
 
             return true;
@@ -137,14 +137,14 @@ class ActivityAPI {
     // TODO: Authenticate user
     // TODO: Verify that the user has permission to edit the activity
     async update(req, res, next) {
-        const activity = {...req.body, activityId: req.params.id};
+        const activity = { ...req.body, activityId: req.params.id };
 
         try {
             await this.activityController.update(activity);
 
             res.status(200).send({
                 success: true,
-                message: "Activity updated."
+                message: 'Activity updated.'
             });
 
             return true;
