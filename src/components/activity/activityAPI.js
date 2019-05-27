@@ -59,26 +59,34 @@ class ActivityAPI {
         } = req.body;
 
         try {
-            await this.activityController.create({
-                name,
-                description,
-                startDateUTC,
-                endDateUTC,
-                duration,
-                isRecurring,
-                recurrencePattern
-            });
+            const authenticated = await this.auth.authenticate(req, res, next);
+            if (authenticated) {
+                const myId = authenticated.sub;
+                await this.activityController.create(myId,{
+                    name,
+                    description,
+                    startDateUTC,
+                    endDateUTC,
+                    duration,
+                    isRecurring,
+                    recurrencePattern
+                });
 
-            res.status(200).send({
-                success: true,
-                message: 'Activity created'
-            });
+                res.status(200).send({
+                    success: true,
+                    message: 'Activity created'
+                });
+
+                return true;
+            }
+
+
 
             return true;
         } catch (e) {
             res.status(500).send({
                 success: false,
-                message: `Error when creating activity: {e}`
+                message: `Error when creating activity: ${e}`
             });
 
             return false;
