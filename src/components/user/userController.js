@@ -81,15 +81,21 @@ class UserController {
             const user = await this.userModel.findByPk(id, {
                 include: [
                     {
-                        model: this.employeeModel,
-                        include: this.companyModel
+                        model: this.employeeModel
                     },
-                    this.jobseekerModel,
-                    this.companyModel
+                    {
+                        model: this.jobseekerModel
+                    }
                 ]
             });
 
-            return user;
+            const skills = user.userType === 'employee' ?
+                await user.employee.getSkills() : await user.jobseeker.getSkills();
+
+            const interests = user.userType === 'employee' ?
+                await user.employee.getInterests() : await user.jobseeker.getInterests();
+
+            return {...user.get(), skills};
         }
 
         // TODO: Restrict some of the info being returned.
@@ -97,19 +103,24 @@ class UserController {
         const user = await this.userModel.findByPk(id, {
             include: [
                 {
-                    model: this.employeeModel,
-                    include: this.companyModel
+                    model: this.employeeModel
                 },
                 {
                     model: this.jobseekerModel
-                },
-                this.companyModel
+                }
             ]
         });
+
+        const skills = user.userType === 'employee' ?
+            await user.employee.getSkills() : await user.jobseeker.getSkills();
+
+        const interests = user.userType === 'employee' ?
+            await user.employee.getInterests() : await user.jobseeker.getInterests();
+
         const connectionStatus = await this.getConnectionStatus(id, myId);
         const userValues = user.get();
 
-        return { ...userValues, connectionStatus };
+        return { ...userValues, connectionStatus, skills, interests };
     }
 
     // Create contact between two users (accept request from contacter)
@@ -277,10 +288,6 @@ class UserController {
                         {
                             association: this.userModel.Jobseeker,
                             model: this.jobseekerModel
-                        },
-                        {
-                            association: this.userModel.Company,
-                            model: this.companyModel
                         }
                     ]
                 }

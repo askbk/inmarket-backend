@@ -27,12 +27,17 @@ const testUsers = [
     // Jobseekers
     {
         userContext: {
-            "email": "aske@aske.no",
+            login: {
+                "email": "aske@aske.no",
+                passwordHash: testPasswordHash
+            },
             "firstName": "aske",
             "lastName": "ashes",
             "userType": "jobseeker",
-            "education": "Bachelor Informatikk",
-            "type": "Arbeidssøker",
+            jobseeker: {
+                "education": "Bachelor Informatikk",
+                "type": "Arbeidssøker",
+            },
             "skills": [1, 2, 3],
             "interests": [6, 4, 5],
             "profilePicturePath": "images/temp2.png"
@@ -41,100 +46,140 @@ const testUsers = [
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "aski@aski.no",
+            login: {
+                "email": "aski@aski.no",
+                passwordHash: testPasswordHash
+            },
             "firstName": "aske",
             "lastName": "ashes",
             "userType": "jobseeker",
+            jobseeker: {
+                "education": "Media og kommunikasjon",
+                "type": "Elev"
+            },
             "skills": [10, 9, 8],
             "interests": [2, 7, 5],
-            "education": "Media og kommunikasjon",
-            "type": "Elev"
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "asko@asko.no",
+            login: {
+                "email": "asko@asko.no",
+                passwordHash: testPasswordHash
+            },
             "firstName": "asko",
             "lastName": "ashes",
             "userType": "jobseeker",
+            jobseeker: {
+                "education": "Master i datateknologi",
+                "type": "Student"
+            },
             "skills": [4, 2, 7],
             "interests": [1, 7, 3],
-            "education": "Master i datateknologi",
-            "type": "Student"
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "filip@ask.no",
+            login: {
+                "email": "filip@ask.no",
+                passwordHash: testPasswordHash
+            },
             "firstName": "filip",
             "lastName": "ashes",
             "userType": "jobseeker",
+            jobseeker: {
+                "education": "Ski VGS",
+                "type": "Arbeidssøker"
+            },
             "skills": [6, 5, 4],
             "interests": [8, 9, 7],
-            "education": "Ski VGS",
-            "type": "Arbeidssøker"
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "ya@yo.no",
+            login: {
+                "email": "ya@yo.no",
+                passwordHash: testPasswordHash
+            },
             "firstName": "yo",
             "lastName": "ta",
             "userType": "jobseeker",
+            jobseeker: {
+                "education": "Bachelor i datasikkerhet",
+                "type": "Student"
+            },
             "skills": [8, 6, 5],
             "interests": [5, 9, 1],
-            "education": "Bachelor i datasikkerhet",
-            "type": "Student"
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "tord@aski.no",
+            login: {
+                "email": "tord@aski.no",
+                passwordHash: testPasswordHash
+            },
             "firstName": "tord",
             "lastName": "stord",
             "userType": "jobseeker",
+            jobseeker: {
+                "education": "Fagbrev tømrer",
+                "type": "Elev"
+            },
             "skills": [1, 9, 8],
             "interests": [2, 5, 7],
-            "education": "Fagbrev tømrer",
-            "type": "Elev"
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "agugsi@hello.no",
+            login: {
+                "email": "agugsi@hello.no",
+                passwordHash: testPasswordHash
+            },
             "firstName": "agugs",
             "lastName": "ashes",
             "userType": "jobseeker",
+            jobseeker: {
+                "education": "Fagbrev elektriker",
+                "type": "Arbeidssøker"
+            },
             "skills": [9, 2, 6],
             "interests": [2, 3, 9],
-            "education": "Fagbrev elektriker",
-            "type": "Arbeidssøker"
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "heyah@yea.com",
+            login: {
+                "email": "heyah@yea.com",
+                passwordHash: testPasswordHash
+            },
             "firstName": "filip",
             "lastName": "ashes",
             "userType": "jobseeker",
+            jobseeker: {
+                "education": "Sandsli videregående",
+                "type": "Elev"
+            },
             "skills": [7, 5, 4],
             "interests": [6, 9, 8],
-            "education": "Sandsli videregående",
-            "type": "Elev"
         },
         passwordHash: testPasswordHash
     },
     // Employees
     {
         userContext: {
-            "email": "ask@inmarket.as",
+            login: {
+                passwordHash: testPasswordHash,
+                "email": "ask@inmarket.as",
+            },
+            employee: {
+                "role": "Teknologisk leder",
+                company: "InMarket"
+            },
             "firstName": "bossman",
             "lastName": "ashes",
             "userType": "employee",
-            "company": "InMarket",
             "skills": [3, 4, 5],
             "companyId": 2,
-            "role": "Teknologisk leder",
             "interests": [8, 2, 1],
             "profilePicturePath": "images/temp2.png"
 
@@ -142,92 +187,127 @@ const testUsers = [
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "filip@inmarket.as",
+            login: {
+                passwordHash: testPasswordHash,
+                "email": "filip@inmarket.as",
+            },
+            employee: {
+                "role": "Utviklerbossman",
+                company: "InMarket"
+            },
             "firstName": "filip",
             "lastName": "heya",
             "userType": "employee",
-            "company": "InMarket",
             "skills": [5, 6, 7],
             "companyId": 2,
-            "role": "Utviklerbossman",
             "interests": [5, 8, 3]
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "marcus@inmarket.as",
+            login: {
+                passwordHash: testPasswordHash,
+                "email": "marcus@inmarket.as",
+            },
+            employee: {
+                "role": "Utviklerbro",
+                company: "InMarket"
+            },
             "firstName": "marcuxz",
             "lastName": "yuo",
             "userType": "employee",
-            "company": "InMarket",
             "skills": [8, 9, 10],
             "companyId": 2,
-            "role": "Utviklerbro",
             "interests": [2, 5, 9]
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "samuel@inmarket.as",
+            login: {
+                passwordHash: testPasswordHash,
+                "email": "samuel@inmarket.as",
+            },
+            employee: {
+                "role": "Daglig leder",
+                company: "InMarket"
+            },
             "firstName": "samuel",
             "lastName": "biggyboi",
             "userType": "employee",
-            "company": "InMarket",
             "skills": [6, 5, 1],
             "companyId": 2,
-            "role": "Daglig leder",
             "interests": [2, 4, 7]
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "skrette@inmarket.as",
+            login: {
+                passwordHash: testPasswordHash,
+                "email": "skrette@inmarket.as",
+            },
+            employee: {
+                "role": "Personalansvarlig",
+                company: "InMarket"
+            },
             "firstName": "skrettebarg",
             "lastName": "samuel",
             "userType": "employee",
-            "company": "InMarket",
             "skills": [3, 1, 5],
             "companyId": 2,
-            "role": "Personalansvarlig",
             "interests": [2, 9, 7]
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "izzy@inmarket.as",
+            login: {
+                passwordHash: testPasswordHash,
+                "email": "izzy@inmarket.as",
+            },
+            employee: {
+                "role": "Markedsføringsansvarlig",
+                company: "InMarket"
+            },
             "firstName": "izraeli",
             "lastName": "bonny",
             "userType": "employee",
-            "company": "InMarket",
             "skills": [4, 6, 7],
             "companyId": 2,
-            "role": "Markedsføringsansvarlig",
             "interests": [7, 2, 1]
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "post@inmarket.as",
+            login: {
+                passwordHash: testPasswordHash,
+                "email": "post@inmarket.as",
+            },
+            employee: {
+                "role": "Postbud",
+                company: "InMarket"
+            },
             "firstName": "anon",
             "lastName": "yuo",
             "userType": "employee",
-            "company": "InMarket",
             "skills": [2, 6, 3],
             "companyId": 2,
-            "role": "Postbud",
             "interests": [5, 4, 3]
         },
         passwordHash: testPasswordHash
     },{
         userContext: {
-            "email": "oyvind@inmarket.as",
+            login: {
+                passwordHash: testPasswordHash,
+                "email": "oyvind@inmarket.as",
+            },
+            employee: {
+                "role": "Nestleder",
+                company: "InMarket"
+            },
             "firstName": "øyvind",
             "lastName": "aleksander",
             "userType": "employee",
-            "company": "InMarket",
             "skills": [3, 4, 2],
             "companyId": 2,
-            "role": "Nestleder",
             "interests": [9, 3, 2]
         },
         passwordHash: testPasswordHash
