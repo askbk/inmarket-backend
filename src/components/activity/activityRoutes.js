@@ -4,7 +4,7 @@ module.exports = (router, activities) => {
         activities.getAll(rq, rs, n);
     });
 
-    // Get and activity
+    // Get an activity
     router.get('/:id', (rq, rs, n) => {
         activities.getByID(rq, rs, n);
     });
@@ -14,8 +14,8 @@ module.exports = (router, activities) => {
         activities.create(rq, rs, n);
     });
 
-    // Update and existing activity
-    router.post('/:id', (rq, rs, n) => {
+    // Update an existing activity
+    router.put('/:id', (rq, rs, n) => {
         activities.update(rq, rs, n);
     });
 
@@ -24,8 +24,13 @@ module.exports = (router, activities) => {
         activities.invite(rq, rs, n);
     });
 
+    // Create activity and immediately invite a user
+    router.post('/users/:userId', (rq, rs, n) => {
+        activities.createAndInvite(rq, rs, n);
+    })
+
     // Accept an invitation to an activity
-    router.put('/:activityId/invitations/:userId', (rq, rs, n) =>  {
+    router.post('/:activityId/invitations/:userId/accept', (rq, rs, n) =>  {
         activities.acceptInvitation(rq, rs, n);
     });
 

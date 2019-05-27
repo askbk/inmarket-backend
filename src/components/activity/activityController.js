@@ -8,29 +8,37 @@ class ActivityController {
     async getAll(userId) {
         // TODO: Filter out activities where end date is in the past?
         const user = await this.userModel.findByPk(userId, {
-            include: [{
-                model: this.activityModel,
-                as: "activities"
-            }, {
-                model: this.activityModel,
-                as: "activityInvitations"
-            }]
+            include: [
+                {
+                    model: this.activityModel,
+                    as: 'activities'
+                },
+                {
+                    model: this.activityModel,
+                    as: 'activityInvitations'
+                }
+            ]
         });
 
-        return {activities: user.activities, activityInvitations: user.activityInvitations};
+        return {
+            activities: user.activities,
+            activityInvitations: user.activityInvitations
+        };
     }
 
     async getByID(id) {
         return await this.activityModel.findByPk(id);
     }
 
-    async create(activity) {
+    async create(userId, activityContext) {
         try {
-            await this.activityModel.create({
-                ...activity
+            const activity = await this.activityModel.create({
+                ...activityContext
             });
 
-            return true;
+            await activity.setCreator(userId);
+
+            return activity.id;
         } catch (e) {
             throw e;
         }
@@ -38,7 +46,9 @@ class ActivityController {
 
     async update(activityContext) {
         try {
-            const activity = await this.activityModel.findByPk(activityContext.activityId);
+            const activity = await this.activityModel.findByPk(
+                activityContext.activityId
+            );
 
             await activity.update(activityContext);
 
@@ -70,14 +80,16 @@ class ActivityController {
                 // is a string.
                 // TODO: Maybe fix this so that === can be used
                 if (invitation.id == activityId) {
-                    const activity = await this.activityModel.findByPk(activityId);
+                    const activity = await this.activityModel.findByPk(
+                        activityId
+                    );
                     await user.addActivity(activity);
 
                     return true;
                 }
             }
 
-            throw `No invitation to activity${activityId} was found for user${userId}.`
+            throw `No invitation to activity${activityId} was found for user${userId}.`;
         } catch (e) {
             throw e;
         }
