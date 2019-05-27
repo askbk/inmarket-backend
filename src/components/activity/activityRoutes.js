@@ -27,11 +27,16 @@ module.exports = (router, activities) => {
     // Create activity and immediately invite a user
     router.post('/users/:userId', (rq, rs, n) => {
         activities.createAndInvite(rq, rs, n);
-    })
+    });
 
     // Accept an invitation to an activity
-    router.post('/:activityId/invitations/:userId/accept', (rq, rs, n) =>  {
+    router.post('/:activityId/invitations/:userId/accept', (rq, rs, n) => {
         activities.acceptInvitation(rq, rs, n);
+    });
+
+    // Decline an invitation to an activity
+    router.post('/:activityId/invitations/:userId/decline', (rq, rs, n) => {
+        activities.declineInvitation(rq, rs, n);
     });
 
     return router;

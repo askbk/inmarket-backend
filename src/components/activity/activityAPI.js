@@ -134,6 +134,29 @@ class ActivityAPI {
         }
     }
 
+    async declineInvitation(req, res, next) {
+        const userId = req.params.userId,
+            activityId = req.params.activityId;
+
+        try {
+            await this.activityController.declineInvitation(userId, activityId);
+
+            res.status(200).send({
+                success: true,
+                message: 'Activity invitation declined.'
+            });
+
+            return true;
+        } catch (e) {
+            res.status(500).send({
+                success: false,
+                message: `Error when declining activity invitation: ${e}`
+            });
+
+            return false;
+        }
+    }
+
     // TODO: Authenticate user
     // TODO: Verify that the user has permission to edit the activity
     async update(req, res, next) {
