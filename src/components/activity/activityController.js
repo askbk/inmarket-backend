@@ -84,6 +84,32 @@ class ActivityController {
                         activityId
                     );
                     await user.addActivity(activity);
+                    await user.removeActivityInvitation(activityId);
+
+                    return true;
+                }
+            }
+
+            throw `No invitation to activity${activityId} was found for user${userId}.`;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async declineInvitation(userId, activityId) {
+        try {
+            const user = await this.userModel.findByPk(userId);
+
+            const invitations = await user.getActivityInvitations();
+            for (const invitation of invitations) {
+                // Need to use type coercion in comparison because invitation.id
+                // is a string.
+                // TODO: Maybe fix this so that === can be used
+                if (invitation.id == activityId) {
+                    const activity = await this.activityModel.findByPk(
+                        activityId
+                    );
+                    await user.removeActivityInvitation(activityId);
 
                     return true;
                 }
