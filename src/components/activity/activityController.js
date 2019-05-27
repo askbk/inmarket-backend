@@ -2,6 +2,8 @@ class ActivityController {
     constructor(models) {
         this.activityModel = models.Activity;
         this.userModel = models.User;
+        this.jobseekerModel = models.Jobseeker;
+        this.employeeModel = models.Employee;
     }
 
     // Returns all activities and invitations to activities for a user.
@@ -11,11 +13,39 @@ class ActivityController {
             include: [
                 {
                     model: this.activityModel,
-                    as: 'activities'
+                    as: 'activities',
+                    include: [
+                        {
+                            model: this.userModel,
+                            as: 'creator',
+                            include: [
+                                {
+                                    model: this.employeeModel
+                                },
+                                {
+                                    model: this.jobseekerModel
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
                     model: this.activityModel,
-                    as: 'activityInvitations'
+                    as: 'activityInvitations',
+                    include: [
+                        {
+                            model: this.userModel,
+                            as: 'creator',
+                            include: [
+                                {
+                                    model: this.employeeModel
+                                },
+                                {
+                                    model: this.jobseekerModel
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         });
@@ -27,7 +57,22 @@ class ActivityController {
     }
 
     async getByID(id) {
-        return await this.activityModel.findByPk(id);
+        return await this.activityModel.findByPk(id, {
+            include: [
+                {
+                    model: this.userModel,
+                    as: 'creator',
+                    include: [
+                        {
+                            model: this.employeeModel
+                        },
+                        {
+                            model: this.jobseekerModel
+                        }
+                    ]
+                }
+            ]
+        });
     }
 
     async create(userId, activityContext) {
