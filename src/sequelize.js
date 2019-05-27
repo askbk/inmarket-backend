@@ -189,25 +189,17 @@ sq.sync({ force: true })
 
         Skill.findOrCreate({ where: { name: 'Videoredigering' } });
         Skill.findOrCreate({ where: { name: 'Salg' } });
-        Skill.findOrCreate({ where: { name: 'Vasking' } });
-        Skill.findOrCreate({ where: { name: 'Baking' } });
-        Skill.findOrCreate({ where: { name: 'Sterk' } });
-        Skill.findOrCreate({ where: { name: 'Sykkelreparasjon' } });
         Skill.findOrCreate({ where: { name: 'Grafisk design' } });
         Skill.findOrCreate({ where: { name: 'Tekstredigering' } });
-        Skill.findOrCreate({ where: { name: 'Nettverksbygging' } });
+        Skill.findOrCreate({ where: { name: 'Regnskapsføring' } });
         Skill.findOrCreate({ where: { name: 'Programmering' } });
 
-        Interest.findOrCreate({ where: { name: 'Avengers' } });
-        Interest.findOrCreate({ where: { name: 'Transformers' } });
-        Interest.findOrCreate({ where: { name: 'Lese bøker' } });
-        Interest.findOrCreate({ where: { name: 'Rappe' } });
-        Interest.findOrCreate({ where: { name: 'Avengers' } });
+        Interest.findOrCreate({ where: { name: 'Teknologi' } });
         Interest.findOrCreate({ where: { name: 'Musikk' } });
         Interest.findOrCreate({ where: { name: 'Fotografi' } });
-        Interest.findOrCreate({ where: { name: 'Fjellturer' } });
-        Interest.findOrCreate({ where: { name: 'Svømming' } });
-        Interest.findOrCreate({ where: { name: 'Fotball' } });
+        Interest.findOrCreate({ where: { name: 'Entreprenørskap' } });
+        Interest.findOrCreate({ where: { name: 'Sosialt arbeid' } });
+        Interest.findOrCreate({ where: { name: 'Mat og drikke' } });
     })
     .catch(e => {
         console.log(`error: ${e}`);
