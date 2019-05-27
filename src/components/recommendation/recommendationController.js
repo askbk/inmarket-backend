@@ -324,9 +324,9 @@ class Recommend {
                 employeeId: id,
                 role: role,
                 // ...company.get(),
-                company: company,
+                company: company
             },
-            connectionStatus: "noContact",
+            connectionStatus: 'noContact',
             skills: skills,
             interests: interests,
             ...user.get(),
@@ -357,9 +357,9 @@ class Recommend {
             jobseeker: {
                 jobseekerId: id,
                 type: type,
-                education: education,
+                education: education
             },
-            connectionStatus: "noContact",
+            connectionStatus: 'noContact',
             skills: skills,
             interests: interests,
             ...user.get(),
@@ -464,10 +464,10 @@ class Recommend {
                 {
                     model: this.userModel,
                     required: true
-                // },
-                // {
-                //     model: this.companyModel,
-                //     required: true
+                    // },
+                    // {
+                    //     model: this.companyModel,
+                    //     required: true
                 }
             ]
         });

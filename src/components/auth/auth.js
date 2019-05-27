@@ -64,7 +64,7 @@ class Auth {
 
             const jwt = await this.tokenIssuer.issue(userContext);
 
-            return {jwt, userType};
+            return { jwt, userType };
         }
 
         //  Password doesn't match

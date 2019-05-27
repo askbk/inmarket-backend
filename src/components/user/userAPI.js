@@ -93,7 +93,7 @@ class UserAPI {
             case userInfo.userType === 'employee':
                 userContext = {
                     employee: {
-                        role: body.role,
+                        role: body.role
                     },
                     interests: body.interests,
                     skills: body.skills,
@@ -104,7 +104,7 @@ class UserAPI {
                 userContext = {
                     jobseeker: {
                         type: body.type,
-                        education: body.education,
+                        education: body.education
                     },
                     interests: body.interests,
                     skills: body.skills,

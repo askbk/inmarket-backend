@@ -37,4 +37,4 @@ const cosine = (vectorA, vectorB) => {
     return 0;
 };
 
-module.exports = {magnitude, dotProduct, cosine};
+module.exports = { magnitude, dotProduct, cosine };
