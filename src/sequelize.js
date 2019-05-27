@@ -80,6 +80,7 @@ Activity.InvitedUsers = Activity.belongsToMany(User, {
     through: 'activityInvitation',
     as: 'InvitedUsers'
 });
+Activity.Creator = Activity.belongsTo(User, { as: 'creator' });
 // Company.hasMany(Activity);
 Activity.hasMany(ActivityException, { as: 'exceptions' });
 
