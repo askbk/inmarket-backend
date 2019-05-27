@@ -89,13 +89,17 @@ class UserController {
                 ]
             });
 
-            const skills = user.userType === 'employee' ?
-                await user.employee.getSkills() : await user.jobseeker.getSkills();
+            const skills =
+                user.userType === 'employee'
+                    ? await user.employee.getSkills()
+                    : await user.jobseeker.getSkills();
 
-            const interests = user.userType === 'employee' ?
-                await user.employee.getInterests() : await user.jobseeker.getInterests();
+            const interests =
+                user.userType === 'employee'
+                    ? await user.employee.getInterests()
+                    : await user.jobseeker.getInterests();
 
-            return {...user.get(), skills};
+            return { ...user.get(), skills };
         }
 
         // TODO: Restrict some of the info being returned.
@@ -111,11 +115,15 @@ class UserController {
             ]
         });
 
-        const skills = user.userType === 'employee' ?
-            await user.employee.getSkills() : await user.jobseeker.getSkills();
+        const skills =
+            user.userType === 'employee'
+                ? await user.employee.getSkills()
+                : await user.jobseeker.getSkills();
 
-        const interests = user.userType === 'employee' ?
-            await user.employee.getInterests() : await user.jobseeker.getInterests();
+        const interests =
+            user.userType === 'employee'
+                ? await user.employee.getInterests()
+                : await user.jobseeker.getInterests();
 
         const connectionStatus = await this.getConnectionStatus(id, myId);
         const userValues = user.get();
@@ -210,11 +218,13 @@ class UserController {
             ]
         });
 
-        return contactRequests.filter(user => {
-            return !user.contactRequest.isDeclined;
-        }).map(user => {
-            return {...user.get(), connectionStatus: "requestReceived"}
-        })
+        return contactRequests
+            .filter(user => {
+                return !user.contactRequest.isDeclined;
+            })
+            .map(user => {
+                return { ...user.get(), connectionStatus: 'requestReceived' };
+            });
     }
 
     async getContacts(userId) {
@@ -228,8 +238,8 @@ class UserController {
         });
 
         return contacts.map(user => {
-            return {...user.get(), connectionStatus: "contact"}
-        })
+            return { ...user.get(), connectionStatus: 'contact' };
+        });
     }
 
     async getConnectionStatus(id, myId) {
@@ -295,14 +305,14 @@ class UserController {
 
             await user.save();
 
-            if (userContext.userType === "employee") {
+            if (userContext.userType === 'employee') {
                 const employee = await user.getEmployee();
                 await employee.addSkills(userContext.skills);
-                await employee.addInterests(userContext.interests)
-            } else if (userContext.userType === "jobseeker") {
+                await employee.addInterests(userContext.interests);
+            } else if (userContext.userType === 'jobseeker') {
                 const jobseeker = await user.getJobseeker();
                 await jobseeker.addSkills(userContext.skills);
-                await jobseeker.addInterests(userContext.interests)
+                await jobseeker.addInterests(userContext.interests);
             }
 
             return true;
