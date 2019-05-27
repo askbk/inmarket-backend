@@ -1,0 +1,2 @@
+CREATE SCHEMA IF NOT EXISTS `inmarket_db` DEFAULT CHARACTER SET utf8 ;
+USE `inmarket_db` ;
