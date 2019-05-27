@@ -2,6 +2,8 @@ class ActivityController {
     constructor(models) {
         this.activityModel = models.Activity;
         this.userModel = models.User;
+        this.jobseekerModel = models.Jobseeker;
+        this.employeeModel = models.Employee;
     }
 
     // Returns all activities and invitations to activities for a user.
@@ -11,11 +13,39 @@ class ActivityController {
             include: [
                 {
                     model: this.activityModel,
-                    as: 'activities'
+                    as: 'activities',
+                    include: [
+                        {
+                            model: this.userModel,
+                            as: 'creator',
+                            include: [
+                                {
+                                    model: this.employeeModel
+                                },
+                                {
+                                    model: this.jobseekerModel
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
                     model: this.activityModel,
-                    as: 'activityInvitations'
+                    as: 'activityInvitations',
+                    include: [
+                        {
+                            model: this.userModel,
+                            as: 'creator',
+                            include: [
+                                {
+                                    model: this.employeeModel
+                                },
+                                {
+                                    model: this.jobseekerModel
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         });
@@ -27,16 +57,33 @@ class ActivityController {
     }
 
     async getByID(id) {
-        return await this.activityModel.findByPk(id);
+        return await this.activityModel.findByPk(id, {
+            include: [
+                {
+                    model: this.userModel,
+                    as: 'creator',
+                    include: [
+                        {
+                            model: this.employeeModel
+                        },
+                        {
+                            model: this.jobseekerModel
+                        }
+                    ]
+                }
+            ]
+        });
     }
 
-    async create(activity) {
+    async create(userId, activityContext) {
         try {
-            await this.activityModel.create({
-                ...activity
+            const activity = await this.activityModel.create({
+                ...activityContext
             });
 
-            return true;
+            await activity.setCreator(userId);
+
+            return activity.id;
         } catch (e) {
             throw e;
         }
@@ -82,6 +129,32 @@ class ActivityController {
                         activityId
                     );
                     await user.addActivity(activity);
+                    await user.removeActivityInvitation(activityId);
+
+                    return true;
+                }
+            }
+
+            throw `No invitation to activity${activityId} was found for user${userId}.`;
+        } catch (e) {
+            throw e;
+        }
+    }
+
+    async declineInvitation(userId, activityId) {
+        try {
+            const user = await this.userModel.findByPk(userId);
+
+            const invitations = await user.getActivityInvitations();
+            for (const invitation of invitations) {
+                // Need to use type coercion in comparison because invitation.id
+                // is a string.
+                // TODO: Maybe fix this so that === can be used
+                if (invitation.id == activityId) {
+                    const activity = await this.activityModel.findByPk(
+                        activityId
+                    );
+                    await user.removeActivityInvitation(activityId);
 
                     return true;
                 }
