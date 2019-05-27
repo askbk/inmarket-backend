@@ -19,6 +19,7 @@ services:
         build: .
         volumes:
             - .:/usr/app
+            - /usr/app/node_modules
         expose:
             - "80"
         networks:
