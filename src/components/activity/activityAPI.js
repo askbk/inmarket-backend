@@ -205,7 +205,7 @@ class ActivityAPI {
                 await this.activityController.invite(id, activityId);
 
                 res.status(200).send({
-                    success: false,
+                    success: true,
                     message: 'Activity created and user invited'
                 });
 
