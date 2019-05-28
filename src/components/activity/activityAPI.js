@@ -55,30 +55,40 @@ class ActivityAPI {
             endDateUTC,
             duration,
             isRecurring,
-            recurrencePattern
+            recurrencePattern,
+            location
         } = req.body;
 
         try {
-            await this.activityController.create({
-                name,
-                description,
-                startDateUTC,
-                endDateUTC,
-                duration,
-                isRecurring,
-                recurrencePattern
-            });
+            const authenticated = await this.auth.authenticate(req, res, next);
+            if (authenticated) {
+                const myId = authenticated.sub;
+                await this.activityController.create(myId,{
+                    name,
+                    description,
+                    startDateUTC,
+                    endDateUTC,
+                    duration,
+                    isRecurring,
+                    recurrencePattern,
+                    location
+                });
 
-            res.status(200).send({
-                success: true,
-                message: 'Activity created'
-            });
+                res.status(200).send({
+                    success: true,
+                    message: 'Activity created'
+                });
+
+                return true;
+            }
+
+
 
             return true;
         } catch (e) {
             res.status(500).send({
                 success: false,
-                message: `Error when creating activity: {e}`
+                message: `Error when creating activity: ${e}`
             });
 
             return false;
@@ -189,7 +199,8 @@ class ActivityAPI {
             endDateUTC: req.body.endDateUTC,
             duration: req.body.duration,
             isRecurring: req.body.isRecurring,
-            recurrencePattern: req.body.recurrencePattern
+            recurrencePattern: req.body.recurrencePattern,
+            location: req.body.location
         };
 
         const id = req.params.userId;

@@ -30,6 +30,10 @@ module.exports = (sequelize, Sq) => {
             recurrencePattern: {
                 type: Sq.STRING,
                 allowNull: true
+            },
+            location: {
+                type: Sq.STRING,
+                allowNull: true
             }
         },
         {
