@@ -1,11 +1,12 @@
-const routes    = require("./userRoutes.js");
-const UserAPI   = require("./userAPI.js");
-const UserDAL   = require("./userDAL.js");
-const router    = require("express").Router();
+const routes = require('./userRoutes.js');
+const UserAPI = require('./userAPI.js');
+const UserController = require('./userController.js');
+const router = require('express').Router();
 
 module.exports = models => {
-    const userDAL = new UserDAL(models);
-    const users = new UserAPI(userDAL, models);
+    const auth = require('../auth')(models);
+    const userController = new UserController(models);
+    const users = new UserAPI(userController, auth);
 
     return routes(router, users);
-}
+};

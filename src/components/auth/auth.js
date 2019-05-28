@@ -1,15 +1,18 @@
-const TokenIssuer   = require('./token.js');
+const TokenIssuer = require('./token.js');
 
 class Auth {
-    constructor(authDAL) {
+    constructor(authController, models) {
         this.tokenIssuer = new TokenIssuer();
-        this.authDAL = authDAL;
-        this.bcrypt = require("bcrypt");
+        if (models) {
+            this.userModel = models.User;
+        }
+        this.authController = authController;
+        this.bcrypt = require('bcrypt');
         this.saltRounds = 10;
     }
 
     async authenticate(req, res, next) {
-        const token = req.body.token || req.body.jwt;
+        const token = req.headers.authorization;
 
         if (token) {
             try {
@@ -18,34 +21,33 @@ class Auth {
                     console.log(decoded);
                 }
 
-                return true;
+                return decoded;
             } catch (e) {
-                res.status(403).send({
+                res.status(401).send({
                     success: false,
-                    message: "Bad token provided."
+                    message: 'Bad token provided.'
                 });
                 throw e;
             }
         } else {
             res.status(403).send({
                 success: false,
-                message: "No token provided."
+                message: 'No token provided.'
             });
-
-            throw "No token provided";
         }
     }
 
     async login(email, password) {
-        const userId = await this.authDAL.getIDByEmail(email);
+        const userId = await this.authController.getIDByEmail(email);
         console.log(userId);
 
-        if (userId === -1) {
+        if (!userId) {
             //  Email is not registered in database
+            //  Should find a better way to handle this.
             return false;
         }
 
-        const passwordHash = await this.authDAL.getPasswordHash(userId);
+        const passwordHash = await this.authController.getPasswordHash(userId);
 
         const match = await this.bcrypt.compare(password, passwordHash);
 
@@ -53,9 +55,16 @@ class Auth {
 
         if (match) {
             //  Password matches entry in database -> issue a token
-            const jwt = await this.tokenIssuer.issue(userId);
-            console.log(jwt);
-            return jwt;
+            const user = await this.userModel.findByPk(userId);
+
+            const fullName = `${user.lastName} ${user.firstName}`;
+            const isAdmin = user.isAdmin;
+            const userType = user.userType;
+            const userContext = { userId, fullName, isAdmin };
+
+            const jwt = await this.tokenIssuer.issue(userContext);
+
+            return { jwt, userType };
         }
 
         //  Password doesn't match
@@ -66,7 +75,7 @@ class Auth {
         try {
             return await this.bcrypt.hash(password, this.saltRounds);
         } catch (e) {
-            throw e
+            throw e;
         }
     }
 }

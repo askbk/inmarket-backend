@@ -1,7 +1,10 @@
 node_modules
 containers
+nginx/www
+nginx/error.log
 src/app
 src/testdata
 .eslint*
 db/workdir
 .nvmrc
+.idea/*

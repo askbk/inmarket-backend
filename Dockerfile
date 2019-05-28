@@ -1,11 +1,11 @@
-FROM node:latest
+FROM node:11.3.0
 
-ARG NODE_ENV=developent
+ARG NODE_ENV=development
 ARG NODE_ENV=${NODE_ENV}
 
 WORKDIR /usr/app
 
-COPY package*.json ./
+COPY package* ./
 RUN npm install
 
 COPY . .

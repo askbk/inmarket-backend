@@ -3,9 +3,7 @@ npm-debug.log
 Dockerfile*
 docker-compose*
 containers
-.dockerignore
 .git
-.gitignore
 README.md
 LICENSE
 src/app
