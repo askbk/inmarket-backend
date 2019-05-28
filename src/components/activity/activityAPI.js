@@ -55,7 +55,8 @@ class ActivityAPI {
             endDateUTC,
             duration,
             isRecurring,
-            recurrencePattern
+            recurrencePattern,
+            location
         } = req.body;
 
         try {
@@ -69,7 +70,8 @@ class ActivityAPI {
                     endDateUTC,
                     duration,
                     isRecurring,
-                    recurrencePattern
+                    recurrencePattern,
+                    location
                 });
 
                 res.status(200).send({
@@ -197,7 +199,8 @@ class ActivityAPI {
             endDateUTC: req.body.endDateUTC,
             duration: req.body.duration,
             isRecurring: req.body.isRecurring,
-            recurrencePattern: req.body.recurrencePattern
+            recurrencePattern: req.body.recurrencePattern,
+            location: req.body.location
         };
 
         const id = req.params.userId;
