@@ -122,7 +122,7 @@ SkillRating.Employee = SkillRating.belongsTo(Employee, {
 const Auth = require('./components/auth/auth.js');
 const auth = new Auth();
 
-sq.sync({ force: true })
+sq.sync({ force: false })
     .then(() => {
         console.log('sequelize initiated');
         return auth.hash('passord123');
