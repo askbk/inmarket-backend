@@ -28,20 +28,44 @@ class UserController {
             }
         });
 
-        const userConnections = await Promise.all(
-            users.map(async user => {
-                const connectionStatus = await this.getConnectionStatus(
-                    user.id,
-                    myId
-                );
-                return { ...user.get(), connectionStatus };
-            })
+        const userConnections = await this.mapUserConnectionStatuses(
+            users,
+            myId
         );
 
         return userConnections;
     }
 
-    async getFilterByNameOrCompany(filter, myId) {
+    async getFilteredByName(filter, myId) {
+        const filteredUsers = await this.userModel.findAll({
+            where: {
+                [Op.and]: [
+                    Sq.where(
+                        Sq.fn(
+                            'concat',
+                            Sq.col('firstName'),
+                            ' ',
+                            Sq.col('lastName')
+                        ),
+                        { [Op.like]: '%' + filter + '%' }
+                    )
+                ],
+                id: {
+                    [Op.ne]: myId
+                }
+            },
+            include: [this.jobseekerModel, this.employeeModel]
+        });
+
+        const userConnections = await this.mapUserConnectionStatuses(
+            filteredUsers,
+            myId
+        );
+
+        return userConnections;
+    }
+
+    async getFilteredByNameOrCompany(filter, myId) {
         const filteredUsers = await this.userModel.findAll({
             where: {
                 [Op.or]: [
@@ -249,6 +273,19 @@ class UserController {
         return contacts.map(user => {
             return { ...user.get(), connectionStatus: 'contact' };
         });
+    }
+
+    async mapUserConnectionStatuses(users, myId) {
+        const userConnections = await Promise.all(
+            users.map(async user => {
+                const connectionStatus = await this.getConnectionStatus(
+                    user.id,
+                    myId
+                );
+                return { ...user.get(), connectionStatus };
+            })
+        );
+        return userConnections;
     }
 
     async getConnectionStatus(id, myId) {

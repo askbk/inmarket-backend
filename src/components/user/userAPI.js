@@ -31,9 +31,18 @@ class UserAPI {
             const authenticated = await this.auth.authenticate(req, res, next);
             if (authenticated) {
                 const myId = authenticated.sub;
-                if (req.query.search) {
-                    const users = await this.userController.getFilterByNameOrCompany(
-                        req.query.search,
+                if (req.query.searchName) {
+                    const users = await this.userController.getFilteredByName(
+                        req.query.searchName,
+                        myId
+                    );
+                    res.status(200).send({
+                        success: true,
+                        data: users
+                    });
+                } else if (req.query.searchNameOrCompany) {
+                    const users = await this.userController.getFilteredByNameOrCompany(
+                        req.query.searchNameOrCompany,
                         myId
                     );
                     res.status(200).send({
