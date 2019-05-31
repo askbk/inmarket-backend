@@ -95,14 +95,9 @@ class UserController {
             include: [this.jobseekerModel, this.employeeModel]
         });
 
-        const userConnections = await Promise.all(
-            filteredUsers.map(async user => {
-                const connectionStatus = await this.getConnectionStatus(
-                    user.id,
-                    myId
-                );
-                return { ...user.get(), connectionStatus };
-            })
+        const userConnections = await this.mapUserConnectionStatuses(
+            filteredUsers,
+            myId
         );
 
         return userConnections;
