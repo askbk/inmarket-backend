@@ -42,41 +42,27 @@ class UserController {
     }
 
     async getFilterByNameOrCompany(filter, myId) {
-        const usersByCompany = await this.employeeModel
-            .findAll({
-                include: [
-                    {
-                        model: this.userModel,
-                        required: true
-                    },
-                    {
-                        model: this.companyModel,
-                        required: true
-                    }
-                ],
-                where: { '$company.name$': { [Op.like]: '%' + filter + '%' } }
-            })
-            .then(employees => {
-                return employees.map(e => {
-                    return {
-                        name: e.company.name,
-                        ...e.user.get()
-                    };
-                });
-            });
-
         const filteredUsers = await this.userModel.findAll({
             where: {
-                [Op.and]: [
-                    Sq.where(
-                        Sq.fn(
-                            'concat',
-                            Sq.col('firstName'),
-                            ' ',
-                            Sq.col('lastName')
-                        ),
-                        { [Op.like]: '%' + filter + '%' }
-                    )
+                [Op.or]: [
+                    {
+                        [Op.and]: [
+                            Sq.where(
+                                Sq.fn(
+                                    'concat',
+                                    Sq.col('firstName'),
+                                    ' ',
+                                    Sq.col('lastName')
+                                ),
+                                { [Op.like]: '%' + filter + '%' }
+                            )
+                        ]
+                    },
+                    {
+                        '$employee.company$': {
+                            [Op.like]: '%' + filter + '%'
+                        }
+                    }
                 ],
                 id: {
                     [Op.ne]: myId
