@@ -1,7 +1,10 @@
 class LoginAPI {
-    constructor(auth) {
+    constructor(models, auth) {
         this.auth = auth;
-    }
+        this.loginModel = models.Login;
+        this.userModel = models.User;
+      }
+
 
     async login(req, res, next) {
         const email = req.body.email,
@@ -40,6 +43,8 @@ class LoginAPI {
     async updateCredentials(req, res, next){
         //  Authenticate user and decode token
         let token;
+        const password = ;
+        const email = ;
         try {
             token = await this.auth.authenticate(req, res, next);
             if (!token) {
@@ -52,11 +57,15 @@ class LoginAPI {
         } catch (e) {
             return false;
         }
+        const userId = token.sub;
+        const passwordHash = await this.authController.getPasswordHash(userId);
+        const match = await this.bcrypt.compare(password, passwordHash);
+        const user = await this.loginModel.findByPk(userId);
+        const passwordHash = this.auth.hash(password);
 
-        console.log("--");
-        console.log(token.sub);
-        console.log("--");
-    }
-}
+        }
+      }
+
+  }
 
 module.exports = LoginAPI;
