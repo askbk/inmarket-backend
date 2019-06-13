@@ -218,7 +218,9 @@ class UserAPI {
             return false;
         }
         const userId = token.sub;
-        const match = this.auth.loginById(userId, password);
+        const match = await this.auth.loginById(userId, password);
+
+        console.log(req.body.newPassword)
 
         if(match){
             const userContext = {
