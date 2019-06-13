@@ -223,11 +223,21 @@ class UserAPI {
         console.log(req.body.newPassword)
 
         if(match){
+            const newEmail = req.body.newEmail;
+            const newPassword = req.body.newPassword;
+
             const userContext = {
-                newPassword: await this.auth.hash(req.body.newPassword),
-                newEmail: req.body.newEmail,
                 id: userId
             }
+
+            if(newEmail != "" && newEmail != undefined && newEmail != null){
+                userContext.newEmail = newEmail;
+            }
+
+            if(newPassword != "" && newPassword != undefined && newPassword != null){
+                userContext.newPassword = await this.auth.hash(newPassword);
+            }
+
 
             console.log(userContext)
 

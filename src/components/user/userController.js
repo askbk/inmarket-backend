@@ -342,10 +342,6 @@ class UserController {
         const user = await this.loginModel.findByPk(userContext.id);
         const { newEmail, newPassword } = userContext;
 
-        const old = await user.get();
-
-        console.log(old)
-
         try {
             const success = await user.update({
                 email: newEmail,
