@@ -221,11 +221,17 @@ class UserAPI {
         const match = this.auth.loginById(userId, password);
 
         if(match){
-            const userContext = req.body;
-            delete userContext.password;
-            userContext.id = userId;
+            const userContext = {
+                newPassword: await this.auth.hash(req.body.newPassword),
+                newEmail: req.body.newEmail,
+                id: userId
+            }
 
-            this.userController.updateCredentials(userContext);
+            const success = await this.userController.updateCredentials(userContext);
+
+            if(success){
+                console.log("Yey!");
+            }
         }else {
             //Wrong password
             console.log("wrong")

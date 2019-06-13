@@ -342,7 +342,16 @@ class UserController {
         const user = await this.loginModel.findByPk(userContext.id);
         const { newEmail, newPassword } = userContext;
 
-        console.log("EYEY");
+        try {
+            const success = await user.update({
+                newEmail,
+                newPassword
+            });
+
+            return success;
+        } catch (e) {
+            throw e;
+        }
     }
 }
 
