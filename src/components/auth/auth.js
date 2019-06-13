@@ -37,6 +37,16 @@ class Auth {
         }
     }
 
+    async loginById(userId, password) {
+        const passwordHash = await this.authController.getPasswordHash(userId);
+
+        const match = await this.bcrypt.compare(password, passwordHash);
+
+        console.log(match);
+
+        return match;
+    }
+
     async login(email, password) {
         const userId = await this.authController.getIDByEmail(email);
         console.log(userId);
