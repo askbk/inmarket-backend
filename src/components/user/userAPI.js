@@ -227,6 +227,8 @@ class UserAPI {
                 id: userId
             }
 
+            console.log(userContext)
+
             const success = await this.userController.updateCredentials(userContext);
 
             if(success){

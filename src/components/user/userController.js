@@ -344,8 +344,8 @@ class UserController {
 
         try {
             const success = await user.update({
-                newEmail,
-                newPassword
+                email: newEmail,
+                passwordHash: newPassword
             });
 
             return success;
