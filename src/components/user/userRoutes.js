@@ -19,6 +19,10 @@ module.exports = (router, users) => {
         users.updateProfile(rq, rs, n);
     });
 
+    router.post('/credentials', (rq, rs, n) => {
+        users.updateCredentials(rq, rs, n);
+    });
+
     // Decline a contact request from the user
     router.post('/:id/contact/decline', (rq, rs, n) => {
         users.declineRequest(rq, rs, n);

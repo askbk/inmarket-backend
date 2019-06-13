@@ -337,6 +337,13 @@ class UserController {
             throw e;
         }
     }
+
+    async updateCredentials(userContext){
+        const user = await this.loginModel.findByPk(userContext.id);
+        const { newEmail, newPassword } = userContext;
+
+        console.log("EYEY");
+    }
 }
 
 module.exports = UserController;
