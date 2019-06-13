@@ -43,8 +43,6 @@ class LoginAPI {
     async updateCredentials(req, res, next){
         //  Authenticate user and decode token
         let token;
-        const password = ;
-        const email = ;
         try {
             token = await this.auth.authenticate(req, res, next);
             if (!token) {
@@ -58,12 +56,7 @@ class LoginAPI {
             return false;
         }
         const userId = token.sub;
-        const passwordHash = await this.authController.getPasswordHash(userId);
-        const match = await this.bcrypt.compare(password, passwordHash);
-        const user = await this.loginModel.findByPk(userId);
-        const passwordHash = this.auth.hash(password);
-
-        }
+        const match = this.auth.loginById(userId, password);
       }
 
   }
