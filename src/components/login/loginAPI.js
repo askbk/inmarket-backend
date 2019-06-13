@@ -1,8 +1,6 @@
 class LoginAPI {
-    constructor(models, auth) {
+    constructor(auth) {
         this.auth = auth;
-        this.loginModel = models.Login;
-        this.userModel = models.User;
       }
 
 
@@ -42,6 +40,8 @@ class LoginAPI {
 
     async updateCredentials(req, res, next){
         //  Authenticate user and decode token
+        const password = req.body.password;
+
         let token;
         try {
             token = await this.auth.authenticate(req, res, next);
@@ -57,6 +57,12 @@ class LoginAPI {
         }
         const userId = token.sub;
         const match = this.auth.loginById(userId, password);
+
+        if(match){
+
+        }else {
+            //Wrong password
+        }
       }
 
   }
