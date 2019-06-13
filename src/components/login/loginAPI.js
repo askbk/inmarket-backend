@@ -36,6 +36,27 @@ class LoginAPI {
 
         return false;
     }
+
+    async updateCredentials(req, res, next){
+        //  Authenticate user and decode token
+        let token;
+        try {
+            token = await this.auth.authenticate(req, res, next);
+            if (!token) {
+                res.status(401).send({
+                    success: false,
+                    message: 'Not logged in with a valid token'
+                });
+                return false;
+            }
+        } catch (e) {
+            return false;
+        }
+
+        console.log("--");
+        console.log(token.sub);
+        console.log("--");
+    }
 }
 
 module.exports = LoginAPI;
